@@ -14,7 +14,8 @@ export const isSafari = (): boolean =>
 	/constructor/i.test(window.HTMLElement) ||
 	(function(p) {
 		return p.toString() === '[object SafariRemoteNotification]';
-	})(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+	})(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification)) ||
+	/iP(ad|hone|od).+Version\/[\d\.]+.*Safari/i.test(navigator.userAgent);
 
 export const glSupported = (): boolean => {
 	// Check https://github.com/AnalyticalGraphicsInc/webglreport for more detailed compatibility tests
