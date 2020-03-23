@@ -1,5 +1,5 @@
-import {useEffect} from 'react';
-import {UniformSetting, FBO, Vector2} from '../../types';
+import { useEffect } from 'react';
+import { UniformSetting, FBO, Vector2 } from '../../types';
 
 export const useWindowSize = (
 	canvas: React.MutableRefObject<HTMLCanvasElement>,
@@ -27,7 +27,7 @@ const updateRendererSize = (
 	FBOB?: React.MutableRefObject<FBO>
 ) => {
 	if (!canvas.current || !gl.current) return;
-	const {width, height} = canvas.current.getBoundingClientRect();
+	const { width, height } = canvas.current.getBoundingClientRect();
 	size.current = {
 		x: width * window.devicePixelRatio,
 		y: height * window.devicePixelRatio

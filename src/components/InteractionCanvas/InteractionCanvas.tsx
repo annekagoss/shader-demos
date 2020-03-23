@@ -7,19 +7,15 @@ import { assignProjectionMatrix, assignUniforms } from '../../../lib/gl/initiali
 import { createMat4, applyTransformation, invertMatrix, transposeMatrix, lookAt, applyTranslation } from '../../../lib/gl/matrix';
 import { degreesToRadians } from '../../../lib/gl/math';
 import { useOBJLoaderWebWorker } from '../../hooks/webWorker';
-import { formatAttributes } from '../../utils/general';
+import { formatAttributes, isSafari } from '../../utils/general';
 import styles from './InteractionCanvas.module.scss';
 import { lookAtMouse, updateInteraction, getInitialInteraction } from '../../../lib/gl/interaction';
 import { useGyroscope } from '../../hooks/gyroscope';
 import { useDrag } from '../../hooks/drag';
 import { useMouse } from '../../hooks/mouse';
 
-const IS_SAFARI: boolean =
-	/constructor/i.test(window.HTMLElement) ||
-	(function(p) {
-		return p.toString() === '[object SafariRemoteNotification]';
-	})(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
-console.log({ IS_SAFARI });
+const IS_SAFARI: boolean = isSafari();
+console.log({ IS_SAFARI_3: IS_SAFARI });
 
 interface Props {
 	fragmentShader: string;
