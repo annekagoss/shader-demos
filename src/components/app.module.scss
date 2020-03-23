@@ -7,6 +7,14 @@ body {
 	font-family: 'Roboto', sans-serif;
 }
 
+.debug {
+	position: fixed;
+	background-color: red;
+	top: 0;
+	left: 0;
+	right: 0;
+}
+
 .app {
 	position: relative;
 	width: 100%;
@@ -42,6 +50,7 @@ canvas {
 	box-sizing: border-box;
 	cursor: crosshair;
 	touch-action: none;
+	user-select: none;
 
 	@media (max-width: 900px) {
 		width: auto;

@@ -15,7 +15,10 @@ import { useDrag } from '../../hooks/drag';
 import { useMouse } from '../../hooks/mouse';
 
 const IS_SAFARI: boolean = isSafari();
-console.log({ IS_SAFARI_3: IS_SAFARI });
+const IS_MOBILE: boolean = Boolean('ontouchstart' in window);
+const ENABLE_FRAMEBUFFER: boolean = !IS_SAFARI && !IS_MOBILE;
+const ENABLE_WEBWORKER: boolean = !IS_SAFARI && !IS_MOBILE;
+console.log({ ENABLE_WEBWORKER });
 
 interface Props {
 	fragmentShader: string;
@@ -48,7 +51,7 @@ const render = (props: RenderProps) => {
 	if (!props.gl) return;
 	const { gl, size, uniformLocations, outlineUniformLocations, program, outlineProgram, FBOA, FBOB } = props;
 
-	if (IS_SAFARI) {
+	if (!ENABLE_FRAMEBUFFER) {
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		draw(props);
 		return;
@@ -194,7 +197,7 @@ const InteractionCanvas = ({ fragmentShader, vertexShader, uniforms, setAttribut
 			setAttributes(formatAttributes(buffersRef));
 		},
 		OBJData,
-		useWebWorker: !IS_SAFARI
+		useWebWorker: ENABLE_WEBWORKER
 	});
 
 	useWindowSize(canvasRef, gl, uniforms.current, size);
@@ -223,7 +226,12 @@ const InteractionCanvas = ({ fragmentShader, vertexShader, uniforms, setAttribut
 		});
 	});
 
-	return <canvas ref={canvasRef} width={size.current.x} height={size.current.y} className={styles.fullScreenCanvas} />;
+	return (
+		<>
+			<div>ENABLE_WEBWORKER: {ENABLE_WEBWORKER.toString()}</div>
+			<canvas ref={canvasRef} width={size.current.x} height={size.current.y} className={styles.fullScreenCanvas} />
+		</>
+	);
 };
 
 export default InteractionCanvas;

@@ -16,7 +16,6 @@ export const useMouse = (mousePosRef: React.MutableRefObject<Vector2>, canvasRef
 };
 
 const handleMouseMove = (e: MouseEvent, mousePosRef: React.MutableRefObject<Vector2>, canvasRef: React.RefObject<HTMLCanvasElement>) => {
-	console.log(e);
 	const { left, top } = canvasRef.current.getBoundingClientRect();
 	mousePosRef.current = {
 		x: e.clientX - left,
@@ -28,7 +27,7 @@ const handleTouchMove = (e: TouchEvent, mousePosRef: React.MutableRefObject<Vect
 	const { clientX: x, clientY: y } = e.touches[0];
 	const { left, top } = canvasRef.current.getBoundingClientRect();
 	mousePosRef.current = {
-		x: ((x - left) * 2),
+		x: (x - left) * 2,
 		y: (y - top) * -2
 	};
 };

@@ -9,8 +9,6 @@ import { addVectors } from '../../lib/gl/math';
 import { useOBJLoaderWebWorker } from '../hooks/webWorker';
 import { formatAttributes, isSafari } from '../utils/general';
 
-const IS_SAFARI: boolean = isSafari();
-
 interface Props {
 	fragmentShader: string;
 	vertexShader: string;
@@ -39,11 +37,16 @@ interface RenderProps {
 	pingPong: number;
 }
 
+const IS_SAFARI: boolean = isSafari();
+const IS_MOBILE: boolean = Boolean('ontouchstart' in window);
+const ENABLE_FRAMEBUFFER: boolean = !IS_SAFARI && !IS_MOBILE;
+const ENABLE_WEBWORKER: boolean = !IS_SAFARI && !IS_MOBILE;
+
 const render = (props: RenderProps) => {
 	if (!props.gl) return;
 	const { gl, size, uniforms, uniformLocations, outlineUniformLocations, program, outlineProgram, FBOA, FBOB } = props;
 
-	if (IS_SAFARI || parseInt(uniforms.find(uniform => uniform.name === 'uMaterialType').value) !== 2) {
+	if (!ENABLE_FRAMEBUFFER || parseInt(uniforms.find(uniform => uniform.name === 'uMaterialType').value) !== 2) {
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 		gl.useProgram(program);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -171,7 +174,7 @@ const LoaderCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, p
 			setAttributes(formatAttributes(buffersRef));
 		},
 		OBJData,
-		useWebWorker: !IS_SAFARI
+		useWebWorker: ENABLE_WEBWORKER
 	});
 
 	useWindowSize(canvasRef, gl, uniforms.current, size);

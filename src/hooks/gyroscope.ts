@@ -10,6 +10,21 @@ export const useGyroscope = (interactionRef: React.MutableRefObject<Interaction>
 	useEffect(() => {
 		interactionRef.current.gyroscope.enabled = Boolean('ondeviceorientation' in window) && Boolean('ontouchstart' in window);
 		if (!interactionRef.current.gyroscope.enabled) return;
+
+		if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+			DeviceOrientationEvent.requestPermission()
+				.then(permissionState => {
+					if (permissionState === 'granted') {
+						interactionRef.current.gyroscope.enabled = true;
+					}
+				})
+				.catch(e => {
+					console.error(e);
+					interactionRef.current.gyroscope.enabled = false;
+				});
+		}
+		if (!interactionRef.current.gyroscope.enabled) return;
+
 		window.addEventListener('deviceorientation', handleOrientationChange);
 		return () => {
 			window.removeEventListener('deviceorientation', handleOrientationChange);

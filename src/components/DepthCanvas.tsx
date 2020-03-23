@@ -6,7 +6,7 @@ import { addVectors } from '../../lib/gl/math';
 import { useInitializeGL } from '../hooks/gl';
 import { useAnimationFrame } from '../hooks/animation';
 import { useWindowSize } from '../hooks/resize';
-import { useMouse } from '../hooks/mouse';
+import { formatAttributes } from '../../utils/general';
 
 interface Props {
 	fragmentShader: string;
@@ -72,10 +72,7 @@ const DepthCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, pa
 	});
 
 	React.useEffect(() => {
-		setAttributes([
-			{ name: 'aVertexPosition', value: buffersRef.current && buffersRef.current.vertexBuffer.data.join(', ') },
-			{ name: 'aVertexNormal', value: buffersRef.current && buffersRef.current.normalBuffer.data.join(', ') }
-		]);
+		setAttributes(formatAttributes(buffersRef));
 	}, []);
 
 	useWindowSize(canvasRef, gl, uniforms.current, size);
