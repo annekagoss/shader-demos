@@ -14,7 +14,6 @@ interface Props {
 	vertexShader: string;
 	uniforms: React.MutableRefObject<UniformSetting[]>;
 	setAttributes: (attributes: any[]) => void;
-	pageMousePosRef?: React.MutableRefObject<Vector2>;
 	OBJData: OBJData;
 	rotationDelta: Vector3;
 }
@@ -24,7 +23,6 @@ interface RenderProps {
 	uniformLocations: Record<string, WebGLUniformLocation>;
 	uniforms: UniformSetting[];
 	time: number;
-	mousePos: Vector2;
 	size: Vector2;
 	rotation: Vector3;
 	buffers: Buffers;
@@ -94,7 +92,7 @@ const drawOutlines = ({ gl, outlineProgram, program, baseVertexBuffer, buffers }
 	gl.disableVertexAttribArray(vertexPosition);
 };
 
-const draw = ({ gl, uniformLocations, uniforms, buffers, time, mousePos, size, rotation, outlineProgram, program }: RenderProps): void => {
+const draw = ({ gl, uniformLocations, uniforms, buffers, time, size, rotation, outlineProgram, program }: RenderProps): void => {
 	assignProjectionMatrix(gl, uniformLocations, size);
 	const modelViewMatrix: Matrix = applyTransformation(createMat4(), {
 		translation: uniforms.find(uniform => uniform.name === 'uTranslation').value,
@@ -109,7 +107,7 @@ const draw = ({ gl, uniformLocations, uniforms, buffers, time, mousePos, size, r
 	let normalMatrix: Float32Array = invertMatrix(modelViewMatrix);
 	normalMatrix = transposeMatrix(normalMatrix);
 	gl.uniformMatrix4fv(uniformLocations.uNormalMatrix, false, normalMatrix);
-	assignUniforms(uniforms, uniformLocations, gl, time, mousePos);
+	assignUniforms(uniforms, uniformLocations, gl, time);
 
 	gl.bindBuffer(gl.ARRAY_BUFFER, buffers.barycentricBuffer.buffer);
 	const barycentricLocation = gl.getAttribLocation(program, 'aBarycentric');
@@ -122,14 +120,12 @@ const draw = ({ gl, uniformLocations, uniforms, buffers, time, mousePos, size, r
 	gl.drawElements(gl.TRIANGLES, vertexCount, indexType, indexOffset);
 };
 
-const LoaderCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, pageMousePosRef, OBJData, rotationDelta }: Props) => {
+const LoaderCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, OBJData, rotationDelta }: Props) => {
 	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<HTMLCanvasElement>();
 	const size: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
 		x: uniforms.current[0].value.x * window.devicePixelRatio,
 		y: uniforms.current[0].value.y * window.devicePixelRatio
 	});
-	const mouseDownRef: React.MutableRefObject<boolean> = React.useRef<boolean>(false);
-	const mousePosRef: React.MutableRefObject<Vector2> = React.useRef<Vector2>({ x: size.current.x * 0.5, y: size.current.y * -0.5 });
 	const gl = React.useRef<WebGLRenderingContext>();
 	const uniformLocations: React.MutableRefObject<Record<string, WebGLUniformLocation>> = React.useRef<Record<string, WebGLUniformLocation>>();
 	const buffersRef: React.MutableRefObject<Buffers> = React.useRef<Buffers>({
@@ -186,7 +182,6 @@ const LoaderCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, p
 			uniformLocations: uniformLocations.current,
 			uniforms: uniforms.current,
 			time,
-			mousePos: mousePosRef.current,
 			size: size.current,
 			rotation: rotationRef.current,
 			buffers: buffersRef.current,
@@ -200,30 +195,7 @@ const LoaderCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, p
 		});
 	});
 
-	return (
-		<canvas
-			ref={canvasRef}
-			width={size.current.x}
-			height={size.current.y}
-			onMouseDown={() => {
-				mouseDownRef.current = true;
-			}}
-			onMouseUp={() => {
-				mouseDownRef.current = false;
-			}}
-			onMouseMove={e => {
-				if (!mouseDownRef.current) return;
-				const { left, top } = canvasRef.current.getBoundingClientRect();
-				mousePosRef.current = {
-					x: e.clientX - left,
-					y: (e.clientY - top) * -1
-				};
-				if (pageMousePosRef) {
-					pageMousePosRef.current = mousePosRef.current;
-				}
-			}}
-		/>
-	);
+	return <canvas ref={canvasRef} width={size.current.x} height={size.current.y} />;
 };
 
 export default LoaderCanvas;

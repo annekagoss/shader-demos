@@ -6,7 +6,7 @@ import { addVectors } from '../../lib/gl/math';
 import { useInitializeGL } from '../hooks/gl';
 import { useAnimationFrame } from '../hooks/animation';
 import { useWindowSize } from '../hooks/resize';
-import { formatAttributes } from '../../utils/general';
+import { formatAttributes } from '../utils/general';
 
 interface Props {
 	fragmentShader: string;

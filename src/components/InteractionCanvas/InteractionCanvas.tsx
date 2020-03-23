@@ -14,12 +14,6 @@ import { useGyroscope } from '../../hooks/gyroscope';
 import { useDrag } from '../../hooks/drag';
 import { useMouse } from '../../hooks/mouse';
 
-const IS_SAFARI: boolean = isSafari();
-const IS_MOBILE: boolean = Boolean('ontouchstart' in window);
-const ENABLE_FRAMEBUFFER: boolean = !IS_SAFARI && !IS_MOBILE;
-const ENABLE_WEBWORKER: boolean = !IS_SAFARI && !IS_MOBILE;
-console.log({ ENABLE_WEBWORKER });
-
 interface Props {
 	fragmentShader: string;
 	vertexShader: string;
@@ -46,6 +40,11 @@ interface RenderProps {
 	pingPong: number;
 	interaction: Interaction;
 }
+
+const IS_SAFARI: boolean = isSafari();
+const IS_MOBILE: boolean = Boolean('ontouchstart' in window);
+const ENABLE_FRAMEBUFFER: boolean = !IS_SAFARI && !IS_MOBILE;
+const ENABLE_WEBWORKER: boolean = !IS_SAFARI && !IS_MOBILE;
 
 const render = (props: RenderProps) => {
 	if (!props.gl) return;
@@ -226,12 +225,7 @@ const InteractionCanvas = ({ fragmentShader, vertexShader, uniforms, setAttribut
 		});
 	});
 
-	return (
-		<>
-			<div>ENABLE_WEBWORKER: {ENABLE_WEBWORKER.toString()}</div>
-			<canvas ref={canvasRef} width={size.current.x} height={size.current.y} className={styles.fullScreenCanvas} />
-		</>
-	);
+	return <canvas ref={canvasRef} width={size.current.x} height={size.current.y} className={styles.fullScreenCanvas} />;
 };
 
 export default InteractionCanvas;
