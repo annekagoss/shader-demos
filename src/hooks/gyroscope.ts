@@ -2,13 +2,14 @@ import { useEffect } from 'react';
 import { Interaction } from '../../types';
 import { normalizeOrientation } from '../../lib/gl/interaction';
 
-export const useGyroscope = (interactionRef: React.MutableRefObject<Interaction>) => {
-	const handleOrientationChange = (e: DeviceOrientationEvent) => {
-		interactionRef.current.gyroscope.beta = e.beta;
-		interactionRef.current.gyroscope.alpha = e.alpha;
-	};
+export const useGyroscope = (
+	interactionRef: React.MutableRefObject<Interaction>
+) => {
 	useEffect(() => {
-		interactionRef.current.gyroscope.enabled = Boolean('ondeviceorientation' in window) && Boolean('ontouchstart' in window);
+		console.log('GYRO TEST 1');
+		interactionRef.current.gyroscope.enabled =
+			Boolean('ondeviceorientation' in window) &&
+			Boolean('ontouchstart' in window);
 		if (!interactionRef.current.gyroscope.enabled) return;
 
 		if (typeof DeviceOrientationEvent.requestPermission === 'function') {
@@ -16,6 +17,20 @@ export const useGyroscope = (interactionRef: React.MutableRefObject<Interaction>
 				.then(permissionState => {
 					if (permissionState === 'granted') {
 						interactionRef.current.gyroscope.enabled = true;
+						console.log('PERMISSION GRANTED');
+
+						window.addEventListener(
+							'deviceorientation',
+							(e: DeviceOrientationEvent) =>
+								handleOrientationChange(e, interactionRef)
+						);
+						return () => {
+							window.removeEventListener(
+								'deviceorientation',
+								(e: DeviceOrientationEvent) =>
+									handleOrientationChange(e, interactionRef)
+							);
+						};
 					}
 				})
 				.catch(e => {
@@ -23,11 +38,14 @@ export const useGyroscope = (interactionRef: React.MutableRefObject<Interaction>
 					interactionRef.current.gyroscope.enabled = false;
 				});
 		}
-		if (!interactionRef.current.gyroscope.enabled) return;
-
-		window.addEventListener('deviceorientation', handleOrientationChange);
-		return () => {
-			window.removeEventListener('deviceorientation', handleOrientationChange);
-		};
 	}, []);
+};
+const handleOrientationChange = (
+	e: DeviceOrientationEvent,
+	interactionRef: React.MutableRefObject<Interaction>
+) => {
+	if (!interactionRef.current.gyroscope.enabled) return;
+	console.log('enabled');
+	interactionRef.current.gyroscope.beta = e.beta;
+	interactionRef.current.gyroscope.alpha = e.alpha;
 };

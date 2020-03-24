@@ -1,6 +1,11 @@
-import { Interaction, Transformation, Vector3, Vector2, Matrix, GyroscopeData, DragData } from '../../types';
+import { Interaction, Vector3, Vector2, Matrix, GyroscopeData, DragData } from '../../types';
 
-import { interpolateVectors, clamp, addVectors, degreesToRadians } from './math';
+import {
+	interpolateVectors,
+	clamp,
+	addVectors,
+	degreesToRadians
+} from './math';
 import { invertMatrix, applyMatrixToVector3, lookAt } from './matrix';
 
 interface InteractionSettings {
@@ -107,17 +112,26 @@ const updateGyroVelocity = ({ beta, alpha, enabled, accelerateTimer, decelerateT
 };
 
 // Map mouse position from pixel coordinate to a range of -1 to 1
-export const mapMouseToScreenSpace = (mousePos: Vector2, size: Vector2): { x: number; y: number } => {
+export const mapMouseToScreenSpace = (
+	mousePos: Vector2,
+	size: Vector2
+): { x: number; y: number } => {
 	return {
-		x: 1 - 2 * (mousePos.x / size.x),
-		y: (mousePos.y / size.y) * 2 + 1
+		x: 1 - 2 * ((mousePos.x * window.devicePixelRatio) / size.x),
+		y: ((mousePos.y * window.devicePixelRatio) / size.y) * 2 + 1
 	};
 };
 
-export const unprojectCoordinate = (screenSpaceCoordinate: Vector2, projectionMatrix: Matrix): Vector3 => {
+export const unprojectCoordinate = (
+	screenSpaceCoordinate: Vector2,
+	projectionMatrix: Matrix
+): Vector3 => {
 	const inverseProjectionMatrix: Matrix = invertMatrix(projectionMatrix);
 	return {
-		...applyMatrixToVector3({ x: screenSpaceCoordinate.x, y: screenSpaceCoordinate.y, z: -1 }, inverseProjectionMatrix),
+		...applyMatrixToVector3(
+			{ x: screenSpaceCoordinate.x, y: screenSpaceCoordinate.y, z: -1 },
+			inverseProjectionMatrix
+		),
 		z: 0.5 // 0.5 places the mouse just in front of the object
 	};
 };
@@ -127,9 +141,17 @@ export const normalizeOrientation = (alpha: number, beta: number): { beta: numbe
 	alpha: Math.sin(degreesToRadians(alpha))
 });
 
-export const lookAtMouse = (mousePos: Vector2, size: Vector2, projectionMatrix: Matrix, modelViewMatrix: Matrix): Matrix => {
+export const lookAtMouse = (
+	mousePos: Vector2,
+	size: Vector2,
+	projectionMatrix: Matrix,
+	modelViewMatrix: Matrix
+): Matrix => {
 	const screenSpaceTarget = mapMouseToScreenSpace(mousePos, size);
-	const targetCoord: Vector3 = unprojectCoordinate(screenSpaceTarget, projectionMatrix);
+	const targetCoord: Vector3 = unprojectCoordinate(
+		screenSpaceTarget,
+		projectionMatrix
+	);
 	return lookAt(modelViewMatrix, {
 		target: targetCoord,
 		origin: { x: 0, y: 0, z: 0 },
