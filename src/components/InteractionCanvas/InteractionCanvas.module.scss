@@ -29,12 +29,20 @@
 .text {
 	font-family: 'Roboto', sans-serif;
 	font-weight: 900;
-	font-size: 200px;
+	font-size: 80px;
 	text-align: center;
 	opacity: 0.125;
 	user-select: none;
 
 	&.enabled {
 		opacity: 1;
+	}
+
+	@media (min-width: 900px) {
+		font-size: 160px;
+	}
+
+	@media (min-width: 1300px) {
+		font-size: 200px;
 	}
 }
