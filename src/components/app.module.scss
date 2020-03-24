@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Inconsolata:400,700|Roboto:100,300,400,500&display=swap');
-
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,900|Work+Sans:800&display=swap');
 body {
 	min-height: 100vh;
 	margin: 0;
@@ -28,6 +27,7 @@ body {
 	font-size: 3rem;
 	font-weight: 300;
 	opacity: 0.5;
+	user-select: none;
 
 	&.active {
 		font-weight: 600;
@@ -65,6 +65,7 @@ input {
 	color: white;
 	font-family: Consolas, monospace;
 	font-size: 14px;
+	min-width: 100px;
 }
 
 ::placeholder {
