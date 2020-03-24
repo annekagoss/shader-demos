@@ -10,27 +10,9 @@ setConfig({
 
 const rootEl = document.getElementById('root');
 
-console.log(`mode: ${process.env.NODE_ENV}`);
-
 render(
 	<AppContainer>
 		<App />
 	</AppContainer>,
 	rootEl
 );
-
-// Hot Module Replacement API
-// declare let module: {hot: any};
-
-// if (module.hot) {
-// 	module.hot.accept('./components/App', () => {
-// 		const NewApp = require('./components/App').default;
-
-// 		render(
-// 			<AppContainer>
-// 				<NewApp />
-// 			</AppContainer>,
-// 			rootEl
-// 		);
-// 	});
-// }
