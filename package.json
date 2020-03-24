@@ -28,7 +28,8 @@
 		],
 		"plugins": [
 			"@babel/plugin-proposal-class-properties",
-			"react-hot-loader/babel"
+			"react-hot-loader/babel",
+			"@babel/plugin-transform-runtime"
 		],
 		"env": {
 			"production": {
@@ -48,6 +49,7 @@
 	"devDependencies": {
 		"@babel/cli": "^7.2.3",
 		"@babel/core": "^7.4.0",
+		"@babel/plugin-transform-runtime": "^7.9.0",
 		"@babel/preset-env": "^7.4.3",
 		"@babel/preset-react": "^7.0.0",
 		"@types/jest": "^24.0.11",

@@ -1,4 +1,11 @@
-import { Interaction, Vector3, Vector2, Matrix, GyroscopeData, DragData } from '../../types';
+import {
+	Interaction,
+	Vector3,
+	Vector2,
+	Matrix,
+	GyroscopeData,
+	DragData
+} from '../../types';
 
 import {
 	interpolateVectors,
@@ -20,8 +27,14 @@ const INTERACTION_SETTINGS: InteractionSettings = {
 	dragFriction: 0.0001
 };
 
-export const getInitialInteraction = (rotationFromUniforms: Vector3): Interaction => {
-	const initialRotation = { x: degreesToRadians(rotationFromUniforms.x), y: degreesToRadians(rotationFromUniforms.y), z: degreesToRadians(rotationFromUniforms.z) };
+export const getInitialInteraction = (
+	rotationFromUniforms: Vector3
+): Interaction => {
+	const initialRotation = {
+		x: degreesToRadians(rotationFromUniforms.x),
+		y: degreesToRadians(rotationFromUniforms.y),
+		z: degreesToRadians(rotationFromUniforms.z)
+	};
 	return {
 		gyroscope: {
 			beta: 0,
@@ -54,15 +67,21 @@ export const updateInteraction = (interaction: Interaction): Interaction => {
 
 	if (newGyroscope.enabled) {
 		newGyroscope.velocity = updateGyroVelocity(gyroscope);
-		newGyroscope.accelerateTimer = updateGyroTimer(gyroscope.accelerateTimer);
-		newGyroscope.decelerateTimer = updateGyroTimer(gyroscope.decelerateTimer);
+		newGyroscope.accelerateTimer = updateGyroTimer(
+			gyroscope.accelerateTimer
+		);
+		newGyroscope.decelerateTimer = updateGyroTimer(
+			gyroscope.decelerateTimer
+		);
 		newRotation = applyGyro(newGyroscope, initialRotation);
 	}
 	if (newDrag.enabled) {
 		newDrag.velocity = updateDragVelocity(drag);
 		newDrag.accelerateTimer = updateDragTimer(drag.accelerateTimer);
 		newDrag.decelerateTimer = updateDragTimer(drag.decelerateTimer);
-		const sourceRotation: Vector3 = newGyroscope.enabled ? newRotation : initialRotation;
+		const sourceRotation: Vector3 = newGyroscope.enabled
+			? newRotation
+			: initialRotation;
 		newRotation = applyDrag(newDrag, sourceRotation);
 	}
 
@@ -84,11 +103,19 @@ const applyGyro = (gyro: GyroscopeData, rotation: Vector3) => {
 	return addVectors(rotation, gyro.velocity);
 };
 
-const updateDragTimer = (timer: number): number => (timer < 1 ? clamp(timer + INTERACTION_SETTINGS.dragFriction, 0, 1) : timer);
+const updateDragTimer = (timer: number): number =>
+	timer < 1 ? clamp(timer + INTERACTION_SETTINGS.dragFriction, 0, 1) : timer;
 
-const updateGyroTimer = (timer: number): number => (timer < 1 ? clamp(timer + INTERACTION_SETTINGS.gyroFriction, 0, 1) : timer);
+const updateGyroTimer = (timer: number): number =>
+	timer < 1 ? clamp(timer + INTERACTION_SETTINGS.gyroFriction, 0, 1) : timer;
 
-const updateDragVelocity = ({ isDragging, dragVelocity, accelerateTimer, decelerateTimer, velocity }: DragData): Vector3 => {
+const updateDragVelocity = ({
+	isDragging,
+	dragVelocity,
+	accelerateTimer,
+	decelerateTimer,
+	velocity
+}: DragData): Vector3 => {
 	const targetVelocity: Vector3 = {
 		x: dragVelocity.x * INTERACTION_SETTINGS.dragSpeed,
 		y: dragVelocity.y * INTERACTION_SETTINGS.dragSpeed,
@@ -98,7 +125,14 @@ const updateDragVelocity = ({ isDragging, dragVelocity, accelerateTimer, deceler
 	return interpolateVectors(velocity, targetVelocity, accelerateTimer);
 };
 
-const updateGyroVelocity = ({ beta, alpha, enabled, accelerateTimer, decelerateTimer, velocity }: GyroscopeData): Vector3 => {
+const updateGyroVelocity = ({
+	beta,
+	alpha,
+	enabled,
+	accelerateTimer,
+	decelerateTimer,
+	velocity
+}: GyroscopeData): Vector3 => {
 	const { beta: x, alpha: y } = normalizeOrientation(alpha, beta);
 	const targetVelocity: Vector3 = enabled
 		? {
@@ -108,19 +142,19 @@ const updateGyroVelocity = ({ beta, alpha, enabled, accelerateTimer, decelerateT
 		  }
 		: { x: 0, y: 0, z: 0 };
 
-	return enabled ? interpolateVectors(velocity, targetVelocity, accelerateTimer) : interpolateVectors(velocity, targetVelocity, decelerateTimer);
+	return enabled
+		? interpolateVectors(velocity, targetVelocity, accelerateTimer)
+		: interpolateVectors(velocity, targetVelocity, decelerateTimer);
 };
 
 // Map mouse position from pixel coordinate to a range of -1 to 1
 export const mapMouseToScreenSpace = (
 	mousePos: Vector2,
 	size: Vector2
-): { x: number; y: number } => {
-	return {
-		x: 1 - 2 * ((mousePos.x * window.devicePixelRatio) / size.x),
-		y: ((mousePos.y * window.devicePixelRatio) / size.y) * 2 + 1
-	};
-};
+): { x: number; y: number } => ({
+	x: 1 - 2 * (mousePos.x / size.x),
+	y: (mousePos.y / size.y) * 2 + 1
+});
 
 export const unprojectCoordinate = (
 	screenSpaceCoordinate: Vector2,
@@ -136,7 +170,10 @@ export const unprojectCoordinate = (
 	};
 };
 
-export const normalizeOrientation = (alpha: number, beta: number): { beta: number; alpha: number } => ({
+export const normalizeOrientation = (
+	alpha: number,
+	beta: number
+): { beta: number; alpha: number } => ({
 	beta: Math.sin(degreesToRadians(beta * 2)),
 	alpha: Math.sin(degreesToRadians(alpha))
 });
