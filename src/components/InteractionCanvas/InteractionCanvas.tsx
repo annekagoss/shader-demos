@@ -1,6 +1,6 @@
 import * as React from 'react';
 import cx from 'classnames';
-import { UniformSetting, Vector2, Matrix, Vector3, Mesh, Buffers, MESH_TYPE, Buffer, OBJData, FBO, GyroscopeData, Interaction } from '../../../types';
+import { UniformSettings, Vector2, Matrix, Vector3, Mesh, Buffers, MESH_TYPE, Buffer, OBJData, FBO, GyroscopeData, Interaction } from '../../../types';
 import { initializeGL } from '../../hooks/gl';
 import { useAnimationFrame } from '../../hooks/animation';
 import { useWindowSize } from '../../hooks/resize';
@@ -90,7 +90,7 @@ const render = (props: RenderProps) => {
 
 const drawOutlines = ({ gl, outlineProgram, uniforms, outlineUniformLocations, baseVertexBuffer }: RenderProps) => {
 	const vertexPosition = gl.getAttribLocation(outlineProgram, 'aBaseVertexPosition');
-	gl.uniform2fv(outlineUniformLocations.uResolution, Object.values(uniforms[0].value));
+	gl.uniform2fv(outlineUniformLocations.uResolution, Object.values(uniforms.uResolution.value));
 	gl.enableVertexAttribArray(vertexPosition);
 	gl.bindBuffer(gl.ARRAY_BUFFER, baseVertexBuffer.buffer);
 	gl.vertexAttribPointer(vertexPosition, 3, gl.FLOAT, false, 0, 0);
@@ -99,8 +99,8 @@ const drawOutlines = ({ gl, outlineProgram, uniforms, outlineUniformLocations, b
 };
 
 const createModelViewMatrix = (mousePos, size, projectionMatrix, interaction, uniforms): Matrix => {
-	const translation: Vector3 = uniforms.find(uniform => uniform.name === 'uTranslation').value;
-	const scale: number = uniforms.find(uniform => uniform.name === 'uScale').value;
+	const translation: Vector3 = uniforms.uTranslation.value;
+	const scale: number = uniforms.uScale.value;
 	if (interaction.gyroscope.enabled || interaction.drag.enabled) {
 		const modelViewMatrix = lookAt(createMat4(), {
 			target: { x: 0, y: 0, z: 0.5 },
@@ -113,7 +113,7 @@ const createModelViewMatrix = (mousePos, size, projectionMatrix, interaction, un
 			scale
 		});
 	} else {
-		const rotation = uniforms.find(uniform => uniform.name === 'uRotation').value;
+		const rotation = uniforms.uRotation.value;
 		const modelViewMatrix = lookAtMouse(mousePos, size, projectionMatrix, createMat4());
 		return applyTransformation(modelViewMatrix, {
 			translation,
@@ -152,14 +152,15 @@ const InteractionCanvas = ({ fragmentShader, vertexShader, uniforms, setAttribut
 	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<HTMLCanvasElement>();
 	const size: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
 		x: window.innerWidth * window.devicePixelRatio,
-		y: window.innerHeight * window.devicePixelRatio
+		y: window.innerHeight * window.devicePixelRatio * 0.75
 	});
-	uniforms.current[0].value = size.current;
+	uniforms.current.uResolution.value = size.current;
+
 	const mousePosRef: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
 		x: size.current.x * 0.5,
 		y: size.current.y * -0.5
 	});
-	const rotation = uniforms.current.find(uniform => uniform.name === 'uRotation').value;
+	const rotation = uniforms.current.uRotation.value;
 	const interactionRef: React.MutableRefObject<Interaction> = React.useRef<Interaction>(getInitialInteraction(rotation));
 	const gl = React.useRef<WebGLRenderingContext>();
 	const uniformLocations: React.MutableRefObject<Record<string, WebGLUniformLocation>> = React.useRef<Record<string, WebGLUniformLocation>>();

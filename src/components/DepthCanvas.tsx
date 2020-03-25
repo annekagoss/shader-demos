@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { UniformSetting, Vector2, Matrix, Vector3, FaceArray, MESH_TYPE, Buffers } from '../../types';
+import { UniformSettings, Vector2, Matrix, Vector3, FaceArray, MESH_TYPE, Buffers } from '../../types';
 import { assignProjectionMatrix, assignUniforms } from '../../lib/gl/initialize';
 import { applyRotation, createMat4 } from '../../lib/gl/matrix';
 import { addVectors } from '../../lib/gl/math';
@@ -7,6 +7,7 @@ import { useInitializeGL } from '../hooks/gl';
 import { useAnimationFrame } from '../hooks/animation';
 import { useWindowSize } from '../hooks/resize';
 import { formatAttributes } from '../utils/general';
+import { useMouse } from '../hooks/mouse';
 
 interface Props {
 	fragmentShader: string;
@@ -40,10 +41,9 @@ const render = ({ gl, uniformLocations, uniforms, time, mousePos, size, numVerti
 const DepthCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, pageMousePosRef, faceArray, rotationDelta }: Props) => {
 	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<HTMLCanvasElement>();
 	const size: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
-		x: uniforms.current[0].value.x * window.devicePixelRatio,
-		y: uniforms.current[0].value.y * window.devicePixelRatio
+		x: uniforms.current.uResolution.value.x * window.devicePixelRatio,
+		y: uniforms.current.uResolution.value.y * window.devicePixelRatio
 	});
-	const mouseDownRef: React.MutableRefObject<boolean> = React.useRef<boolean>(false);
 	const mousePosRef: React.MutableRefObject<Vector2> = React.useRef<Vector2>({ x: size.current.x * 0.5, y: size.current.y * -0.5 });
 	const gl = React.useRef<WebGLRenderingContext>();
 	const uniformLocations = React.useRef<Record<string, WebGLUniformLocation>>();
@@ -76,7 +76,7 @@ const DepthCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, pa
 	}, []);
 
 	useWindowSize(canvasRef, gl, uniforms.current, size);
-	// useMouse(mousePosRef, canvasRef);
+	useMouse(mousePosRef, canvasRef);
 
 	useAnimationFrame(canvasRef, (time: number) => {
 		rotationRef.current = addVectors(rotationRef.current, rotationDelta);

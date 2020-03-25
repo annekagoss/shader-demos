@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { UNIFORM_TYPE, Vector2, UniformSetting, Vector3 } from '../../types';
+import { UNIFORM_TYPE, Vector2, UniformSettings, Vector3 } from '../../types';
 import { BASE_UNIFORMS } from '../utils/general';
 import meshFragmentShader from '../../lib/gl/shaders/mesh.frag';
 import meshVertexShader from '../../lib/gl/shaders/mesh.vert';
@@ -26,16 +26,16 @@ interface Props {
 
 const IS_MOBILE: boolean = Boolean('ontouchstart' in window);
 
-const BASE_MESH_UNIFORMS: UniformSettings = [
+const BASE_MESH_UNIFORMS: UniformSettings = {
 	...BASE_UNIFORMS,
-	{
+	uTime: {
 		defaultValue: 0,
 		name: 'uTime',
 		readonly: true,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 0
 	},
-	{
+	uMaterialType: {
 		defaultValue: 0,
 		name: 'uMaterialType',
 		isBool: false,
@@ -45,39 +45,39 @@ const BASE_MESH_UNIFORMS: UniformSettings = [
 		type: UNIFORM_TYPE.INT_1,
 		value: 0
 	},
-	{
+	uLightPositionA: {
 		defaultValue: { x: 1.0, y: 1.0, z: 1.0 },
 		name: 'uLightPositionA',
 		readonly: false,
 		type: UNIFORM_TYPE.VEC_3,
 		value: { x: 1.0, y: 1.0, z: 1.0 }
 	},
-	{
+	uLightColorA: {
 		defaultValue: { x: 0.0, y: 0.0, z: 1.0 },
 		name: 'uLightColorA',
 		readonly: false,
 		type: UNIFORM_TYPE.VEC_3,
 		value: { x: 0.0, y: 0.0, z: 1.0 }
 	},
-	{
+	uLightColorB: {
 		defaultValue: { x: 0.3, y: 0.0, z: 0.6 },
 		name: 'uLightColorB',
 		readonly: false,
 		type: UNIFORM_TYPE.VEC_3,
 		value: { x: 0.3, y: 0.0, z: 0.6 }
 	},
-	{
+	uLightPositionB: {
 		defaultValue: { x: -1.0, y: -1.0, z: 1.0 },
 		name: 'uLightPositionB',
 		readonly: false,
 		type: UNIFORM_TYPE.VEC_3,
 		value: { x: -1.0, y: -1.0, z: 1.0 }
 	}
-];
+};
 
-const BASE_PHONG_UNIFORMS: UniformSettings = [
+const BASE_PHONG_UNIFORMS: UniformSettings = {
 	...BASE_UNIFORMS,
-	{
+	uMaterialType: {
 		defaultValue: 0,
 		name: 'uMaterialType',
 		isBool: false,
@@ -87,7 +87,7 @@ const BASE_PHONG_UNIFORMS: UniformSettings = [
 		type: UNIFORM_TYPE.INT_1,
 		value: 0
 	},
-	{
+	uDisplacement: {
 		defaultValue: 0,
 		name: 'uDisplacement',
 		isBool: true,
@@ -95,109 +95,109 @@ const BASE_PHONG_UNIFORMS: UniformSettings = [
 		type: UNIFORM_TYPE.INT_1,
 		value: 0
 	},
-	{
+	uTime: {
 		defaultValue: 0,
 		name: 'uTime',
 		readonly: true,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 0
 	},
-	{
+	uTranslation: {
 		defaultValue: { x: 0, y: 0.3, z: 0 },
 		name: 'uTranslation',
 		readonly: false,
 		type: UNIFORM_TYPE.VEC_3,
 		value: { x: 0, y: 0.3, z: 0 }
 	},
-	{
+	uScale: {
 		defaultValue: 0.0485,
 		name: 'uScale',
 		readonly: false,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 0.0485
 	},
-	{
+	uSpecular: {
 		defaultValue: 0.6,
 		name: 'uSpecular',
 		readonly: false,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 0.6
 	},
-	{
+	uLightColorA: {
 		defaultValue: { x: 0.75, y: 0.75, z: 0.75 },
 		name: 'uLightColorA',
 		readonly: false,
 		type: UNIFORM_TYPE.VEC_3,
 		value: { x: 0.75, y: 0.75, z: 0.75 }
 	},
-	{
+	uLightPositionA: {
 		defaultValue: { x: 1.0, y: 1.0, z: 1.0 },
 		name: 'uLightPositionA',
 		readonly: false,
 		type: UNIFORM_TYPE.VEC_3,
 		value: { x: 1.0, y: 1.0, z: 1.0 }
 	},
-	{
+	uLightColorB: {
 		defaultValue: { x: 0.3, y: 0.3, z: 0.3 },
 		name: 'uLightColorB',
 		readonly: false,
 		type: UNIFORM_TYPE.VEC_3,
 		value: { x: 0.3, y: 0.3, z: 0.3 }
 	},
-	{
+	uLightPositionB: {
 		defaultValue: { x: -1.0, y: -1.0, z: 1.0 },
 		name: 'uLightPositionB',
 		readonly: false,
 		type: UNIFORM_TYPE.VEC_3,
 		value: { x: -1.0, y: -1.0, z: 1.0 }
 	}
-];
+};
 
-const BASE_FRACTAL_UNIFORMS = [
+const BASE_FRACTAL_UNIFORMS = {
 	...BASE_UNIFORMS,
-	{
+	uTime: {
 		defaultValue: 0,
 		name: 'uTime',
 		readonly: true,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 0
 	},
-	{
+	uMouse: {
 		defaultValue: { x: 0.6, y: 0.7 },
 		name: 'uMouse',
 		readonly: true,
 		type: UNIFORM_TYPE.VEC_2,
 		value: { x: 0.6, y: 0.7 }
 	},
-	{
+	uIterations: {
 		defaultValue: IS_MOBILE ? 1 : 3,
 		name: 'uIterations',
 		readonly: false,
 		type: UNIFORM_TYPE.INT_1,
 		value: IS_MOBILE ? 1 : 3
 	},
-	{
+	uFractalColor1: {
 		defaultValue: { x: 1.0, y: 0.0, z: 0.0 },
 		name: 'uFractalColor1',
 		readonly: false,
 		type: UNIFORM_TYPE.VEC_3,
 		value: { x: 1.0, y: 0.0, z: 0.0 }
 	},
-	{
+	uFractalColor2: {
 		defaultValue: { x: 0.0, y: 1.0, z: 0.0 },
 		name: 'uFractalColor2',
 		readonly: false,
 		type: UNIFORM_TYPE.VEC_3,
 		value: { x: 0.0, y: 1.0, z: 0.0 }
 	},
-	{
+	uFractalColor3: {
 		defaultValue: { x: 0.0, y: 0.0, z: 1.0 },
 		name: 'uFractalColor3',
 		readonly: false,
 		type: UNIFORM_TYPE.VEC_3,
 		value: { x: 0.0, y: 0.0, z: 1.0 }
 	}
-];
+};
 
 const CUBE_MESH: Vector3[][] = [
 	// Side 1

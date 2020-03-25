@@ -9,7 +9,7 @@ import TransitionPage from '../pages/TransitionPage';
 import styles from './app.module.scss';
 
 const App = () => {
-	const [activePageIndex, setActivePageIndex] = React.useState<number>(0);
+	const [activePageIndex, setActivePageIndex] = React.useState<number>(4);
 	if (!glSupported()) return <div>'WebGL is not supported on this device.'</div>;
 
 	return (
@@ -53,10 +53,10 @@ const App = () => {
 			</div>
 			<div className={styles.PagesContainer}>
 				<FormPage isActive={activePageIndex === 0} />
-				{/* <MotionPage isActive={activePageIndex === 1} />
+				<MotionPage isActive={activePageIndex === 1} />
 				<DepthPage isActive={activePageIndex === 2} />
 				<InteractionPage isActive={activePageIndex === 3} />
-				<TransitionPage isActive={activePageIndex === 4} /> */}
+				<TransitionPage isActive={activePageIndex === 4} />
 			</div>
 		</div>
 	);

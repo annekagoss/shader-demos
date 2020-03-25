@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { UniformSetting, Vector2, MESH_TYPE } from '../../../types';
+import { UniformSettings, Vector2, MESH_TYPE } from '../../../types';
 import { assignUniforms } from '../../../lib/gl/initialize';
 import { BASE_TRIANGLE_MESH } from '../../../lib/gl/settings';
 import { useInitializeGL } from '../../hooks/gl';
@@ -47,9 +47,9 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes }: P
 	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<HTMLCanvasElement>();
 	const size: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
 		x: window.innerWidth * window.devicePixelRatio,
-		y: window.innerHeight * window.devicePixelRatio
+		y: window.innerHeight * window.devicePixelRatio * 0.75
 	});
-	uniforms.current[0].value = size.current;
+	uniforms.current.uResolution.value = size.current;
 	const mousePosRef: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
 		x: size.current.x * 0.5,
 		y: size.current.y * -0.5
@@ -78,8 +78,6 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes }: P
 
 	React.useEffect(() => {
 		setAttributes([{ name: 'aVertexPosition', value: BASE_TRIANGLE_MESH.join(', ') }]);
-		uniforms.current[0].value = size.current;
-		gl.current.viewport(0, 0, size.current.x, size.current.y);
 	}, []);
 
 	useWindowSize(canvasRef, gl, uniforms.current, size);

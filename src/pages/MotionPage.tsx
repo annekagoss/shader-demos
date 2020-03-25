@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { UNIFORM_TYPE, Vector2, UniformSetting } from '../../types';
+import { UNIFORM_TYPE, Vector2, UniformSettings } from '../../types';
 import { BASE_UNIFORMS } from '../utils/general';
 import Section from '../components/Section/Section';
 import BaseCanvas from '../components/BaseCanvas';
@@ -15,91 +15,91 @@ import noiseFragmentShader from '../../lib/gl/shaders/noise.frag';
 import feedbackFragmentShader from '../../lib/gl/shaders/feedback.frag';
 import styles from './page.module.scss';
 
-const BASE_TRANSLATION_UNIFORMS: UniformSettings = [
+const BASE_TRANSLATION_UNIFORMS: UniformSettings = {
 	...BASE_UNIFORMS,
-	{
+	uTime: {
 		defaultValue: 0,
 		name: 'uTime',
 		readonly: true,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 0
 	},
-	{
+	uRectDimensions: {
 		defaultValue: { x: 0.5, y: 0.5 },
 		name: 'uRectDimensions',
 		readonly: false,
 		type: UNIFORM_TYPE.VEC_2,
 		value: { x: 0.5, y: 0.5 }
 	},
-	{
+	uMouse: {
 		defaultValue: { x: 0.5, y: 0.5 },
 		name: 'uMouse',
 		readonly: true,
 		type: UNIFORM_TYPE.VEC_2,
 		value: { x: 0.5, y: 0.5 }
 	}
-];
+};
 
-const BASE_SCALE_UNIFORMS: UniformSettings = [
+const BASE_SCALE_UNIFORMS: UniformSettings = {
 	...BASE_UNIFORMS,
-	{
+	uTime: {
 		defaultValue: 0,
 		name: 'uTime',
 		readonly: true,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 0
 	},
-	{
+	uMaxScale: {
 		defaultValue: { x: 1.0, y: 1.0 },
 		name: 'uMaxScale',
 		readonly: false,
 		type: UNIFORM_TYPE.VEC_2,
 		value: { x: 1.0, y: 1.0 }
 	}
-];
+};
 
-const BASE_ROTATION_UNIFORMS: UniformSettings = [
+const BASE_ROTATION_UNIFORMS: UniformSettings = {
 	...BASE_UNIFORMS,
-	{
+	uTime: {
 		defaultValue: 0,
 		name: 'uTime',
 		readonly: true,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 0
 	},
-	{
+	uSpeed: {
 		defaultValue: 1,
 		name: 'uSpeed',
 		readonly: false,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 1
 	}
-];
+};
 
-const BASE_SIGNAL_UNIFORMS: UniformSettings = [
+const BASE_SIGNAL_UNIFORMS: UniformSettings = {
 	...BASE_UNIFORMS,
-	{
+	uTime: {
 		defaultValue: 0,
 		name: 'uTime',
 		readonly: true,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 0
 	},
-	{
+	uFrequency: {
 		defaultValue: 1.0,
 		name: 'uFrequency',
 		readonly: false,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 1.0
 	},
-	{
+	uSpeed: {
 		defaultValue: 1.0,
 		name: 'uSpeed',
 		readonly: false,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 1.0
 	},
-	{
+	uSignalType: {
 		defaultValue: 0,
 		isBool: false,
 		isRadio: true,
@@ -109,18 +109,18 @@ const BASE_SIGNAL_UNIFORMS: UniformSettings = [
 		type: UNIFORM_TYPE.INT_1,
 		value: 0
 	}
-];
+};
 
-const BASE_NOISE_UNIFORMS: UniformSettings = [
+const BASE_NOISE_UNIFORMS: UniformSettings = {
 	...BASE_UNIFORMS,
-	{
+	uTime: {
 		defaultValue: 0,
 		name: 'uTime',
 		readonly: true,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 0
 	},
-	{
+	uFractal: {
 		defaultValue: 1,
 		isBool: true,
 		name: 'uFractal',
@@ -128,7 +128,7 @@ const BASE_NOISE_UNIFORMS: UniformSettings = [
 		type: UNIFORM_TYPE.INT_1,
 		value: 1
 	},
-	{
+	uOctaves: {
 		defaultValue: 4,
 		isBool: false,
 		name: 'uOctaves',
@@ -136,39 +136,39 @@ const BASE_NOISE_UNIFORMS: UniformSettings = [
 		type: UNIFORM_TYPE.INT_1,
 		value: 4
 	}
-];
+};
 
-const BASE_FEEDBACK_UNIFORMS: UniformSettings = [
+const BASE_FEEDBACK_UNIFORMS: UniformSettings = {
 	...BASE_UNIFORMS,
-	{
+	uTime: {
 		defaultValue: 0,
 		name: 'uTime',
 		readonly: true,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 0
 	},
-	{
+	uMouse: {
 		defaultValue: { x: 0.5, y: 0.5 },
 		name: 'uMouse',
 		readonly: true,
 		type: UNIFORM_TYPE.VEC_2,
 		value: { x: 0.5, y: 0.5 }
 	},
-	{
+	uOffset: {
 		defaultValue: { x: 0, y: -0.01 },
 		name: 'uOffset',
 		readonly: false,
 		type: UNIFORM_TYPE.VEC_2,
 		value: { x: 0, y: -0.01 }
 	},
-	{
+	uAlpha: {
 		defaultValue: 0.95,
 		name: 'uAlpha',
 		readonly: false,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 0.95
 	},
-	{
+	uSmoke: {
 		defaultValue: 0,
 		isBool: true,
 		name: 'uSmoke',
@@ -176,7 +176,7 @@ const BASE_FEEDBACK_UNIFORMS: UniformSettings = [
 		type: UNIFORM_TYPE.INT_1,
 		value: 0
 	}
-];
+};
 
 interface Props {
 	isActive: boolean;

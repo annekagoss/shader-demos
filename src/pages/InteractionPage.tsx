@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { UNIFORM_TYPE, UniformSetting } from '../../types';
+import { UNIFORM_TYPE, UniformSettings } from '../../types';
 import { BASE_UNIFORMS } from '../utils/general';
 import interactionVertexShader from '../../lib/gl/shaders/phong.vert';
 import interactionFragmentShader from '../../lib/gl/shaders/toon.frag';
@@ -16,37 +16,37 @@ interface Props {
 	isActive: boolean;
 }
 
-const BASE_INTERACTION_UNIFORMS: UniformSettings = [
+const BASE_INTERACTION_UNIFORMS: UniformSettings = {
 	...BASE_UNIFORMS,
-	{
+	uTime: {
 		defaultValue: 0,
 		name: 'uTime',
 		readonly: true,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 0
 	},
-	{
+	uTranslation: {
 		defaultValue: { x: 0, y: 0, z: 0 },
 		name: 'uTranslation',
 		readonly: false,
 		type: UNIFORM_TYPE.VEC_3,
 		value: { x: 0, y: 0, z: 0 }
 	},
-	{
+	uRotation: {
 		defaultValue: { x: 14.9, y: 180 + 50.7, z: 28.8 },
 		name: 'uRotation',
 		readonly: false,
 		type: UNIFORM_TYPE.VEC_3,
 		value: { x: 14.9, y: 180 + 50.7, z: 28.8 }
 	},
-	{
+	uScale: {
 		defaultValue: 0.0485,
 		name: 'uScale',
 		readonly: false,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 0.0485
 	}
-];
+};
 
 const InteractionPage = ({ isActive }: Props) => {
 	const interactionUniforms = React.useRef<UniformSettings>(BASE_INTERACTION_UNIFORMS);

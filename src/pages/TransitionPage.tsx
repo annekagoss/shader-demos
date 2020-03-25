@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { UNIFORM_TYPE, UniformSetting } from '../../types';
+import { UNIFORM_TYPE, UniformSettings } from '../../types';
 import { BASE_UNIFORMS } from '../utils/general';
 import transitionFragmentShader from '../../lib/gl/shaders/transition.frag';
 import transitionVertexShader from '../../lib/gl/shaders/base.vert';
@@ -10,30 +10,30 @@ interface Props {
 	isActive: boolean;
 }
 
-const BASE_TRANSITION_UNIFORMS: UniformSettings = [
+const BASE_TRANSITION_UNIFORMS: UniformSettings = {
 	...BASE_UNIFORMS,
-	{
+	uTime: {
 		defaultValue: 0,
 		name: 'uTime',
 		readonly: true,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 0
 	},
-	{
+	uSlideIndex: {
 		defaultValue: 0,
 		name: 'uSlideIndex',
 		readonly: true,
 		type: UNIFORM_TYPE.INT_1,
 		value: 0
 	},
-	{
+	uTransitionProgress: {
 		defaultValue: 0.0,
 		name: 'uTransitionProgress',
 		readonly: true,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 0.0
 	}
-];
+};
 
 const TransitionPage = ({ isActive }: Props) => {
 	const transitionUniforms = React.useRef<UniformSettings>(BASE_TRANSITION_UNIFORMS);

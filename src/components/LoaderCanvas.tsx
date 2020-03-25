@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { UniformSetting, Vector2, Matrix, Vector3, Mesh, Buffers, MESH_TYPE, Buffer, OBJData, FBO } from '../../types';
+import { UniformSettings, Vector2, Matrix, Vector3, Mesh, Buffers, MESH_TYPE, Buffer, OBJData, FBO } from '../../types';
 import { initializeGL } from '../hooks/gl';
 import { useAnimationFrame } from '../hooks/animation';
 import { useWindowSize } from '../hooks/resize';
@@ -44,7 +44,7 @@ const render = (props: RenderProps) => {
 	if (!props.gl) return;
 	const { gl, size, uniforms, uniformLocations, outlineUniformLocations, program, outlineProgram, FBOA, FBOB } = props;
 
-	if (!ENABLE_FRAMEBUFFER || parseInt(uniforms.find(uniform => uniform.name === 'uMaterialType').value) !== 2) {
+	if (!ENABLE_FRAMEBUFFER || uniforms.uMaterialType.value !== 2) {
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 		gl.useProgram(program);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -95,13 +95,13 @@ const drawOutlines = ({ gl, outlineProgram, program, baseVertexBuffer, buffers }
 const draw = ({ gl, uniformLocations, uniforms, buffers, time, size, rotation, outlineProgram, program }: RenderProps): void => {
 	assignProjectionMatrix(gl, uniformLocations, size);
 	const modelViewMatrix: Matrix = applyTransformation(createMat4(), {
-		translation: uniforms.find(uniform => uniform.name === 'uTranslation').value,
+		translation: uniforms.uTranslation.value,
 		rotation: {
 			x: Math.sin(time * 0.0005) * 0.25,
 			y: rotation.y,
 			z: rotation.z
 		},
-		scale: uniforms.find(uniform => uniform.name === 'uScale').value
+		scale: uniforms.uScale.value
 	});
 	gl.uniformMatrix4fv(uniformLocations.uModelViewMatrix, false, modelViewMatrix);
 	let normalMatrix: Float32Array = invertMatrix(modelViewMatrix);
@@ -123,8 +123,8 @@ const draw = ({ gl, uniformLocations, uniforms, buffers, time, size, rotation, o
 const LoaderCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, OBJData, rotationDelta }: Props) => {
 	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<HTMLCanvasElement>();
 	const size: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
-		x: uniforms.current[0].value.x * window.devicePixelRatio,
-		y: uniforms.current[0].value.y * window.devicePixelRatio
+		x: uniforms.current.uResolution.value.x * window.devicePixelRatio,
+		y: uniforms.current.uResolution.value.y * window.devicePixelRatio
 	});
 	const gl = React.useRef<WebGLRenderingContext>();
 	const uniformLocations: React.MutableRefObject<Record<string, WebGLUniformLocation>> = React.useRef<Record<string, WebGLUniformLocation>>();

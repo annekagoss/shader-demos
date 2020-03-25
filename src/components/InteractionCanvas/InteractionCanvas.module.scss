@@ -1,14 +1,15 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,900|Work+Sans:800&display=swap');
 
 .fullScreenCanvas {
-	width: calc(100vw - 4rem);
+	width: 100vw;
 	height: 75vh;
-	max-width: calc(100vw - 4rem);
+	max-width: 100vw;
 	max-height: 75vh;
 	min-width: 100%;
 	min-height: 100%;
 	border: none;
 	position: relative;
+	margin: 0 -2rem;
 }
 
 .canvasContainer {

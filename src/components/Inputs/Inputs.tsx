@@ -192,7 +192,7 @@ const Inputs = ({ uniforms, attributes, pageMousePosRef, fullScreen }: Props) =>
 	const [attributesVisible, setAttributesVisible] = React.useState<boolean>(false);
 
 	const updateUniforms = (name, newValue) => {
-		const newUniform: UniformSetting = uniforms[name];
+		const newUniform: UniformSetting = uniforms.current[name];
 		const uniformIsVector: boolean = [UNIFORM_TYPE.VEC_2, UNIFORM_TYPE.VEC_3].includes(newUniform.type);
 		newUniform.value = uniformIsVector ? { ...newUniform.value, ...newValue } : newValue;
 		uniforms.current = { ...uniforms.current, [name]: newUniform };

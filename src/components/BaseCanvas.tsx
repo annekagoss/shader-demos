@@ -64,9 +64,6 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes }: P
 
 	React.useEffect(() => {
 		setAttributes([{ name: 'aVertexPosition', value: BASE_TRIANGLE_MESH.join(', ') }]);
-		// uniforms.current.uResolution.value = size.current;
-		// gl.current.viewport(0, 0, size.current.x, size.current.y);
-		// console.log({ effectSize: size });
 	}, []);
 
 	useWindowSize(canvasRef, gl, uniforms.current, size);
@@ -81,8 +78,6 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes }: P
 			mousePos: mousePosRef.current
 		});
 	});
-
-	console.log({ renderSize: size });
 
 	return <canvas ref={canvasRef} width={size.current.x} height={size.current.y} />;
 };

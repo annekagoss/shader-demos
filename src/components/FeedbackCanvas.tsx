@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { UniformSetting, Vector2, UNIFORM_TYPE, FBO, MESH_TYPE } from '../../types';
+import { UniformSettings, Vector2, UNIFORM_TYPE, FBO, MESH_TYPE } from '../../types';
 import { BASE_TRIANGLE_MESH } from '../../lib/gl/settings';
 import { useInitializeGL } from '../hooks/gl';
 import { useAnimationFrame } from '../hooks/animation';
@@ -50,12 +50,11 @@ const render = ({ gl, uniformLocations, uniforms, time, mousePos, FBOA, FBOB, pi
 const FeedbackCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes }: Props) => {
 	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<HTMLCanvasElement>();
 	const size: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
-		x: uniforms.current[0].value.x * window.devicePixelRatio,
-		y: uniforms.current[0].value.y * window.devicePixelRatio
+		x: uniforms.current.uResolution.value.x * window.devicePixelRatio,
+		y: uniforms.current.uResolution.value.y * window.devicePixelRatio
 	});
 	const gl = React.useRef<WebGLRenderingContext>();
 	const uniformLocations = React.useRef<Record<string, WebGLUniformLocation>>();
-	const mouseDownRef: React.MutableRefObject<boolean> = React.useRef<boolean>(false);
 	const mousePosRef: React.MutableRefObject<Vector2> = React.useRef<Vector2>({ x: size.current.x * 0.5, y: size.current.y * -0.5 });
 	const FBOA: React.MutableRefObject<FBO> = React.useRef();
 	const FBOB: React.MutableRefObject<FBO> = React.useRef();
@@ -75,8 +74,6 @@ const FeedbackCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes 
 
 	React.useEffect(() => {
 		setAttributes([{ name: 'aVertexPosition', value: BASE_TRIANGLE_MESH.join(', ') }]);
-		uniforms.current[0].value = size.current;
-		gl.current.viewport(0, 0, size.current.x, size.current.y);
 	}, []);
 
 	useWindowSize(canvasRef, gl, uniforms.current, size);

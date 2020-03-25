@@ -32,7 +32,6 @@ const updateRendererSize = (
 		x: width * window.devicePixelRatio,
 		y: height * window.devicePixelRatio
 	};
-	console.log({ size });
 	canvas.current.width = size.current.x;
 	canvas.current.height = size.current.y;
 	uniforms.uResolution.value = size.current;

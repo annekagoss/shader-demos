@@ -57,12 +57,12 @@ export const initializeRenderer = ({ uniformLocations, canvasRef, fragmentSource
 	};
 
 	if (usePingPongBuffers) {
-		FBOA.current = initFrameBufferObject(gl, x, y);
-		FBOB.current = initFrameBufferObject(gl, x, y);
+		FBOA.current = initFrameBufferObject(gl, size.current.x, size.current.y);
+		FBOB.current = initFrameBufferObject(gl, size.current.x, size.current.y);
 	}
 	let outlineProgram;
 	if (outlineUniformLocations) {
-		outlineProgram = initializeOutlineProgram(gl, outlineUniformLocations, x, y);
+		outlineProgram = initializeOutlineProgram(gl, outlineUniformLocations, size.current.x, size.current.y);
 	}
 
 	return { gl, program, outlineProgram };
