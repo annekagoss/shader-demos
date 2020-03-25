@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { UNIFORM_TYPE, UniformSetting } from '../../types';
 import { BASE_UNIFORMS } from '../utils/general';
-import transitionFragmentShader from '../../lib/gl/shaders/hello-world.frag';
+import transitionFragmentShader from '../../lib/gl/shaders/transition.frag';
 import transitionVertexShader from '../../lib/gl/shaders/base.vert';
 import Section from '../components/Section/Section';
 import TransitionCanvas from '../components/TransitionCanvas/TransitionCanvas';
@@ -25,6 +25,13 @@ const BASE_TRANSITION_UNIFORMS: UniformSetting[] = [
 		readonly: true,
 		type: UNIFORM_TYPE.INT_1,
 		value: 0
+	},
+	{
+		defaultValue: 0.0,
+		name: 'uTransitionProgress',
+		readonly: true,
+		type: UNIFORM_TYPE.FLOAT_1,
+		value: 0.0
 	}
 ];
 

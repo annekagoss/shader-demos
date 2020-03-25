@@ -9,7 +9,7 @@ import TransitionPage from '../pages/TransitionPage';
 import styles from './app.module.scss';
 
 const App = () => {
-	const [activePageIndex, setActivePageIndex] = React.useState<number>(3);
+	const [activePageIndex, setActivePageIndex] = React.useState<number>(4);
 	if (!glSupported()) return <div>'WebGL is not supported on this device.'</div>;
 
 	return (

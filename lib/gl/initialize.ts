@@ -1,11 +1,11 @@
-import {Buffer, Buffers, FBO, Mesh, Material, Matrix, Vector2, FaceArray, UniformSetting, MESH_TYPE, Materials, UNIFORM_TYPE} from '../../types';
-import {degreesToRadians} from './math';
-import {createMat4, applyPerspective, lookAt} from './matrix';
-import {MAX_SUPPORTED_MATERIAL_TEXTURES, NEAR_CLIPPING, FAR_CLIPPING, FIELD_OF_VIEW} from './settings';
+import { Buffer, Buffers, FBO, Mesh, Material, Matrix, Vector2, FaceArray, UniformSetting, MESH_TYPE, Materials, UNIFORM_TYPE } from '../../types';
+import { degreesToRadians } from './math';
+import { createMat4, applyPerspective, lookAt } from './matrix';
+import { MAX_SUPPORTED_MATERIAL_TEXTURES, NEAR_CLIPPING, FAR_CLIPPING, FIELD_OF_VIEW } from './settings';
 import outlineFragmentSource from '../../lib/gl/shaders/outline.frag';
 import outlineVertexSource from '../../lib/gl/shaders/base.vert';
-import {initBaseMeshBuffers, initMeshBuffersFromFaceArray, initBuffers} from './buffers';
-import {initFrameBufferObject} from './frameBuffer';
+import { initBaseMeshBuffers, initMeshBuffersFromFaceArray, initBuffers } from './buffers';
+import { initFrameBufferObject } from './frameBuffer';
 
 export interface InitializeProps {
 	gl: React.MutableRefObject<WebGLRenderingContext>;
@@ -29,11 +29,11 @@ export interface InitializeProps {
 	baseVertexBufferRef?: React.MutableRefObject<Buffer>;
 }
 
-export const initializeRenderer = ({uniformLocations, canvasRef, fragmentSource, vertexSource, uniforms, size, FBOA, FBOB, outlineUniformLocations}: InitializeProps) => {
-	const {width, height} = canvasRef.current ? canvasRef.current.getBoundingClientRect() : {width: 400, height: 400};
+export const initializeRenderer = ({ uniformLocations, canvasRef, fragmentSource, vertexSource, uniforms, size, FBOA, FBOB, outlineUniformLocations }: InitializeProps) => {
+	const { width, height } = canvasRef.current ? canvasRef.current.getBoundingClientRect() : { width: 400, height: 400 };
 	const x: number = width * window.devicePixelRatio;
 	const y: number = height * window.devicePixelRatio;
-	size.current = {x, y};
+	size.current = { x, y };
 	canvasRef.current.width = x;
 	canvasRef.current.height = y;
 
@@ -72,7 +72,7 @@ export const initializeRenderer = ({uniformLocations, canvasRef, fragmentSource,
 		outlineProgram = initializeOutlineProgram(gl, outlineUniformLocations, x, y);
 	}
 
-	return {gl, program, outlineProgram};
+	return { gl, program, outlineProgram };
 };
 
 const initShaderProgram = (gl: WebGLRenderingContext, vertSource: string, fragSource: string): WebGLProgram => {
@@ -112,7 +112,7 @@ const mapUniformSettingsToLocations = (settings: UniformSetting[], gl: WebGLRend
 	}, locations);
 };
 
-export const initializeMesh = ({faceArray, buffersRef, meshType, mesh, baseVertexBufferRef}: InitializeProps, gl: WebGLRenderingContext, program: WebGLProgram, outlineProgram: WebGLProgram) => {
+export const initializeMesh = ({ faceArray, buffersRef, meshType, mesh, baseVertexBufferRef }: InitializeProps, gl: WebGLRenderingContext, program: WebGLProgram, outlineProgram: WebGLProgram) => {
 	switch (meshType) {
 		case MESH_TYPE.BASE_TRIANGLES:
 			initBaseMeshBuffers(gl, program);
@@ -169,9 +169,9 @@ export const assignProjectionMatrix = (gl: WebGLRenderingContext, uniformLocatio
 		far: FAR_CLIPPING
 	});
 	projectionMatrix = lookAt(projectionMatrix, {
-		target: {x: 0, y: 0, z: 0},
-		origin: {x: 0, y: 0, z: 6},
-		up: {x: 0, y: 1, z: 0}
+		target: { x: 0, y: 0, z: 0 },
+		origin: { x: 0, y: 0, z: 6 },
+		up: { x: 0, y: 1, z: 0 }
 	});
 
 	gl.uniformMatrix4fv(uniformLocations.uProjectionMatrix, false, projectionMatrix);
@@ -187,12 +187,22 @@ export function initPlaceholderTexture(gl: WebGLRenderingContext): WebGLTexture 
 	return texture;
 }
 
-export const assignUniforms = (uniforms: UniformSetting[], uniformLocations: Record<string, WebGLUniformLocation>, gl: WebGLRenderingContext, time: number, mousePos?: Vector2) => {
+export const assignUniforms = (
+	uniforms: UniformSetting[],
+	uniformLocations: Record<string, WebGLUniformLocation>,
+	gl: WebGLRenderingContext,
+	time: number,
+	mousePos?: Vector2,
+	transitionProgress?: number
+) => {
 	uniforms.forEach((uniform: UniformSetting) => {
 		switch (uniform.type) {
 			case UNIFORM_TYPE.FLOAT_1:
 				if (uniform.name === 'uTime') {
 					uniform.value = time;
+				}
+				if (uniform.name === 'uTransitionProgress') {
+					uniform.value = transitionProgress;
 				}
 				gl.uniform1f(uniformLocations[uniform.name], uniform.value);
 				break;

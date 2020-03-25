@@ -6,6 +6,7 @@ import { useInitializeGL } from '../../hooks/gl';
 import { useAnimationFrame } from '../../hooks/animation';
 import { useWindowSize } from '../../hooks/resize';
 import { useMouse } from '../../hooks/mouse';
+import { updateTransitionProgress } from '../../utils/transition';
 import styles from './TransitionCanvas.module.scss';
 
 interface Props {
@@ -23,10 +24,11 @@ interface RenderProps {
 	time: number;
 	mousePos: Vector2;
 	texture?: HTMLImageElement;
+	transitionProgress: number;
 }
 
-const render = ({ gl, uniformLocations, uniforms, time, mousePos, texture }: RenderProps) => {
-	assignUniforms(uniforms, uniformLocations, gl, time, mousePos);
+const render = ({ gl, uniformLocations, uniforms, time, mousePos, texture, transitionProgress }: RenderProps) => {
+	assignUniforms(uniforms, uniformLocations, gl, time, mousePos, transitionProgress);
 
 	gl.activeTexture(gl.TEXTURE0);
 
@@ -55,6 +57,14 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes }: P
 	const gl = React.useRef<WebGLRenderingContext>();
 	const uniformLocations = React.useRef<Record<string, WebGLUniformLocation>>();
 
+	const forwardButtonRef: React.RefObject<HTMLButtonElement> = React.useRef<HTMLButtonElement>();
+	const backButtonRef: React.RefObject<HTMLButtonElement> = React.useRef<HTMLButtonElement>();
+	const transitionTimeRef: React.MutableRefObject<number> = React.useRef<number>(0);
+	const transitionDirectionRef: React.MutableRefObject<number> = React.useRef<number>(1);
+	const slideIndexRef: React.MutableRefObject<number> = React.useRef<number>(0);
+	const isTransitioningRef: React.MutableRefObject<boolean> = React.useRef<boolean>(false);
+	const transitionProgressRef: React.MutableRefObject<number> = React.useRef<number>(0);
+
 	useInitializeGL({
 		gl,
 		uniformLocations,
@@ -76,16 +86,40 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes }: P
 	useMouse(mousePosRef, canvasRef);
 
 	useAnimationFrame(canvasRef, (time: number) => {
+		updateTransitionProgress(transitionTimeRef, slideIndexRef, isTransitioningRef, transitionProgressRef, transitionDirectionRef);
 		render({
 			gl: gl.current,
 			uniformLocations: uniformLocations.current,
 			uniforms: uniforms.current,
 			time,
-			mousePos: mousePosRef.current
+			mousePos: mousePosRef.current,
+			transitionProgress: transitionProgressRef.current
 		});
 	});
 
-	return <canvas ref={canvasRef} width={size.current.x} height={size.current.y} className={styles.fullScreenCanvas} />;
+	return (
+		<div className={styles.canvasContainer}>
+			<canvas ref={canvasRef} width={size.current.x} height={size.current.y} className={styles.fullScreenCanvas} />
+			<div className={styles.canvasForeground}>
+				<button
+					className={styles.button}
+					onClick={() => {
+						isTransitioningRef.current = true;
+						transitionDirectionRef.current = -1;
+					}}>
+					{'<'}
+				</button>
+				<button
+					className={styles.button}
+					onClick={() => {
+						isTransitioningRef.current = true;
+						transitionDirectionRef.current = 1;
+					}}>
+					{'>'}
+				</button>
+			</div>
+		</div>
+	);
 };
 
 export default BaseCanvas;
