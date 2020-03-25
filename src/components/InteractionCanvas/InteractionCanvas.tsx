@@ -18,7 +18,7 @@ import { useMouse } from '../../hooks/mouse';
 interface Props {
 	fragmentShader: string;
 	vertexShader: string;
-	uniforms: React.MutableRefObject<UniformSetting[]>;
+	uniforms: React.MutableRefObject<UniformSettings>;
 	setAttributes: (attributes: any[]) => void;
 	pageMousePosRef?: React.MutableRefObject<Vector2>;
 	OBJData: OBJData;
@@ -27,7 +27,7 @@ interface Props {
 interface RenderProps {
 	gl: WebGLRenderingContext;
 	uniformLocations: Record<string, WebGLUniformLocation>;
-	uniforms: UniformSetting[];
+	uniforms: UniformSettings;
 	time: number;
 	mousePos: Vector2;
 	size: Vector2;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { UniformSetting, Vector2, UNIFORM_TYPE, FBO, MESH_TYPE, Buffers } from '../../types';
+import { UniformSettings, Vector2, UNIFORM_TYPE, FBO, MESH_TYPE, Buffers } from '../../types';
 import { assignUniforms } from '../../lib/gl/initialize';
 import { BASE_TRIANGLE_MESH } from '../../lib/gl/settings';
 import { useInitializeGL } from '../hooks/gl';
@@ -10,7 +10,7 @@ import { useMouse } from '../hooks/mouse';
 interface Props {
 	fragmentShader: string;
 	vertexShader: string;
-	uniforms: React.MutableRefObject<UniformSetting[]>;
+	uniforms: React.MutableRefObject<UniformSettings>;
 	setAttributes: (attributes: any[]) => void;
 	textureSource?: string;
 }
@@ -18,7 +18,7 @@ interface Props {
 interface RenderProps {
 	gl: WebGLRenderingContext;
 	uniformLocations: Record<string, WebGLUniformLocation>;
-	uniforms: UniformSetting[];
+	uniforms: UniformSettings;
 	time: number;
 	mousePos: Vector2;
 	texture?: HTMLImageElement;
@@ -40,15 +40,13 @@ const render = ({ gl, uniformLocations, uniforms, time, mousePos, texture }: Ren
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 };
 
-const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, textureSource }: Props) => {
+const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes }: Props) => {
 	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<HTMLCanvasElement>();
 	const size: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
-		x: uniforms.current[0].value.x * window.devicePixelRatio,
-		y: uniforms.current[0].value.y * window.devicePixelRatio
+		x: uniforms.current.uResolution.value.x * window.devicePixelRatio,
+		y: uniforms.current.uResolution.value.y * window.devicePixelRatio
 	});
-	const mouseDownRef: React.MutableRefObject<boolean> = React.useRef<boolean>(false);
-	const initialMouse = uniforms.current.find(uniform => uniform.name === 'uMouse');
-	const initialMousePosition = initialMouse ? initialMouse.defaultValue : { x: 0.5, y: 0.5 };
+	const initialMousePosition = uniforms.current.uMouse ? uniforms.current.uMouse.defaultValue : { x: 0.5, y: 0.5 };
 	const mousePosRef: React.MutableRefObject<Vector2> = React.useRef<Vector2>({ x: size.current.x * initialMousePosition.x, y: size.current.y * -initialMousePosition.y });
 	const gl = React.useRef<WebGLRenderingContext>();
 	const uniformLocations = React.useRef<Record<string, WebGLUniformLocation>>();
@@ -66,8 +64,9 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, tex
 
 	React.useEffect(() => {
 		setAttributes([{ name: 'aVertexPosition', value: BASE_TRIANGLE_MESH.join(', ') }]);
-		uniforms.current[0].value = size.current;
-		gl.current.viewport(0, 0, size.current.x, size.current.y);
+		// uniforms.current.uResolution.value = size.current;
+		// gl.current.viewport(0, 0, size.current.x, size.current.y);
+		// console.log({ effectSize: size });
 	}, []);
 
 	useWindowSize(canvasRef, gl, uniforms.current, size);
@@ -82,6 +81,8 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, tex
 			mousePos: mousePosRef.current
 		});
 	});
+
+	console.log({ renderSize: size });
 
 	return <canvas ref={canvasRef} width={size.current.x} height={size.current.y} />;
 };

@@ -15,7 +15,7 @@ import noiseFragmentShader from '../../lib/gl/shaders/noise.frag';
 import feedbackFragmentShader from '../../lib/gl/shaders/feedback.frag';
 import styles from './page.module.scss';
 
-const BASE_TRANSLATION_UNIFORMS: UniformSetting[] = [
+const BASE_TRANSLATION_UNIFORMS: UniformSettings = [
 	...BASE_UNIFORMS,
 	{
 		defaultValue: 0,
@@ -40,7 +40,7 @@ const BASE_TRANSLATION_UNIFORMS: UniformSetting[] = [
 	}
 ];
 
-const BASE_SCALE_UNIFORMS: UniformSetting[] = [
+const BASE_SCALE_UNIFORMS: UniformSettings = [
 	...BASE_UNIFORMS,
 	{
 		defaultValue: 0,
@@ -58,7 +58,7 @@ const BASE_SCALE_UNIFORMS: UniformSetting[] = [
 	}
 ];
 
-const BASE_ROTATION_UNIFORMS: UniformSetting[] = [
+const BASE_ROTATION_UNIFORMS: UniformSettings = [
 	...BASE_UNIFORMS,
 	{
 		defaultValue: 0,
@@ -76,7 +76,7 @@ const BASE_ROTATION_UNIFORMS: UniformSetting[] = [
 	}
 ];
 
-const BASE_SIGNAL_UNIFORMS: UniformSetting[] = [
+const BASE_SIGNAL_UNIFORMS: UniformSettings = [
 	...BASE_UNIFORMS,
 	{
 		defaultValue: 0,
@@ -111,7 +111,7 @@ const BASE_SIGNAL_UNIFORMS: UniformSetting[] = [
 	}
 ];
 
-const BASE_NOISE_UNIFORMS: UniformSetting[] = [
+const BASE_NOISE_UNIFORMS: UniformSettings = [
 	...BASE_UNIFORMS,
 	{
 		defaultValue: 0,
@@ -138,7 +138,7 @@ const BASE_NOISE_UNIFORMS: UniformSetting[] = [
 	}
 ];
 
-const BASE_FEEDBACK_UNIFORMS: UniformSetting[] = [
+const BASE_FEEDBACK_UNIFORMS: UniformSettings = [
 	...BASE_UNIFORMS,
 	{
 		defaultValue: 0,
@@ -183,12 +183,12 @@ interface Props {
 }
 
 const MotionPage = ({ isActive }: Props) => {
-	const translationUniforms = React.useRef<UniformSetting[]>(BASE_TRANSLATION_UNIFORMS);
-	const scaleUniforms = React.useRef<UniformSetting[]>(BASE_SCALE_UNIFORMS);
-	const rotationUniforms = React.useRef<UniformSetting[]>(BASE_ROTATION_UNIFORMS);
-	const signalUniforms = React.useRef<UniformSetting[]>(BASE_SIGNAL_UNIFORMS);
-	const noiseUniforms = React.useRef<UniformSetting[]>(BASE_NOISE_UNIFORMS);
-	const feedbackUniforms = React.useRef<UniformSetting[]>(BASE_FEEDBACK_UNIFORMS);
+	const translationUniforms = React.useRef<UniformSettings>(BASE_TRANSLATION_UNIFORMS);
+	const scaleUniforms = React.useRef<UniformSettings>(BASE_SCALE_UNIFORMS);
+	const rotationUniforms = React.useRef<UniformSettings>(BASE_ROTATION_UNIFORMS);
+	const signalUniforms = React.useRef<UniformSettings>(BASE_SIGNAL_UNIFORMS);
+	const noiseUniforms = React.useRef<UniformSettings>(BASE_NOISE_UNIFORMS);
+	const feedbackUniforms = React.useRef<UniformSettings>(BASE_FEEDBACK_UNIFORMS);
 	const [attributes, setAttributes] = React.useState<any[]>([]);
 
 	if (!isActive) return <></>;

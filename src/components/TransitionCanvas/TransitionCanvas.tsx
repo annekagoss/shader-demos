@@ -12,7 +12,7 @@ import styles from './TransitionCanvas.module.scss';
 interface Props {
 	fragmentShader: string;
 	vertexShader: string;
-	uniforms: React.MutableRefObject<UniformSetting[]>;
+	uniforms: React.MutableRefObject<UniformSettings>;
 	setAttributes: (attributes: any[]) => void;
 	textureSource?: string;
 }
@@ -20,7 +20,7 @@ interface Props {
 interface RenderProps {
 	gl: WebGLRenderingContext;
 	uniformLocations: Record<string, WebGLUniformLocation>;
-	uniforms: UniformSetting[];
+	uniforms: UniformSettings;
 	time: number;
 	mousePos: Vector2;
 	texture?: HTMLImageElement;

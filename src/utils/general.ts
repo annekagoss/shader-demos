@@ -1,14 +1,14 @@
-import { UNIFORM_TYPE, UniformSetting, Buffers } from '../../types';
+import { UNIFORM_TYPE, UniformSettings, Buffers } from '../../types';
 
-export const BASE_UNIFORMS: UniformSetting[] = [
-	{
+export const BASE_UNIFORMS: UniformSettings = {
+	uResolution: {
 		defaultValue: { x: 400, y: 400 },
 		name: 'uResolution',
 		readonly: true,
 		type: UNIFORM_TYPE.VEC_2,
 		value: { x: 400, y: 400 }
 	}
-];
+};
 
 export const isSafari = (): boolean =>
 	/constructor/i.test(window.HTMLElement) ||

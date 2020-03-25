@@ -16,7 +16,7 @@ interface Props {
 	isActive: boolean;
 }
 
-const BASE_INTERACTION_UNIFORMS: UniformSetting[] = [
+const BASE_INTERACTION_UNIFORMS: UniformSettings = [
 	...BASE_UNIFORMS,
 	{
 		defaultValue: 0,
@@ -49,7 +49,7 @@ const BASE_INTERACTION_UNIFORMS: UniformSetting[] = [
 ];
 
 const InteractionPage = ({ isActive }: Props) => {
-	const interactionUniforms = React.useRef<UniformSetting[]>(BASE_INTERACTION_UNIFORMS);
+	const interactionUniforms = React.useRef<UniformSettings>(BASE_INTERACTION_UNIFORMS);
 	const [attributes, setAttributes] = React.useState<any[]>([]);
 	if (!isActive) return <></>;
 	const foxOBJData = {

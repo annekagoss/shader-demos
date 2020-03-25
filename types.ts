@@ -284,6 +284,8 @@ export interface UniformSetting {
 	value: any;
 }
 
+export type UniformSettings = Record<string, UniformSetting>;
+
 export type FaceArray = Vector3[][];
 
 export interface Textures {

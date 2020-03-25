@@ -1,4 +1,4 @@
-import { Buffer, Buffers, FBO, Mesh, Material, Matrix, Vector2, FaceArray, UniformSetting, MESH_TYPE, Materials, UNIFORM_TYPE } from '../../types';
+import { Buffer, Buffers, FBO, Mesh, Material, Matrix, Vector2, FaceArray, UniformSetting, UniformSettings, MESH_TYPE, Materials, UNIFORM_TYPE } from '../../types';
 import { degreesToRadians } from './math';
 import { createMat4, applyPerspective, lookAt } from './matrix';
 import { MAX_SUPPORTED_MATERIAL_TEXTURES, NEAR_CLIPPING, FAR_CLIPPING, FIELD_OF_VIEW } from './settings';
@@ -15,7 +15,7 @@ export interface InitializeProps {
 	canvasRef: React.MutableRefObject<HTMLCanvasElement>;
 	fragmentSource: string;
 	vertexSource: string;
-	uniforms: UniformSetting[];
+	uniforms: UniformSettings;
 	size: React.MutableRefObject<Vector2>;
 	FBOA?: React.MutableRefObject<FBO>;
 	FBOB?: React.MutableRefObject<FBO>;
@@ -30,13 +30,6 @@ export interface InitializeProps {
 }
 
 export const initializeRenderer = ({ uniformLocations, canvasRef, fragmentSource, vertexSource, uniforms, size, FBOA, FBOB, outlineUniformLocations }: InitializeProps) => {
-	const { width, height } = canvasRef.current ? canvasRef.current.getBoundingClientRect() : { width: 400, height: 400 };
-	const x: number = width * window.devicePixelRatio;
-	const y: number = height * window.devicePixelRatio;
-	size.current = { x, y };
-	canvasRef.current.width = x;
-	canvasRef.current.height = y;
-
 	const gl: WebGLRenderingContext = (canvasRef.current.getContext('experimental-webgl') as WebGLRenderingContext) || (canvasRef.current.getContext('webgl') as WebGLRenderingContext);
 
 	gl.clearColor(0, 0, 0, 0);
@@ -44,7 +37,7 @@ export const initializeRenderer = ({ uniformLocations, canvasRef, fragmentSource
 	gl.enable(gl.DEPTH_TEST);
 	gl.depthFunc(gl.LEQUAL);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-	gl.viewport(0, 0, x, y);
+	gl.viewport(0, 0, size.current.x, size.current.y);
 	gl.enable(gl.SAMPLE_ALPHA_TO_COVERAGE); // Prevents culling for wireframes
 
 	const program: WebGLProgram = initShaderProgram(gl, vertexSource, fragmentSource);
@@ -99,15 +92,14 @@ const initializeOutlineProgram = (gl: WebGLRenderingContext, outlineUniformLocat
 	return outlineProgram;
 };
 
-const mapUniformSettingsToLocations = (settings: UniformSetting[], gl: WebGLRenderingContext, program: WebGLProgram, useFrameBuffer: boolean): Record<string, WebGLUniformLocation> => {
-	if (!settings.length) return null;
+const mapUniformSettingsToLocations = (settings: UniformSettings, gl: WebGLRenderingContext, program: WebGLProgram, useFrameBuffer: boolean): Record<string, WebGLUniformLocation> => {
 	const locations: Record<string, WebGLUniformLocation> = useFrameBuffer
 		? {
 				frameBufferTexture0: gl.getUniformLocation(program, 'frameBufferTexture0')
 		  }
 		: {};
-	return settings.reduce((result, setting) => {
-		result[setting.name] = gl.getUniformLocation(program, setting.name);
+	return Object.keys(settings).reduce((result, name) => {
+		result[name] = gl.getUniformLocation(program, name);
 		return result;
 	}, locations);
 };
@@ -188,14 +180,15 @@ export function initPlaceholderTexture(gl: WebGLRenderingContext): WebGLTexture 
 }
 
 export const assignUniforms = (
-	uniforms: UniformSetting[],
+	uniforms: UniformSettings,
 	uniformLocations: Record<string, WebGLUniformLocation>,
 	gl: WebGLRenderingContext,
 	time: number,
 	mousePos?: Vector2,
 	transitionProgress?: number
 ) => {
-	uniforms.forEach((uniform: UniformSetting) => {
+	Object.keys(uniforms).forEach((name: string) => {
+		const uniform: UniformSetting = uniforms[name];
 		switch (uniform.type) {
 			case UNIFORM_TYPE.FLOAT_1:
 				if (uniform.name === 'uTime') {

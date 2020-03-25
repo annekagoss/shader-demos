@@ -1,13 +1,13 @@
 import * as React from 'react';
 import cx from 'classnames';
-import {UNIFORM_TYPE, UniformSetting, Vector2} from '../../../types';
-import {parseUniform} from '../../utils/general';
+import { UNIFORM_TYPE, UniformSetting, UniformSettings, Vector2 } from '../../../types';
+import { parseUniform } from '../../utils/general';
 import styles from './Inputs.module.scss';
-import {any} from 'prop-types';
+import { any } from 'prop-types';
 
 interface Props {
 	attributes: any[];
-	uniforms: React.MutableRefObject<UniformSetting[]>;
+	uniforms: React.MutableRefObject<UniformSettings>;
 	pageMousePosRef?: React.MutableRefObject<Vector2>;
 	fullScreen?: boolean;
 }
@@ -23,7 +23,7 @@ interface TypeInputProps {
 	updateUniforms: (name: string, newValue: any) => void;
 }
 
-const FloatInput = ({uniform, updateUniforms}: TypeInputProps) => (
+const FloatInput = ({ uniform, updateUniforms }: TypeInputProps) => (
 	<input
 		type='number'
 		placeholder={uniform.defaultValue}
@@ -36,7 +36,7 @@ const FloatInput = ({uniform, updateUniforms}: TypeInputProps) => (
 	/>
 );
 
-const IntInput = ({uniform, updateUniforms}: TypeInputProps) => (
+const IntInput = ({ uniform, updateUniforms }: TypeInputProps) => (
 	<input
 		type='number'
 		step={1}
@@ -49,7 +49,7 @@ const IntInput = ({uniform, updateUniforms}: TypeInputProps) => (
 	/>
 );
 
-const BoolInput = ({uniform, updateUniforms}: TypeInputProps) => (
+const BoolInput = ({ uniform, updateUniforms }: TypeInputProps) => (
 	<input
 		type='checkbox'
 		defaultChecked={uniform.defaultValue === 1}
@@ -62,12 +62,12 @@ const BoolInput = ({uniform, updateUniforms}: TypeInputProps) => (
 	/>
 );
 
-const RadioInput = ({uniform, updateUniforms}: TypeInputProps) => {
+const RadioInput = ({ uniform, updateUniforms }: TypeInputProps) => {
 	const [selectedOption, setSelectedOption] = React.useState<number>(uniform.defaultValue);
 	return (
 		<form>
 			{uniform.radioChoices.map((choice, i) => (
-				<label style={{display: 'block'}} key={i}>
+				<label style={{ display: 'block' }} key={i}>
 					<input
 						type='radio'
 						key={i}
@@ -86,7 +86,7 @@ const RadioInput = ({uniform, updateUniforms}: TypeInputProps) => {
 	);
 };
 
-const Vec2Input = ({uniform, updateUniforms}: TypeInputProps) => {
+const Vec2Input = ({ uniform, updateUniforms }: TypeInputProps) => {
 	return (
 		<div>
 			<div>
@@ -98,7 +98,7 @@ const Vec2Input = ({uniform, updateUniforms}: TypeInputProps) => {
 					min={-1}
 					max={1}
 					onChange={e => {
-						updateUniforms(uniform.name, {x: e.target.value});
+						updateUniforms(uniform.name, { x: e.target.value });
 					}}
 				/>
 			</div>
@@ -111,7 +111,7 @@ const Vec2Input = ({uniform, updateUniforms}: TypeInputProps) => {
 					min={-1}
 					max={1}
 					onChange={e => {
-						updateUniforms(uniform.name, {y: e.target.value});
+						updateUniforms(uniform.name, { y: e.target.value });
 					}}
 				/>
 			</div>
@@ -119,7 +119,7 @@ const Vec2Input = ({uniform, updateUniforms}: TypeInputProps) => {
 	);
 };
 
-const Vec3Input = ({uniform, updateUniforms}: TypeInputProps) => (
+const Vec3Input = ({ uniform, updateUniforms }: TypeInputProps) => (
 	<div>
 		<div>
 			{`x: `}
@@ -130,7 +130,7 @@ const Vec3Input = ({uniform, updateUniforms}: TypeInputProps) => (
 				min={0}
 				max={1}
 				onChange={e => {
-					updateUniforms(uniform.name, {x: e.target.value});
+					updateUniforms(uniform.name, { x: e.target.value });
 				}}
 			/>
 		</div>
@@ -143,7 +143,7 @@ const Vec3Input = ({uniform, updateUniforms}: TypeInputProps) => (
 				min={0}
 				max={1}
 				onChange={e => {
-					updateUniforms(uniform.name, {y: e.target.value});
+					updateUniforms(uniform.name, { y: e.target.value });
 				}}
 			/>
 		</div>
@@ -156,14 +156,14 @@ const Vec3Input = ({uniform, updateUniforms}: TypeInputProps) => (
 				min={0}
 				max={1}
 				onChange={e => {
-					updateUniforms(uniform.name, {z: e.target.value});
+					updateUniforms(uniform.name, { z: e.target.value });
 				}}
 			/>
 		</div>
 	</div>
 );
 
-const UniformInput = ({uniform, updateUniforms, pageMousePosRef}: UniformInputProps) => {
+const UniformInput = ({ uniform, updateUniforms, pageMousePosRef }: UniformInputProps) => {
 	if (uniform.readonly) {
 		if (uniform.name === 'uMouse' && pageMousePosRef !== null) {
 			return parseUniform(pageMousePosRef.current, UNIFORM_TYPE.VEC_2);
@@ -187,25 +187,15 @@ const UniformInput = ({uniform, updateUniforms, pageMousePosRef}: UniformInputPr
 	}
 };
 
-const Inputs = ({uniforms, attributes, pageMousePosRef, fullScreen}: Props) => {
+const Inputs = ({ uniforms, attributes, pageMousePosRef, fullScreen }: Props) => {
 	const [uniformsVisible, setUniformsVisible] = React.useState<boolean>(true);
 	const [attributesVisible, setAttributesVisible] = React.useState<boolean>(false);
 
 	const updateUniforms = (name, newValue) => {
-		const newUniforms: UniformSetting[] = uniforms.current.reduce((result, oldUniform) => {
-			if (oldUniform.name === name) {
-				const uniformIsVector: boolean = [UNIFORM_TYPE.VEC_2, UNIFORM_TYPE.VEC_3].includes(oldUniform.type);
-				const newUniform = {
-					...oldUniform,
-					value: uniformIsVector ? {...oldUniform.value, ...newValue} : newValue
-				};
-				result.push(newUniform);
-				return result;
-			}
-			result.push(oldUniform);
-			return result;
-		}, []);
-		uniforms.current = newUniforms;
+		const newUniform: UniformSetting = uniforms[name];
+		const uniformIsVector: boolean = [UNIFORM_TYPE.VEC_2, UNIFORM_TYPE.VEC_3].includes(newUniform.type);
+		newUniform.value = uniformIsVector ? { ...newUniform.value, ...newValue } : newValue;
+		uniforms.current = { ...uniforms.current, [name]: newUniform };
 	};
 
 	return (
@@ -234,11 +224,11 @@ const Inputs = ({uniforms, attributes, pageMousePosRef, fullScreen}: Props) => {
 			</div>
 			<div className={styles.textContainer}>
 				<div className={cx(styles.textBlock, uniformsVisible && styles.active)}>
-					{uniforms.current
-						.filter(uniform => uniform.name !== 'uMouse' && uniform.name !== 'uTime')
-						.map(uniform => (
-							<div className={styles.textItem} key={uniform.name}>
-								{uniform.name}: <UniformInput uniform={uniform} updateUniforms={updateUniforms} pageMousePosRef={pageMousePosRef} />
+					{Object.keys(uniforms.current)
+						.filter(name => name !== 'uMouse' && name !== 'uTime')
+						.map(name => (
+							<div className={styles.textItem} key={name}>
+								{name}: <UniformInput uniform={uniforms.current[name]} updateUniforms={updateUniforms} pageMousePosRef={pageMousePosRef} />
 							</div>
 						))}
 				</div>

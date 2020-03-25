@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import { UniformSetting, FBO, Vector2 } from '../../types';
+import { UniformSetting, FBO, Vector2, UniformSettings } from '../../types';
 
 export const useWindowSize = (
 	canvas: React.MutableRefObject<HTMLCanvasElement>,
 	gl: React.MutableRefObject<WebGLRenderingContext>,
-	uniforms: UniformSetting[],
+	uniforms: UniformSettings,
 	size: React.MutableRefObject<Vector2>,
 	FBOA?: React.MutableRefObject<FBO>,
 	FBOB?: React.MutableRefObject<FBO>
@@ -21,7 +21,7 @@ export const useWindowSize = (
 const updateRendererSize = (
 	canvas: React.MutableRefObject<HTMLCanvasElement>,
 	gl: React.MutableRefObject<WebGLRenderingContext>,
-	uniforms: UniformSetting[],
+	uniforms: UniformSettings,
 	size: React.MutableRefObject<Vector2>,
 	FBOA?: React.MutableRefObject<FBO>,
 	FBOB?: React.MutableRefObject<FBO>
@@ -32,8 +32,9 @@ const updateRendererSize = (
 		x: width * window.devicePixelRatio,
 		y: height * window.devicePixelRatio
 	};
+	console.log({ size });
 	canvas.current.width = size.current.x;
 	canvas.current.height = size.current.y;
-	uniforms[0].value = size.current;
+	uniforms.uResolution.value = size.current;
 	gl.current.viewport(0, 0, size.current.x, size.current.y);
 };

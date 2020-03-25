@@ -10,7 +10,7 @@ interface Props {
 	isActive: boolean;
 }
 
-const BASE_TRANSITION_UNIFORMS: UniformSetting[] = [
+const BASE_TRANSITION_UNIFORMS: UniformSettings = [
 	...BASE_UNIFORMS,
 	{
 		defaultValue: 0,
@@ -36,7 +36,7 @@ const BASE_TRANSITION_UNIFORMS: UniformSetting[] = [
 ];
 
 const TransitionPage = ({ isActive }: Props) => {
-	const transitionUniforms = React.useRef<UniformSetting[]>(BASE_TRANSITION_UNIFORMS);
+	const transitionUniforms = React.useRef<UniformSettings>(BASE_TRANSITION_UNIFORMS);
 	const [attributes, setAttributes] = React.useState<any[]>([]);
 	if (!isActive) return <></>;
 	return (

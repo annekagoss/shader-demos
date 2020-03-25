@@ -9,22 +9,22 @@ import lineFragmentShader from '../../lib/gl/shaders/line.frag';
 import rectangleFragmentShader from '../../lib/gl/shaders/rectangle.frag';
 import circleFragmentShader from '../../lib/gl/shaders/circle.frag';
 import polygonFragmentShader from '../../lib/gl/shaders/polygon.frag';
-import { UNIFORM_TYPE, UniformSetting } from '../../types';
+import { UNIFORM_TYPE, UniformSettings } from '../../types';
 
-const BASE_STEP_UNIFORMS: UniformSetting[] = [
+const BASE_STEP_UNIFORMS: UniformSettings = {
 	...BASE_UNIFORMS,
-	{
+	uThreshold: {
 		defaultValue: 0.5,
 		name: 'uThreshold',
 		readonly: false,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 0.5
 	}
-];
+};
 
-const BASE_LINE_UNIFORMS: UniformSetting[] = [
+const BASE_LINE_UNIFORMS: UniformSettings = {
 	...BASE_UNIFORMS,
-	{
+	uSmooth: {
 		defaultValue: 1,
 		isBool: true,
 		name: 'uSmooth',
@@ -32,29 +32,29 @@ const BASE_LINE_UNIFORMS: UniformSetting[] = [
 		type: UNIFORM_TYPE.INT_1,
 		value: 1
 	},
-	{
+	uThickness: {
 		defaultValue: 0.02,
 		name: 'uThickness',
 		readonly: false,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 0.02
 	}
-];
+};
 
-const BASE_RECTANGLE_UNIFORMS: UniformSetting[] = [
+const BASE_RECTANGLE_UNIFORMS: UniformSettings = {
 	...BASE_UNIFORMS,
-	{
+	uRectDimensions: {
 		defaultValue: { x: 0.33, y: 0.66 },
 		name: 'uRectDimensions',
 		readonly: false,
 		type: UNIFORM_TYPE.VEC_2,
 		value: { x: 0.33, y: 0.66 }
 	}
-];
+};
 
-const BASE_CIRCLE_UNIFORMS: UniformSetting[] = [
+const BASE_CIRCLE_UNIFORMS: UniformSettings = {
 	...BASE_UNIFORMS,
-	{
+	uSmooth: {
 		defaultValue: 1,
 		isBool: true,
 		name: 'uSmooth',
@@ -62,52 +62,25 @@ const BASE_CIRCLE_UNIFORMS: UniformSetting[] = [
 		type: UNIFORM_TYPE.INT_1,
 		value: 1
 	},
-	{
+	uRadius: {
 		defaultValue: 0.25,
 		name: 'uRadius',
 		readonly: false,
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 0.25
 	},
-	{
+	uCenter: {
 		defaultValue: { x: 0.5, y: 0.5 },
 		name: 'uCenter',
 		readonly: false,
 		type: UNIFORM_TYPE.VEC_2,
 		value: { x: 0.5, y: 0.5 }
 	}
-];
+};
 
-const BASE_TRIANGLE_UNIFORMS: UniformSetting[] = [
+const BASE_POLYGON_UNIFORMS: UniformSettings = {
 	...BASE_UNIFORMS,
-	{
-		defaultValue: 1,
-		isBool: true,
-		name: 'uSmooth',
-		readonly: false,
-		type: UNIFORM_TYPE.INT_1,
-		value: 1
-	},
-	{
-		defaultValue: { x: 0.5, y: 0.5 },
-		name: 'uDimensions',
-		readonly: false,
-		type: UNIFORM_TYPE.VEC_2,
-		value: { x: 0.5, y: 0.5 }
-	},
-	{
-		defaultValue: 0,
-		isBool: true,
-		name: 'uShowSDF',
-		readonly: false,
-		type: UNIFORM_TYPE.INT_1,
-		value: 0
-	}
-];
-
-const BASE_POLYGON_UNIFORMS: UniformSetting[] = [
-	...BASE_UNIFORMS,
-	{
+	uNumSides: {
 		defaultValue: 3,
 		isBool: false,
 		name: 'uNumSides',
@@ -115,7 +88,7 @@ const BASE_POLYGON_UNIFORMS: UniformSetting[] = [
 		type: UNIFORM_TYPE.INT_1,
 		value: 3
 	},
-	{
+	uShowSDF: {
 		defaultValue: 0,
 		isBool: true,
 		name: 'uShowSDF',
@@ -123,19 +96,19 @@ const BASE_POLYGON_UNIFORMS: UniformSetting[] = [
 		type: UNIFORM_TYPE.INT_1,
 		value: 0
 	}
-];
+};
 
 interface Props {
 	isActive: boolean;
 }
 
 const FormPage = ({ isActive }: Props) => {
-	const baseUniforms = React.useRef<UniformSetting[]>(BASE_UNIFORMS);
-	const stepUniforms = React.useRef<UniformSetting[]>(BASE_STEP_UNIFORMS);
-	const lineUniforms = React.useRef<UniformSetting[]>(BASE_LINE_UNIFORMS);
-	const rectUniforms = React.useRef<UniformSetting[]>(BASE_RECTANGLE_UNIFORMS);
-	const circleUniforms = React.useRef<UniformSetting[]>(BASE_CIRCLE_UNIFORMS);
-	const polygonUniforms = React.useRef<UniformSetting[]>(BASE_POLYGON_UNIFORMS);
+	const baseUniforms = React.useRef<UniformSettings>(BASE_UNIFORMS);
+	const stepUniforms = React.useRef<UniformSettings>(BASE_STEP_UNIFORMS);
+	const lineUniforms = React.useRef<UniformSettings>(BASE_LINE_UNIFORMS);
+	const rectUniforms = React.useRef<UniformSettings>(BASE_RECTANGLE_UNIFORMS);
+	const circleUniforms = React.useRef<UniformSettings>(BASE_CIRCLE_UNIFORMS);
+	const polygonUniforms = React.useRef<UniformSettings>(BASE_POLYGON_UNIFORMS);
 	const [attributes, setAttributes] = React.useState<any[]>([]);
 
 	if (!isActive) return <></>;
@@ -150,11 +123,10 @@ const FormPage = ({ isActive }: Props) => {
             `}
 				fragmentShader={helloWorldFragmentShader}
 				vertexShader={baseVertexShader}
-				uniforms={stepUniforms}
+				uniforms={baseUniforms}
 				attributes={attributes}>
-				<BaseCanvas fragmentShader={helloWorldFragmentShader} vertexShader={baseVertexShader} uniforms={stepUniforms} setAttributes={setAttributes} />
+				<BaseCanvas fragmentShader={helloWorldFragmentShader} vertexShader={baseVertexShader} uniforms={baseUniforms} setAttributes={setAttributes} />
 			</Section>
-
 			<Section
 				title='0.1: Step'
 				notes={` Step is one of the hardware accelerated functions that are native to GLSL. It returns either 1.0 or 0.0 based on whether a value has passed a given threshold.`}
