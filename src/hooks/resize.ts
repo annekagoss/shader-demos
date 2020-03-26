@@ -1,15 +1,13 @@
 import { useEffect } from 'react';
-import { UniformSetting, FBO, Vector2, UniformSettings } from '../../types';
+import { FBO, Vector2, UniformSettings } from '../../types';
 
 export const useWindowSize = (
 	canvas: React.MutableRefObject<HTMLCanvasElement>,
 	gl: React.MutableRefObject<WebGLRenderingContext>,
 	uniforms: UniformSettings,
-	size: React.MutableRefObject<Vector2>,
-	FBOA?: React.MutableRefObject<FBO>,
-	FBOB?: React.MutableRefObject<FBO>
+	size: React.MutableRefObject<Vector2>
 ) => {
-	const handleResize = () => updateRendererSize(canvas, gl, uniforms, size, FBOA, FBOB);
+	const handleResize = () => updateRendererSize(canvas, gl, uniforms, size);
 	useEffect(() => {
 		window.addEventListener('resize', handleResize);
 		return () => {
@@ -18,14 +16,7 @@ export const useWindowSize = (
 	}, []);
 };
 
-const updateRendererSize = (
-	canvas: React.MutableRefObject<HTMLCanvasElement>,
-	gl: React.MutableRefObject<WebGLRenderingContext>,
-	uniforms: UniformSettings,
-	size: React.MutableRefObject<Vector2>,
-	FBOA?: React.MutableRefObject<FBO>,
-	FBOB?: React.MutableRefObject<FBO>
-) => {
+const updateRendererSize = (canvas: React.MutableRefObject<HTMLCanvasElement>, gl: React.MutableRefObject<WebGLRenderingContext>, uniforms: UniformSettings, size: React.MutableRefObject<Vector2>) => {
 	if (!canvas.current || !gl.current) return;
 	const { width, height } = canvas.current.getBoundingClientRect();
 	size.current = {

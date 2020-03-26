@@ -14,7 +14,7 @@ interface Props {
 	vertexShader: string;
 	uniforms: React.MutableRefObject<UniformSettings>;
 	setAttributes: (attributes: any[]) => void;
-	textureSource?: string;
+	slideImages: Record<string, string>;
 }
 
 interface RenderProps {
@@ -28,6 +28,7 @@ interface RenderProps {
 }
 
 const render = ({ gl, uniformLocations, uniforms, time, mousePos, texture, transitionProgress }: RenderProps) => {
+	if (!gl) return;
 	assignUniforms(uniforms, uniformLocations, gl, time, mousePos, transitionProgress);
 
 	gl.activeTexture(gl.TEXTURE0);
@@ -43,7 +44,7 @@ const render = ({ gl, uniformLocations, uniforms, time, mousePos, texture, trans
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 };
 
-const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes }: Props) => {
+const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, slideImages }: Props) => {
 	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<HTMLCanvasElement>();
 	const size: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
 		x: window.innerWidth * window.devicePixelRatio,
@@ -73,7 +74,8 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes }: P
 		vertexSource: vertexShader,
 		uniforms: uniforms.current,
 		size,
-		meshType: MESH_TYPE.BASE_TRIANGLES
+		meshType: MESH_TYPE.BASE_TRIANGLES,
+		imageTextures: slideImages
 	});
 
 	React.useEffect(() => {

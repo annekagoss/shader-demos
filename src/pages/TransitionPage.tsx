@@ -6,6 +6,12 @@ import transitionVertexShader from '../../lib/gl/shaders/base.vert';
 import Section from '../components/Section/Section';
 import TransitionCanvas from '../components/TransitionCanvas/TransitionCanvas';
 
+import slideImage1 from '../assets/purple-desert-1.jpg';
+import slideImage2 from '../assets/red-cave-1.jpg';
+import slideImage3 from '../assets/red-boulder-1.jpg';
+import slideImage4 from '../assets/purple-desert-2.jpg';
+import slideImage5 from '../assets/red-boulder-2.jpg';
+
 interface Props {
 	isActive: boolean;
 }
@@ -39,10 +45,24 @@ const TransitionPage = ({ isActive }: Props) => {
 	const transitionUniforms = React.useRef<UniformSettings>(BASE_TRANSITION_UNIFORMS);
 	const [attributes, setAttributes] = React.useState<any[]>([]);
 	if (!isActive) return <></>;
+
+	const slideImages: Record<string, string> = {
+		slideImage1,
+		slideImage2,
+		slideImage3,
+		slideImage4,
+		slideImage5
+	};
 	return (
 		<div>
 			<Section title='' fullScreen={true} fragmentShader={transitionFragmentShader} vertexShader={transitionVertexShader} attributes={attributes} uniforms={transitionUniforms}>
-				<TransitionCanvas fragmentShader={transitionFragmentShader} vertexShader={transitionVertexShader} uniforms={transitionUniforms} setAttributes={setAttributes} />
+				<TransitionCanvas
+					fragmentShader={transitionFragmentShader}
+					vertexShader={transitionVertexShader}
+					uniforms={transitionUniforms}
+					setAttributes={setAttributes}
+					slideImages={slideImages}
+				/>
 			</Section>
 		</div>
 	);

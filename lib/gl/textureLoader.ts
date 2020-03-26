@@ -1,48 +1,60 @@
-import {Materials} from '../../types';
+import { Materials, Texture } from '../../types';
 
 interface LoadedImage {
-	matName: string;
+	name: string;
 	type: string;
 	image: HTMLImageElement;
 }
 
-// TODO: async this
-export function loadTextures(gl: WebGLRenderingContext, materials: Materials): Promise<Materials> {
+export const loadImageTextures = async (gl: WebGLRenderingContext, images: Record<string, string>): Promise<Record<string, Texture>> => {
+	const promises: Promise<LoadedImage>[] = Object.keys(images).map(name => initTexture(name, 'diffuse', images[name]));
+
+	return Promise.all(promises).then(loadedImages => {
+		const loadedTextures: Record<string, Texture> = {};
+		loadedImages.forEach(({ name, image }: LoadedImage) => {
+			if (image && image.src) {
+				loadedTextures[name] = bindTexture(gl, image);
+			}
+		});
+		return loadedTextures;
+	});
+};
+
+export const loadMaterialTextures = (gl: WebGLRenderingContext, materials: Materials): Promise<Materials> => {
 	let promises: Promise<LoadedImage>[] = [];
-	Object.keys(materials).forEach(matName => {
-		const {textures} = materials[matName];
+	Object.keys(materials).forEach(name => {
+		const { textures } = materials[name];
 		if (textures && textures !== {}) {
 			const matPromises: Promise<LoadedImage>[] = Object.keys(textures)
 				.filter(type => !!textures[type])
-				.map(type => initTexture(matName, type, textures[type]));
+				.map(type => initTexture(name, type, textures[type]));
 			promises = promises.concat(matPromises);
 		}
 	});
 
-	return Promise.all(promises).then(values => {
+	return Promise.all(promises).then(loadedImages => {
 		const loadedMaterials: Materials = materials;
-		values.forEach((value: LoadedImage) => {
-			const {matName, type, image} = value;
+		loadedImages.forEach(({ name, type, image }: LoadedImage) => {
 			if (image && image.src) {
 				const boundTexture: WebGLTexture = bindTexture(gl, image);
-				loadedMaterials[matName].textures[type] = boundTexture;
+				loadedMaterials[name].textures[type] = boundTexture;
 			}
 		});
 		delete loadedMaterials.textures;
 		return loadedMaterials;
 	});
-}
+};
 
-const initTexture = (matName: string, type: string, source: string): Promise<LoadedImage> =>
+const initTexture = async (name: string, type: string, source: string): Promise<LoadedImage> =>
 	new Promise((resolve, reject) => {
 		const image = new Image();
 		image.crossOrigin = 'anonymous';
-		image.onload = () => resolve({matName, type, image});
+		image.onload = () => resolve({ name, type, image });
 		image.onerror = e => reject(e);
 		image.src = source;
 	});
 
-export const bindTexture = (gl, image) => {
+export const bindTexture = (gl, image): Texture => {
 	const level = 0;
 	const internalFormat = gl.RGBA;
 	const sourceFormat = gl.RGBA;
@@ -60,7 +72,7 @@ export const bindTexture = (gl, image) => {
 	}
 	return {
 		texture,
-		textureSize: {x: image.width, y: image.height}
+		textureSize: { x: image.width, y: image.height }
 	};
 };
 

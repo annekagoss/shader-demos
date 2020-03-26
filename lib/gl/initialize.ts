@@ -27,6 +27,7 @@ export interface InitializeProps {
 	supportsDepthRef?: React.MutableRefObject<boolean>;
 	outlineProgramRef?: React.MutableRefObject<WebGLProgram>;
 	baseVertexBufferRef?: React.MutableRefObject<Buffer>;
+	imageTextures?: Record<string, string>;
 }
 
 export const initializeRenderer = ({ uniformLocations, canvasRef, fragmentSource, vertexSource, uniforms, size, FBOA, FBOB, outlineUniformLocations }: InitializeProps) => {

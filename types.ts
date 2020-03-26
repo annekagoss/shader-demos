@@ -170,12 +170,17 @@ export interface Material {
 	textures?: Textures;
 }
 
+export interface Texture {
+	texture: WebGLTexture;
+	textureSize: Vector2;
+}
+
 export interface Textures {
-	alphaMap?: WebGLTexture;
-	bumpMap?: WebGLTexture;
-	diffuseMap?: WebGLTexture;
-	normalMap?: WebGLTexture;
-	specularMap?: WebGLTexture;
+	alphaMap?: Texture;
+	bumpMap?: Texture;
+	diffuseMap?: Texture;
+	normalMap?: Texture;
+	specularMap?: Texture;
 }
 
 export interface Materials {
