@@ -29,7 +29,6 @@ interface RenderProps {
 
 const render = ({ gl, uniformLocations, uniforms, time, mousePos, transitionProgress }: RenderProps) => {
 	if (!gl) return;
-	// console.log(uniforms.uSlideIndex.value);
 	assignUniforms(uniforms, uniformLocations, gl, time, mousePos, transitionProgress);
 	gl.activeTexture(gl.TEXTURE0);
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -103,6 +102,8 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, sli
 					onClick={() => {
 						if (isTransitioningRef.current) return;
 						isTransitioningRef.current = true;
+						transitionProgressRef.current = 0;
+						transitionTimeRef.current = 0;
 						transitionDirectionRef.current = -1;
 						uniforms.current.uDirection.value = -1;
 					}}>

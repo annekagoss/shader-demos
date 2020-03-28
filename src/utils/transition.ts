@@ -1,6 +1,12 @@
 const SPEED = 0.001;
 const DURATION = 0.1;
 
+const easeInQuad = (time: number, initial: number, final: number, duration: number) => final * (time /= duration) * time + initial;
+
+const easeOutQuad = (time: number, initial: number, final: number, duration: number) => -final * (time /= duration) * (time - 2) + initial;
+
+const easeOutCubic = (time: number, initial: number, final: number, duration: number) => final * ((time = time / duration - 1) * time * time + 1) + initial;
+
 const easeInOutQuad = (time: number, initial: number, final: number, duration: number): number => {
 	if ((time /= duration / 2) < 1) return (final / 2) * time * time + initial;
 	return (-final / 2) * (--time * (time - 2) - 1) + initial;
@@ -24,7 +30,7 @@ export const updateTransitionProgress = (
 ) => {
 	if (!isTransitioningRef.current) return;
 
-	if (transitionTimeRef.current >= DURATION) {
+	if (transitionTimeRef.current >= DURATION - 0.05) {
 		isTransitioningRef.current = false; // Stop transition
 		slideIndexRef.current += transitionDirectionRef.current; // Increment/decrement slide index
 		transitionProgressRef.current = 0;
@@ -37,9 +43,9 @@ export const updateTransitionProgress = (
 	}
 
 	if (transitionDirectionRef.current === 1) {
-		transitionProgressRef.current = easeInOutQuad(transitionTimeRef.current, 0, 1, DURATION);
+		transitionProgressRef.current = easeOutCubic(transitionTimeRef.current, 0, 1, DURATION);
 	} else {
-		transitionProgressRef.current = 1.0 - easeInOutQuad(transitionTimeRef.current, 0, 1, DURATION);
+		transitionProgressRef.current = 1.0 - easeOutCubic(transitionTimeRef.current, 0, 1, DURATION);
 		if (transitionProgressRef.current === 1) {
 			texturesRef.current = rotateArray(texturesRef.current, transitionDirectionRef.current);
 			fakeTexturesRef.current = rotateArray(fakeTexturesRef.current, transitionDirectionRef.current);

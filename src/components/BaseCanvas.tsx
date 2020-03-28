@@ -27,17 +27,6 @@ interface RenderProps {
 const render = ({ gl, uniformLocations, uniforms, time, mousePos, texture }: RenderProps) => {
 	if (!gl) return;
 	assignUniforms(uniforms, uniformLocations, gl, time, mousePos);
-
-	// gl.activeTexture(gl.TEXTURE0);
-
-	// if (texture) {
-	// 	// Bind the texture to texture unit 0
-	// 	gl.bindTexture(gl.TEXTURE_2D, texture);
-
-	// 	// Tell the shader we bound the texture to texture unit 0
-	// 	gl.uniform1i(uniformLocations.uBackground, 0);
-	// }
-
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 };
 

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { InitializeProps, initializeRenderer, initializeMesh } from '../../lib/gl/initialize';
 import { loadTextures } from '../../lib/gl/textureLoader';
+import { updateRendererSize } from './resize';
 import { Texture } from '../../types';
 
 export const useInitializeGL = (props: InitializeProps) => {
@@ -15,12 +16,16 @@ export const initializeGL = async (props: InitializeProps) => {
 
 	if (!(props.imageTextures || (props.mesh && props.mesh.materials))) {
 		initializeMeshAndProgram(props, gl, program, outlineProgram);
+		updateRendererSize(props.canvasRef, { current: gl }, props.uniforms, props.size);
 		return;
 	}
 	const loadedTextures: void | Record<string, Texture> = await loadTextures(gl, props.uniformLocations.current, props.imageTextures, props.mesh && props.mesh.materials);
-	console.log({ loadedTextures });
-	props.texturesRef.current = loadedTextures && Object.values(loadedTextures).map(({ texture }) => texture);
+	if (props.texturesRef) {
+		props.texturesRef.current = loadedTextures && Object.values(loadedTextures).map(({ texture }) => texture);
+	}
+
 	initializeMeshAndProgram(props, gl, program, outlineProgram);
+	updateRendererSize(props.canvasRef, { current: gl }, props.uniforms, props.size);
 };
 
 const initializeMeshAndProgram = (props: InitializeProps, gl: WebGLRenderingContext, program: WebGLProgram, outlineProgram: WebGLProgram) => {

@@ -93,7 +93,7 @@ const DepthCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, pa
 		});
 	});
 
-	return <canvas ref={canvasRef} width={size.current.x} height={size.current.y} />;
+	return <canvas ref={canvasRef} />;
 };
 
 export default DepthCanvas;

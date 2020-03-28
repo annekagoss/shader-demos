@@ -28,7 +28,7 @@ export interface InitializeProps {
 	outlineProgramRef?: React.MutableRefObject<WebGLProgram>;
 	baseVertexBufferRef?: React.MutableRefObject<Buffer>;
 	imageTextures?: Record<string, string>;
-	texturesRef: React.MutableRefObject<WebGLTexture[]>;
+	texturesRef?: React.MutableRefObject<WebGLTexture[]>;
 }
 
 export const initializeRenderer = ({ uniformLocations, canvasRef, fragmentSource, vertexSource, uniforms, size, FBOA, FBOB, outlineUniformLocations }: InitializeProps) => {
