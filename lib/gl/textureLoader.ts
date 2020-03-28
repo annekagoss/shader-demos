@@ -1,10 +1,27 @@
-import { Materials, Texture } from '../../types';
+import { Materials, Texture, Material } from '../../types';
+import { MAX_SUPPORTED_MATERIAL_TEXTURES } from './settings';
 
 interface LoadedImage {
 	name: string;
 	type: string;
 	image: HTMLImageElement;
 }
+
+export const loadTextures = async (gl: WebGLRenderingContext, uniformLocations: Record<string, WebGLUniformLocation>, images?: Record<string, string>, materials?: Materials) => {
+	if (images && images !== {}) {
+		return loadImageTextures(gl, images).then((loadedTextures: Record<string, Texture>) => {
+			bindTextures(gl, uniformLocations, loadedTextures);
+			return loadedTextures;
+		});
+	}
+
+	if (materials && materials !== {}) {
+		return loadMaterialTextures(gl, materials).then((loadedMaterials: Materials): void => {
+			materials = loadedMaterials;
+			bindMaterials(gl, uniformLocations, materials);
+		});
+	}
+};
 
 export const loadImageTextures = async (gl: WebGLRenderingContext, images: Record<string, string>): Promise<Record<string, Texture>> => {
 	const promises: Promise<LoadedImage>[] = Object.keys(images).map(name => initTexture(name, 'diffuse', images[name]));
@@ -54,6 +71,8 @@ const initTexture = async (name: string, type: string, source: string): Promise<
 		image.src = source;
 	});
 
+const isPowerOf2 = value => (value & (value - 1)) === 0;
+
 export const bindTexture = (gl, image): Texture => {
 	const level = 0;
 	const internalFormat = gl.RGBA;
@@ -76,4 +95,26 @@ export const bindTexture = (gl, image): Texture => {
 	};
 };
 
-const isPowerOf2 = value => (value & (value - 1)) === 0;
+export const bindMaterials = (gl, uniformLocations: Record<string, WebGLUniformLocation>, materials: Materials) => {
+	Object.keys(materials).forEach((name, i) => {
+		if (i <= MAX_SUPPORTED_MATERIAL_TEXTURES) {
+			const mat: Material = materials[name];
+			if (mat.textures && mat.textures.diffuseMap) {
+				gl.activeTexture(gl[`TEXTURE${i}`] as number);
+				gl.bindTexture(gl.TEXTURE_2D, mat.textures.diffuseMap.texture);
+				gl.uniform1i(uniformLocations[`uDiffuse${i}`], i);
+			}
+		}
+	});
+};
+
+export const bindTextures = (gl, uniformLocations: Record<string, WebGLUniformLocation>, textures: Record<string, Texture>) => {
+	Object.keys(textures).forEach((name, i) => {
+		if (i <= MAX_SUPPORTED_MATERIAL_TEXTURES) {
+			const texture: WebGLTexture = textures[name].texture;
+			gl.activeTexture(gl[`TEXTURE${i}`] as number);
+			gl.bindTexture(gl.TEXTURE_2D, texture);
+			gl.uniform1i(uniformLocations[`uDiffuse${i}`], i);
+		}
+	});
+};

@@ -28,6 +28,7 @@ interface RenderProps {
 }
 
 const render = ({ gl, uniformLocations, uniforms, time, mousePos, FBOA, FBOB, pingPong }: RenderProps) => {
+	if (!gl) return;
 	assignUniforms(uniforms, uniformLocations, gl, time, mousePos);
 
 	const buffer: WebGLFramebuffer = pingPong === 0 ? FBOA.buffer : FBOB.buffer;

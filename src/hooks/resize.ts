@@ -9,6 +9,7 @@ export const useWindowSize = (
 ) => {
 	const handleResize = () => updateRendererSize(canvas, gl, uniforms, size);
 	useEffect(() => {
+		handleResize();
 		window.addEventListener('resize', handleResize);
 		return () => {
 			window.removeEventListener('resize', handleResize);
@@ -16,7 +17,12 @@ export const useWindowSize = (
 	}, []);
 };
 
-const updateRendererSize = (canvas: React.MutableRefObject<HTMLCanvasElement>, gl: React.MutableRefObject<WebGLRenderingContext>, uniforms: UniformSettings, size: React.MutableRefObject<Vector2>) => {
+export const updateRendererSize = (
+	canvas: React.MutableRefObject<HTMLCanvasElement>,
+	gl: React.MutableRefObject<WebGLRenderingContext>,
+	uniforms: UniformSettings,
+	size: React.MutableRefObject<Vector2>
+) => {
 	if (!canvas.current || !gl.current) return;
 	const { width, height } = canvas.current.getBoundingClientRect();
 	size.current = {

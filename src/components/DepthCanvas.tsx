@@ -5,7 +5,7 @@ import { applyRotation, createMat4 } from '../../lib/gl/matrix';
 import { addVectors } from '../../lib/gl/math';
 import { useInitializeGL } from '../hooks/gl';
 import { useAnimationFrame } from '../hooks/animation';
-import { useWindowSize } from '../hooks/resize';
+import { useWindowSize, updateRendererSize } from '../hooks/resize';
 import { formatAttributes } from '../utils/general';
 import { useMouse } from '../hooks/mouse';
 
@@ -31,6 +31,7 @@ interface RenderProps {
 }
 
 const render = ({ gl, uniformLocations, uniforms, time, mousePos, size, numVertices, rotation }: RenderProps) => {
+	if (!gl) return;
 	assignProjectionMatrix(gl, uniformLocations, size);
 	const modelViewMatrix: Matrix = applyRotation(createMat4().slice(), rotation);
 	gl.uniformMatrix4fv(uniformLocations.uModelViewMatrix, false, modelViewMatrix);

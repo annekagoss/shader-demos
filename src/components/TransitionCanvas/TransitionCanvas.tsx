@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { UniformSettings, Vector2, MESH_TYPE } from '../../../types';
+import { UniformSettings, Vector2, MESH_TYPE, Texture } from '../../../types';
 import { assignUniforms } from '../../../lib/gl/initialize';
 import { BASE_TRIANGLE_MESH } from '../../../lib/gl/settings';
 import { useInitializeGL } from '../../hooks/gl';
@@ -27,20 +27,11 @@ interface RenderProps {
 	transitionProgress: number;
 }
 
-const render = ({ gl, uniformLocations, uniforms, time, mousePos, texture, transitionProgress }: RenderProps) => {
+const render = ({ gl, uniformLocations, uniforms, time, mousePos, transitionProgress }: RenderProps) => {
 	if (!gl) return;
+	// console.log(uniforms.uSlideIndex.value);
 	assignUniforms(uniforms, uniformLocations, gl, time, mousePos, transitionProgress);
-
 	gl.activeTexture(gl.TEXTURE0);
-
-	if (texture) {
-		// Bind the texture to texture unit 0
-		gl.bindTexture(gl.TEXTURE_2D, texture);
-
-		// Tell the shader we bound the texture to texture unit 0
-		gl.uniform1i(uniformLocations.uBackground, 0);
-	}
-
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 };
 
@@ -63,8 +54,11 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, sli
 	const transitionTimeRef: React.MutableRefObject<number> = React.useRef<number>(0);
 	const transitionDirectionRef: React.MutableRefObject<number> = React.useRef<number>(1);
 	const slideIndexRef: React.MutableRefObject<number> = React.useRef<number>(0);
+	const lastSlideIndexRef: React.MutableRefObject<number> = React.useRef<number>(0);
 	const isTransitioningRef: React.MutableRefObject<boolean> = React.useRef<boolean>(false);
 	const transitionProgressRef: React.MutableRefObject<number> = React.useRef<number>(0);
+	const texturesRef: React.MutableRefObject<WebGLTexture[]> = React.useRef<WebGLTexture[]>([]);
+	const fakeTexturesRef: React.MutableRefObject<number[]> = React.useRef<number[]>([0, 1, 2, 3, 4]);
 
 	useInitializeGL({
 		gl,
@@ -75,7 +69,8 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, sli
 		uniforms: uniforms.current,
 		size,
 		meshType: MESH_TYPE.BASE_TRIANGLES,
-		imageTextures: slideImages
+		imageTextures: slideImages,
+		texturesRef
 	});
 
 	React.useEffect(() => {
@@ -86,7 +81,9 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, sli
 	useMouse(mousePosRef, canvasRef);
 
 	useAnimationFrame(canvasRef, (time: number) => {
-		updateTransitionProgress(transitionTimeRef, slideIndexRef, isTransitioningRef, transitionProgressRef, transitionDirectionRef);
+		updateTransitionProgress(gl, uniformLocations, transitionTimeRef, slideIndexRef, isTransitioningRef, transitionProgressRef, transitionDirectionRef, texturesRef, fakeTexturesRef);
+		uniforms.current.uSlideIndex.value = slideIndexRef.current;
+		uniforms.current.uTransitionProgress.value = transitionProgressRef.current;
 		render({
 			gl: gl.current,
 			uniformLocations: uniformLocations.current,
@@ -104,16 +101,20 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, sli
 				<button
 					className={styles.button}
 					onClick={() => {
+						if (isTransitioningRef.current) return;
 						isTransitioningRef.current = true;
 						transitionDirectionRef.current = -1;
+						uniforms.current.uDirection.value = -1;
 					}}>
 					{'<'}
 				</button>
 				<button
 					className={styles.button}
 					onClick={() => {
+						if (isTransitioningRef.current) return;
 						isTransitioningRef.current = true;
 						transitionDirectionRef.current = 1;
+						uniforms.current.uDirection.value = 1;
 					}}>
 					{'>'}
 				</button>

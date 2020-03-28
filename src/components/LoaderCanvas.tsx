@@ -2,7 +2,7 @@ import * as React from 'react';
 import { UniformSettings, Vector2, Matrix, Vector3, Mesh, Buffers, MESH_TYPE, Buffer, OBJData, FBO } from '../../types';
 import { initializeGL } from '../hooks/gl';
 import { useAnimationFrame } from '../hooks/animation';
-import { useWindowSize } from '../hooks/resize';
+import { useWindowSize, updateRendererSize } from '../hooks/resize';
 import { assignProjectionMatrix, assignUniforms } from '../../lib/gl/initialize';
 import { createMat4, applyTransformation, invertMatrix, transposeMatrix } from '../../lib/gl/matrix';
 import { addVectors } from '../../lib/gl/math';
@@ -52,7 +52,7 @@ const render = (props: RenderProps) => {
 		return;
 	}
 
-	gl.activeTexture(gl.TEXTURE4);
+	gl.activeTexture(gl.TEXTURE7);
 	gl.bindFramebuffer(gl.FRAMEBUFFER, FBOA.current.buffer);
 	gl.viewport(0, 0, FBOA.current.textureWidth, FBOA.current.textureHeight);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -60,7 +60,7 @@ const render = (props: RenderProps) => {
 	gl.uniform1i(uniformLocations.uOutlinePass, 1);
 	draw(props);
 
-	gl.activeTexture(gl.TEXTURE5);
+	gl.activeTexture(gl.TEXTURE8);
 	gl.bindFramebuffer(gl.FRAMEBUFFER, FBOB.current.buffer);
 	gl.uniform1i(uniformLocations.uOutlinePass, 0);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -70,20 +70,20 @@ const render = (props: RenderProps) => {
 	gl.viewport(0, 0, size.x, size.y);
 	gl.useProgram(outlineProgram);
 
-	gl.activeTexture(gl.TEXTURE4);
+	gl.activeTexture(gl.TEXTURE7);
 	gl.bindTexture(gl.TEXTURE_2D, FBOA.current.targetTexture);
-	gl.uniform1i(outlineUniformLocations.uOutline, 4);
+	gl.uniform1i(outlineUniformLocations.uOutline, 7);
 
-	gl.activeTexture(gl.TEXTURE5);
+	gl.activeTexture(gl.TEXTURE8);
 	gl.bindTexture(gl.TEXTURE_2D, FBOB.current.targetTexture);
-	gl.uniform1i(outlineUniformLocations.uSource, 5);
+	gl.uniform1i(outlineUniformLocations.uSource, 8);
 
 	gl.uniform2fv(outlineUniformLocations.uResolution, [size.x, size.y]);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	drawOutlines(props);
 };
 
-const drawOutlines = ({ gl, outlineProgram, program, baseVertexBuffer, buffers }: RenderProps) => {
+const drawOutlines = ({ gl, outlineProgram, baseVertexBuffer }: RenderProps) => {
 	const vertexPosition = gl.getAttribLocation(outlineProgram, 'aBaseVertexPosition');
 	gl.enableVertexAttribArray(vertexPosition);
 	gl.bindBuffer(gl.ARRAY_BUFFER, baseVertexBuffer.buffer);
@@ -92,7 +92,7 @@ const drawOutlines = ({ gl, outlineProgram, program, baseVertexBuffer, buffers }
 	gl.disableVertexAttribArray(vertexPosition);
 };
 
-const draw = ({ gl, uniformLocations, uniforms, buffers, time, size, rotation, outlineProgram, program }: RenderProps): void => {
+const draw = ({ gl, uniformLocations, uniforms, buffers, time, size, rotation, program }: RenderProps): void => {
 	assignProjectionMatrix(gl, uniformLocations, size);
 	const modelViewMatrix: Matrix = applyTransformation(createMat4(), {
 		translation: uniforms.uTranslation.value,
@@ -168,6 +168,7 @@ const LoaderCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, O
 				FBOB
 			});
 			setAttributes(formatAttributes(buffersRef));
+			updateRendererSize(canvasRef, gl, uniforms.current, size);
 		},
 		OBJData,
 		useWebWorker: ENABLE_WEBWORKER

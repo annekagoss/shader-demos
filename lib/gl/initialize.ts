@@ -1,4 +1,4 @@
-import { Buffer, Buffers, FBO, Mesh, Material, Matrix, Vector2, FaceArray, UniformSetting, UniformSettings, MESH_TYPE, Materials, UNIFORM_TYPE } from '../../types';
+import { Buffer, Buffers, FBO, Mesh, Material, Matrix, Vector2, FaceArray, UniformSetting, UniformSettings, MESH_TYPE, Materials, UNIFORM_TYPE, Texture } from '../../types';
 import { degreesToRadians } from './math';
 import { createMat4, applyPerspective, lookAt } from './matrix';
 import { MAX_SUPPORTED_MATERIAL_TEXTURES, NEAR_CLIPPING, FAR_CLIPPING, FIELD_OF_VIEW } from './settings';
@@ -28,9 +28,11 @@ export interface InitializeProps {
 	outlineProgramRef?: React.MutableRefObject<WebGLProgram>;
 	baseVertexBufferRef?: React.MutableRefObject<Buffer>;
 	imageTextures?: Record<string, string>;
+	texturesRef: React.MutableRefObject<WebGLTexture[]>;
 }
 
 export const initializeRenderer = ({ uniformLocations, canvasRef, fragmentSource, vertexSource, uniforms, size, FBOA, FBOB, outlineUniformLocations }: InitializeProps) => {
+	if (!canvasRef.current) return;
 	const gl: WebGLRenderingContext = (canvasRef.current.getContext('experimental-webgl') as WebGLRenderingContext) || (canvasRef.current.getContext('webgl') as WebGLRenderingContext);
 
 	gl.clearColor(0, 0, 0, 0);
@@ -54,7 +56,10 @@ export const initializeRenderer = ({ uniformLocations, canvasRef, fragmentSource
 		uDisplacement: gl.getUniformLocation(program, 'uDisplacement'),
 		uOutlinePass: gl.getUniformLocation(program, 'uOutlinePass'),
 		uDiffuse0: gl.getUniformLocation(program, 'uDiffuse0'),
-		uDiffuse1: gl.getUniformLocation(program, 'uDiffuse1')
+		uDiffuse1: gl.getUniformLocation(program, 'uDiffuse1'),
+		uDiffuse2: gl.getUniformLocation(program, 'uDiffuse2'),
+		uDiffuse3: gl.getUniformLocation(program, 'uDiffuse3'),
+		uDiffuse4: gl.getUniformLocation(program, 'uDiffuse4')
 	};
 
 	if (usePingPongBuffers) {
@@ -127,19 +132,6 @@ export const initializeMesh = ({ faceArray, buffersRef, meshType, mesh, baseVert
 	}
 };
 
-export const bindMaterials = (gl, uniformLocations, materials: Materials) => {
-	Object.keys(materials).forEach((name, i) => {
-		if (i <= MAX_SUPPORTED_MATERIAL_TEXTURES) {
-			const mat: Material = materials[name];
-			if (mat.textures && mat.textures.diffuseMap) {
-				gl.activeTexture(gl[`TEXTURE${i}`] as number);
-				gl.bindTexture(gl.TEXTURE_2D, mat.textures.diffuseMap.texture);
-				gl.uniform1i(uniformLocations.current[`uDiffuse${i}`], i);
-			}
-		}
-	});
-};
-
 export const loadShader = (gl: WebGLRenderingContext, type: number, source: string): WebGLShader => {
 	const shader: WebGLShader = gl.createShader(type);
 	gl.shaderSource(shader, source);
@@ -194,9 +186,6 @@ export const assignUniforms = (
 			case UNIFORM_TYPE.FLOAT_1:
 				if (uniform.name === 'uTime') {
 					uniform.value = time;
-				}
-				if (uniform.name === 'uTransitionProgress') {
-					uniform.value = transitionProgress;
 				}
 				gl.uniform1f(uniformLocations[uniform.name], uniform.value);
 				break;

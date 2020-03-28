@@ -32,6 +32,13 @@ const BASE_TRANSITION_UNIFORMS: UniformSettings = {
 		type: UNIFORM_TYPE.INT_1,
 		value: 0
 	},
+	uDirection: {
+		defaultValue: 1,
+		name: 'uDirection',
+		readonly: true,
+		type: UNIFORM_TYPE.INT_1,
+		value: 1
+	},
 	uTransitionProgress: {
 		defaultValue: 0.0,
 		name: 'uTransitionProgress',

@@ -4,7 +4,7 @@ import { Vector3 } from '../../types';
 export const MAX_IDLE_TIME: number = 1000;
 
 // Number of texture Sampler2D uniforms currently initialized for the phong shader
-export const MAX_SUPPORTED_MATERIAL_TEXTURES: number = 1;
+export const MAX_SUPPORTED_MATERIAL_TEXTURES: number = 5;
 
 export const FIELD_OF_VIEW: number = 40;
 export const NEAR_CLIPPING: number = 0.01;
