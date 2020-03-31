@@ -46,18 +46,14 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, sli
 		y: size.current.y * -0.5
 	});
 	const gl = React.useRef<WebGLRenderingContext>();
+	å;
 	const uniformLocations = React.useRef<Record<string, WebGLUniformLocation>>();
-
-	const forwardButtonRef: React.RefObject<HTMLButtonElement> = React.useRef<HTMLButtonElement>();
-	const backButtonRef: React.RefObject<HTMLButtonElement> = React.useRef<HTMLButtonElement>();
 	const transitionTimeRef: React.MutableRefObject<number> = React.useRef<number>(0);
 	const transitionDirectionRef: React.MutableRefObject<number> = React.useRef<number>(1);
 	const slideIndexRef: React.MutableRefObject<number> = React.useRef<number>(0);
-	const lastSlideIndexRef: React.MutableRefObject<number> = React.useRef<number>(0);
 	const isTransitioningRef: React.MutableRefObject<boolean> = React.useRef<boolean>(false);
 	const transitionProgressRef: React.MutableRefObject<number> = React.useRef<number>(0);
 	const texturesRef: React.MutableRefObject<WebGLTexture[]> = React.useRef<WebGLTexture[]>([]);
-	const fakeTexturesRef: React.MutableRefObject<number[]> = React.useRef<number[]>([0, 1, 2, 3, 4]);
 
 	useInitializeGL({
 		gl,
@@ -80,7 +76,7 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, sli
 	useMouse(mousePosRef, canvasRef);
 
 	useAnimationFrame(canvasRef, (time: number) => {
-		updateTransitionProgress(gl, uniformLocations, transitionTimeRef, slideIndexRef, isTransitioningRef, transitionProgressRef, transitionDirectionRef, texturesRef, fakeTexturesRef);
+		updateTransitionProgress({ gl, uniformLocations, transitionTimeRef, slideIndexRef, isTransitioningRef, transitionProgressRef, transitionDirectionRef, texturesRef });
 		uniforms.current.uSlideIndex.value = slideIndexRef.current;
 		uniforms.current.uTransitionProgress.value = transitionProgressRef.current;
 		render({

@@ -1,0 +1,22 @@
+.fullScreenCanvas {
+	width: calc(100vw - 4rem);
+	height: calc((100vw - 4rem) / 3 * 2);
+	max-width: calc(100vw - 4rem);
+	max-height: calc((100vw - 4rem) / 3 * 2);
+	min-width: 100%;
+	min-height: 100%;
+	border: none;
+	position: relative;
+}
+
+.canvasContainer {
+	position: relative;
+}
+
+.canvasForeground {
+	opacity: 0;
+}
+
+button {
+	cursor: pointer;
+}

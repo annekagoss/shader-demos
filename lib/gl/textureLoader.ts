@@ -30,7 +30,7 @@ export const loadImageTextures = async (gl: WebGLRenderingContext, images: Recor
 		const loadedTextures: Record<string, Texture> = {};
 		loadedImages.forEach(({ name, image }: LoadedImage) => {
 			if (image && image.src) {
-				loadedTextures[name] = bindTexture(gl, image);
+				loadedTextures[name] = createTexture(gl, image);
 			}
 		});
 		return loadedTextures;
@@ -53,7 +53,7 @@ export const loadMaterialTextures = (gl: WebGLRenderingContext, materials: Mater
 		const loadedMaterials: Materials = materials;
 		loadedImages.forEach(({ name, type, image }: LoadedImage) => {
 			if (image && image.src) {
-				const boundTexture: WebGLTexture = bindTexture(gl, image);
+				const boundTexture: WebGLTexture = createTexture(gl, image);
 				loadedMaterials[name].textures[type] = boundTexture;
 			}
 		});
@@ -73,7 +73,7 @@ const initTexture = async (name: string, type: string, source: string): Promise<
 
 const isPowerOf2 = value => (value & (value - 1)) === 0;
 
-export const bindTexture = (gl, image): Texture => {
+export const createTexture = (gl, image): Texture => {
 	const level = 0;
 	const internalFormat = gl.RGBA;
 	const sourceFormat = gl.RGBA;

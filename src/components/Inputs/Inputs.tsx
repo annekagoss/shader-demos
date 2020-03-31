@@ -63,24 +63,21 @@ const BoolInput = ({ uniform, updateUniforms }: TypeInputProps) => (
 );
 
 const RadioInput = ({ uniform, updateUniforms }: TypeInputProps) => {
-	const [selectedOption, setSelectedOption] = React.useState<number>(uniform.defaultValue);
 	return (
 		<form>
 			{uniform.radioChoices.map((choice, i) => (
-				<label style={{ display: 'block' }} key={i}>
+				<div>
 					<input
 						type='radio'
 						key={i}
 						value={i}
-						// defaultChecked={uniform.defaultValue === i}
-						checked={selectedOption === i}
+						name={uniform.name}
 						onChange={() => {
-							setSelectedOption(i);
 							updateUniforms(uniform.name, i);
 						}}
 					/>
-					{choice}
-				</label>
+					<label key={i}>{choice}</label>
+				</div>
 			))}
 		</form>
 	);

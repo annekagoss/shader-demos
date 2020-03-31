@@ -17,38 +17,46 @@ const easeInOutCubic = (time: number, initial: number, final: number, duration: 
 	return (final / 2) * ((time -= 2) * time * time + 2) + initial;
 };
 
-export const updateTransitionProgress = (
-	gl: React.MutableRefObject<WebGLRenderingContext>,
-	uniformLocations: React.MutableRefObject<Record<string, WebGLUniformLocation>>,
-	transitionTimeRef: React.MutableRefObject<number>,
-	slideIndexRef: React.MutableRefObject<number>,
-	isTransitioningRef: React.MutableRefObject<boolean>,
-	transitionProgressRef: React.MutableRefObject<number>,
-	transitionDirectionRef: React.MutableRefObject<number>,
-	texturesRef: React.MutableRefObject<WebGLTexture[]>,
-	fakeTexturesRef: React.MutableRefObject<number[]>
-) => {
-	if (!isTransitioningRef.current) return;
+interface TransitionProps {
+	gl: React.MutableRefObject<WebGLRenderingContext>;
+	uniformLocations: React.MutableRefObject<Record<string, WebGLUniformLocation>>;
+	transitionTimeRef: React.MutableRefObject<number>;
+	slideIndexRef: React.MutableRefObject<number>;
+	isTransitioningRef: React.MutableRefObject<boolean>;
+	transitionProgressRef: React.MutableRefObject<number>;
+	transitionDirectionRef: React.MutableRefObject<number>;
+	texturesRef: React.MutableRefObject<WebGLTexture[]>;
+}
 
+export const updateTransitionProgress = (props: TransitionProps) => {
+	const { transitionTimeRef, isTransitioningRef } = props;
+	if (!isTransitioningRef.current) return;
 	if (transitionTimeRef.current >= DURATION - 0.05) {
-		isTransitioningRef.current = false; // Stop transition
-		slideIndexRef.current += transitionDirectionRef.current; // Increment/decrement slide index
-		transitionProgressRef.current = 0;
-		transitionTimeRef.current = 0;
-		if (transitionDirectionRef.current === 1) {
-			texturesRef.current = rotateArray(texturesRef.current, transitionDirectionRef.current);
-			bindTextures(gl.current, texturesRef.current.slice(0, 2), uniformLocations.current);
-		}
+		stopTransition(props);
 		return;
 	}
 
+	animateTransition(props);
+};
+
+const stopTransition = ({ gl, uniformLocations, transitionTimeRef, slideIndexRef, isTransitioningRef, transitionProgressRef, transitionDirectionRef, texturesRef }: TransitionProps) => {
+	isTransitioningRef.current = false; // Stop transition
+	slideIndexRef.current += transitionDirectionRef.current; // Increment/decrement slide index
+	transitionProgressRef.current = 0;
+	transitionTimeRef.current = 0;
+	if (transitionDirectionRef.current === 1) {
+		texturesRef.current = rotateArray(texturesRef.current, transitionDirectionRef.current);
+		bindTextures(gl.current, texturesRef.current.slice(0, 2), uniformLocations.current);
+	}
+};
+
+const animateTransition = ({ gl, uniformLocations, transitionTimeRef, transitionProgressRef, transitionDirectionRef, texturesRef }: TransitionProps) => {
 	if (transitionDirectionRef.current === 1) {
 		transitionProgressRef.current = easeOutCubic(transitionTimeRef.current, 0, 1, DURATION);
 	} else {
 		transitionProgressRef.current = 1.0 - easeOutCubic(transitionTimeRef.current, 0, 1, DURATION);
 		if (transitionProgressRef.current === 1) {
 			texturesRef.current = rotateArray(texturesRef.current, transitionDirectionRef.current);
-			fakeTexturesRef.current = rotateArray(fakeTexturesRef.current, transitionDirectionRef.current);
 			bindTextures(gl.current, texturesRef.current.slice(0, 2), uniformLocations.current);
 		}
 	}

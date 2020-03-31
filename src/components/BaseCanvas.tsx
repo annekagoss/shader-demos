@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { UniformSettings, Vector2, UNIFORM_TYPE, FBO, MESH_TYPE, Buffers } from '../../types';
+import { UniformSettings, Vector2, MESH_TYPE } from '../../types';
 import { assignUniforms } from '../../lib/gl/initialize';
 import { BASE_TRIANGLE_MESH } from '../../lib/gl/settings';
 import { useInitializeGL } from '../hooks/gl';
 import { useAnimationFrame } from '../hooks/animation';
-import { useWindowSize, updateRendererSize } from '../hooks/resize';
+import { useWindowSize } from '../hooks/resize';
 import { useMouse } from '../hooks/mouse';
 
 interface Props {

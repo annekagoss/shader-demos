@@ -6,10 +6,11 @@ import MotionPage from '../pages/MotionPage';
 import DepthPage from '../pages/DepthPage';
 import InteractionPage from '../pages/InteractionPage';
 import TransitionPage from '../pages/TransitionPage';
+import DOMRasterizationPage from '../pages/DOMRasterizationPage';
 import styles from './app.module.scss';
 
 const App = () => {
-	const [activePageIndex, setActivePageIndex] = React.useState<number>(4);
+	const [activePageIndex, setActivePageIndex] = React.useState<number>(5);
 	if (!glSupported()) return <div>'WebGL is not supported on this device.'</div>;
 
 	return (
@@ -50,6 +51,13 @@ const App = () => {
 					}}>
 					4. Transition
 				</div>
+				<div
+					className={cx(styles.navItem, activePageIndex === 5 && styles.active)}
+					onClick={() => {
+						setActivePageIndex(5);
+					}}>
+					5. DOM Rasterization
+				</div>
 			</div>
 			<div className={styles.PagesContainer}>
 				<FormPage isActive={activePageIndex === 0} />
@@ -57,6 +65,7 @@ const App = () => {
 				<DepthPage isActive={activePageIndex === 2} />
 				<InteractionPage isActive={activePageIndex === 3} />
 				<TransitionPage isActive={activePageIndex === 4} />
+				<DOMRasterizationPage isActive={activePageIndex === 5} />
 			</div>
 		</div>
 	);

@@ -68,7 +68,7 @@ export const initializeRenderer = ({ uniformLocations, canvasRef, fragmentSource
 	}
 	let outlineProgram;
 	if (outlineUniformLocations) {
-		outlineProgram = initializeOutlineProgram(gl, outlineUniformLocations, size.current.x, size.current.y);
+		outlineProgram = initializeOutlineProgram(gl, outlineUniformLocations);
 	}
 
 	return { gl, program, outlineProgram };
