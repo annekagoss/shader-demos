@@ -86,6 +86,7 @@ const SourceElement = React.forwardRef(({ buttonActive, setButtonActive, text, s
 							border: 'solid 1px transparent',
 							borderBottom: buttonBorder,
 							color: textColor,
+							caretColor: 'white',
 							fontSize: 40,
 							minWidth: 500,
 							padding: '4px 4px 1px 4px',
