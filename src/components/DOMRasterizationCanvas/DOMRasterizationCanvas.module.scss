@@ -15,6 +15,10 @@
 
 .canvasForeground {
 	opacity: 0;
+
+	&.cursorCopy {
+		opacity: 1;
+	}
 }
 
 button {

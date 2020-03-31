@@ -6,7 +6,7 @@ import { loadTextures } from '../../lib/gl/textureLoader';
 
 interface RasterizeToGLProps {
 	sourceElementRef: React.RefObject<HTMLElement>;
-	targetElementRef: React.RefObject<HTMLImageElement>;
+	cursorElementRef: React.RefObject<HTMLImageElement>;
 	imageTexturesRef: React.MutableRefObject<Record<string, string>>;
 	initializeGLProps: InitializeProps;
 }
@@ -19,45 +19,45 @@ export const useRasterizeToGL = (props: RasterizeToGLProps) => {
 		}
 		rasterizeElementAndInitializeGL(props);
 		const refreshImageOnEvent = throttle(30, () => refreshImage(props));
-		props.sourceElementRef.current.addEventListener('mousemove', refreshImageOnEvent);
-		props.sourceElementRef.current.addEventListener('keydown', refreshImageOnEvent);
-		props.sourceElementRef.current.addEventListener('keyup', refreshImageOnEvent);
+		props.cursorElementRef.current.addEventListener('mousemove', refreshImageOnEvent);
+		props.cursorElementRef.current.addEventListener('keydown', refreshImageOnEvent);
+		props.cursorElementRef.current.addEventListener('keyup', refreshImageOnEvent);
 		const mouseUpHandler = () => {
 			setTimeout(() => {
 				refreshImageOnEvent();
 			}, 0);
 		};
-		props.sourceElementRef.current.addEventListener('mouseup', mouseUpHandler);
+		props.cursorElementRef.current.addEventListener('mouseup', mouseUpHandler);
 		window.addEventListener('load', () => refreshImage(props));
 		window.addEventListener('resize', () => refreshImage(props));
 
 		return () => {
-			props.sourceElementRef.current.removeEventListener('mousemove', refreshImageOnEvent);
-			props.sourceElementRef.current.removeEventListener('keydown', refreshImageOnEvent);
-			props.sourceElementRef.current.removeEventListener('keyup', refreshImageOnEvent);
-			props.sourceElementRef.current.removeEventListener('mouseup', mouseUpHandler);
+			props.cursorElementRef.current.removeEventListener('mousemove', refreshImageOnEvent);
+			props.cursorElementRef.current.removeEventListener('keydown', refreshImageOnEvent);
+			props.cursorElementRef.current.removeEventListener('keyup', refreshImageOnEvent);
+			props.cursorElementRef.current.removeEventListener('mouseup', mouseUpHandler);
 			window.removeEventListener('load', () => refreshImage(props));
 			window.removeEventListener('resize', () => refreshImage(props));
 		};
 	}, []);
 };
 
-const refreshImage = async ({ sourceElementRef, targetElementRef, imageTexturesRef, initializeGLProps }: RasterizeToGLProps) => {
-	const { DOMImage, size } = await rasterizeElement(sourceElementRef.current, targetElementRef.current);
+const refreshImage = async ({ sourceElementRef, cursorElementRef, imageTexturesRef, initializeGLProps }: RasterizeToGLProps) => {
+	const { DOMImage, size } = await rasterizeElement(sourceElementRef.current);
 	imageTexturesRef.current = { DOMImage };
 	initializeGLProps.uniforms.uSamplerResolution0.value = size;
 	loadTextures(initializeGLProps.gl.current, initializeGLProps.uniformLocations.current, { DOMImage });
 };
 
-const rasterizeElementAndInitializeGL = async ({ sourceElementRef, targetElementRef, imageTexturesRef, initializeGLProps }: RasterizeToGLProps) => {
-	const { DOMImage, size } = await rasterizeElement(sourceElementRef.current, targetElementRef.current);
+const rasterizeElementAndInitializeGL = async ({ sourceElementRef, imageTexturesRef, initializeGLProps }: RasterizeToGLProps) => {
+	const { DOMImage, size } = await rasterizeElement(sourceElementRef.current);
 	imageTexturesRef.current = { DOMImage };
 	initializeGLProps.uniforms.uSamplerResolution0.value = size;
 	initializeGLProps.imageTextures = imageTexturesRef.current;
 	initializeGL(initializeGLProps);
 };
 
-const rasterizeElement = async (sourceElement: HTMLElement, targetElement: HTMLImageElement) => {
+const rasterizeElement = async (sourceElement: HTMLElement) => {
 	if (!sourceElement) return;
 	const { width, height } = sourceElement.getBoundingClientRect();
 	const SVGDataURI = makeSVGDataURI(sourceElement, width, height);
@@ -68,7 +68,7 @@ const rasterizeElement = async (sourceElement: HTMLElement, targetElement: HTMLI
 	const context = canvas.getContext('2d');
 	context.drawImage(image, 0, 0);
 	const png = canvas.toDataURL();
-	if (targetElement) targetElement.src = png;
+	// if (targetElement) targetElement.src = png;
 	return { DOMImage: png, size: { x: width, y: height } };
 };
 
