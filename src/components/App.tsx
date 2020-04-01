@@ -10,7 +10,7 @@ import DOMRasterizationPage from '../pages/DOMRasterizationPage';
 import styles from './app.module.scss';
 
 const App = () => {
-	const [activePageIndex, setActivePageIndex] = React.useState<number>(1);
+	const [activePageIndex, setActivePageIndex] = React.useState<number>(0);
 	if (!glSupported())
 		return <div>'WebGL is not supported on this device.'</div>;
 
