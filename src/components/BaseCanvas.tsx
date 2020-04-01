@@ -24,22 +24,42 @@ interface RenderProps {
 	texture?: HTMLImageElement;
 }
 
-const render = ({ gl, uniformLocations, uniforms, time, mousePos, texture }: RenderProps) => {
+const render = ({
+	gl,
+	uniformLocations,
+	uniforms,
+	time,
+	mousePos
+}: RenderProps) => {
 	if (!gl) return;
 	assignUniforms(uniforms, uniformLocations, gl, time, mousePos);
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 };
 
-const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes }: Props) => {
-	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<HTMLCanvasElement>();
+const BaseCanvas = ({
+	fragmentShader,
+	vertexShader,
+	uniforms,
+	setAttributes
+}: Props) => {
+	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<
+		HTMLCanvasElement
+	>();
 	const size: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
-		x: uniforms.current.uResolution.value.x * window.devicePixelRatio,
-		y: uniforms.current.uResolution.value.y * window.devicePixelRatio
+		x: uniforms.current.uResolution.value.x,
+		y: uniforms.current.uResolution.value.y
 	});
-	const initialMousePosition = uniforms.current.uMouse ? uniforms.current.uMouse.defaultValue : { x: 0.5, y: 0.5 };
-	const mousePosRef: React.MutableRefObject<Vector2> = React.useRef<Vector2>({ x: size.current.x * initialMousePosition.x, y: size.current.y * -initialMousePosition.y });
+	const initialMousePosition = uniforms.current.uMouse
+		? uniforms.current.uMouse.defaultValue
+		: { x: 0.5, y: 0.5 };
+	const mousePosRef: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
+		x: size.current.x * initialMousePosition.x,
+		y: size.current.y * -initialMousePosition.y
+	});
 	const gl = React.useRef<WebGLRenderingContext>();
-	const uniformLocations = React.useRef<Record<string, WebGLUniformLocation>>();
+	const uniformLocations = React.useRef<
+		Record<string, WebGLUniformLocation>
+	>();
 
 	useInitializeGL({
 		gl,
@@ -53,7 +73,9 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes }: P
 	});
 
 	React.useEffect(() => {
-		setAttributes([{ name: 'aVertexPosition', value: BASE_TRIANGLE_MESH.join(', ') }]);
+		setAttributes([
+			{ name: 'aVertexPosition', value: BASE_TRIANGLE_MESH.join(', ') }
+		]);
 	}, []);
 
 	useWindowSize(canvasRef, gl, uniforms.current, size);

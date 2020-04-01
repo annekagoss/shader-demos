@@ -114,16 +114,9 @@ export const initializeRenderer = ({
 	};
 
 	if (usePingPongBuffers) {
-		FBOA.current = initFrameBufferObject(
-			gl,
-			size.current.x,
-			size.current.y
-		);
-		FBOB.current = initFrameBufferObject(
-			gl,
-			size.current.x,
-			size.current.y
-		);
+		const FBOSize: Vector2 = uniforms.uResolution.value;
+		FBOA.current = initFrameBufferObject(gl, FBOSize.x, FBOSize.y);
+		FBOB.current = initFrameBufferObject(gl, FBOSize.x, FBOSize.y);
 	}
 	let outlineProgram;
 	if (outlineUniformLocations) {

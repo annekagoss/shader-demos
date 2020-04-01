@@ -9,7 +9,10 @@ export const useWindowSize = (
 ) => {
 	const handleResize = () => updateRendererSize(canvas, gl, uniforms, size);
 	useEffect(() => {
-		handleResize();
+		setTimeout(() => {
+			handleResize();
+		}, 0);
+
 		window.addEventListener('resize', handleResize);
 		return () => {
 			window.removeEventListener('resize', handleResize);

@@ -193,14 +193,10 @@ const Source = React.forwardRef(({ uniforms }: SourceProps, ref) => {
 	const [inputFocused, setInputFocused] = React.useState<boolean>(false);
 
 	React.useEffect(() => {
-		console.log(text);
-		console.log(parseColorFromString(text));
 		const color: RGBA = parseColorFromString(text);
 		if (Boolean(color)) {
 			uniforms.current.uColor.value = color;
 		}
-
-		console.log(uniforms.current.uColor.value);
 	}, [text]);
 	return (
 		<>

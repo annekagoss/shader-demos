@@ -274,8 +274,12 @@ const OBJ_ROTATION_DELTA: Vector3 = { x: 0, y: 0.01, z: 0 };
 const DepthPage = ({ isActive }: Props) => {
 	const meshUniforms = React.useRef<UniformSettings>(BASE_MESH_UNIFORMS);
 	const phongUniforms = React.useRef<UniformSettings>(BASE_PHONG_UNIFORMS);
-	const fractalUniforms = React.useRef<UniformSettings>(BASE_FRACTAL_UNIFORMS);
-	const pageMousePosRef: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
+	const fractalUniforms = React.useRef<UniformSettings>(
+		BASE_FRACTAL_UNIFORMS
+	);
+	const pageMousePosRef: React.MutableRefObject<Vector2> = React.useRef<
+		Vector2
+	>({
 		x: 0.5,
 		y: 0.5
 	});
@@ -296,7 +300,14 @@ const DepthPage = ({ isActive }: Props) => {
 
 	return (
 		<div>
-			<Section title='2.0: Mesh' notes={``} fragmentShader={meshFragmentShader} vertexShader={meshVertexShader} attributes={attributes} uniforms={meshUniforms}>
+			<Section
+				title='2.0: Mesh'
+				notes={``}
+				fragmentShader={meshFragmentShader}
+				vertexShader={meshVertexShader}
+				attributes={attributes}
+				uniforms={meshUniforms}
+			>
 				<DepthCanvas
 					fragmentShader={meshFragmentShader}
 					vertexShader={meshVertexShader}
@@ -306,7 +317,14 @@ const DepthPage = ({ isActive }: Props) => {
 					rotationDelta={CUBE_ROTATION_DELTA}
 				/>
 			</Section>
-			<Section title='2.1: File Loader' notes={``} fragmentShader={phongFragmentShader} attributes={attributes} uniforms={phongUniforms} vertexShader={phongVertexShader}>
+			<Section
+				title='2.1: File Loader'
+				notes={``}
+				fragmentShader={phongFragmentShader}
+				attributes={attributes}
+				uniforms={phongUniforms}
+				vertexShader={phongVertexShader}
+			>
 				<LoaderCanvas
 					fragmentShader={phongFragmentShader}
 					vertexShader={phongVertexShader}
@@ -317,8 +335,20 @@ const DepthPage = ({ isActive }: Props) => {
 				/>
 			</Section>
 			{!IS_MOBILE && (
-				<Section title='2.2: Fractal' notes={``} fragmentShader={mandelbulbFragmentShader} vertexShader={baseVertexShader} attributes={attributes} uniforms={fractalUniforms}>
-					<BaseCanvas fragmentShader={mandelbulbFragmentShader} vertexShader={baseVertexShader} uniforms={fractalUniforms} setAttributes={setAttributes} />
+				<Section
+					title='2.2: Fractal'
+					notes={``}
+					fragmentShader={mandelbulbFragmentShader}
+					vertexShader={baseVertexShader}
+					attributes={attributes}
+					uniforms={fractalUniforms}
+				>
+					<BaseCanvas
+						fragmentShader={mandelbulbFragmentShader}
+						vertexShader={baseVertexShader}
+						uniforms={fractalUniforms}
+						setAttributes={setAttributes}
+					/>
 				</Section>
 			)}
 		</div>

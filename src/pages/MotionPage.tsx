@@ -3,7 +3,7 @@ import { UNIFORM_TYPE, Vector2, UniformSettings } from '../../types';
 import { BASE_UNIFORMS } from '../utils/general';
 import Section from '../components/Section/Section';
 import BaseCanvas from '../components/BaseCanvas';
-import FeedbackCanvas from '../components/FeedbackCanvas';
+import FeedbackCanvas from '../components/FeedbackCanvas/FeedbackCanvas';
 import ShaderText from '../components/ShaderText/ShaderText';
 import Inputs from '../components/Inputs/Inputs';
 import baseVertexShader from '../../lib/gl/shaders/base.vert';
@@ -13,7 +13,6 @@ import rotationFragmentShader from '../../lib/gl/shaders/rotation.frag';
 import signalFragmentShader from '../../lib/gl/shaders/signal.frag';
 import noiseFragmentShader from '../../lib/gl/shaders/noise.frag';
 import feedbackFragmentShader from '../../lib/gl/shaders/feedback.frag';
-import styles from './page.module.scss';
 
 const BASE_TRANSLATION_UNIFORMS: UniformSettings = {
 	...BASE_UNIFORMS,
@@ -183,12 +182,18 @@ interface Props {
 }
 
 const MotionPage = ({ isActive }: Props) => {
-	const translationUniforms = React.useRef<UniformSettings>(BASE_TRANSLATION_UNIFORMS);
+	const translationUniforms = React.useRef<UniformSettings>(
+		BASE_TRANSLATION_UNIFORMS
+	);
 	const scaleUniforms = React.useRef<UniformSettings>(BASE_SCALE_UNIFORMS);
-	const rotationUniforms = React.useRef<UniformSettings>(BASE_ROTATION_UNIFORMS);
+	const rotationUniforms = React.useRef<UniformSettings>(
+		BASE_ROTATION_UNIFORMS
+	);
 	const signalUniforms = React.useRef<UniformSettings>(BASE_SIGNAL_UNIFORMS);
 	const noiseUniforms = React.useRef<UniformSettings>(BASE_NOISE_UNIFORMS);
-	const feedbackUniforms = React.useRef<UniformSettings>(BASE_FEEDBACK_UNIFORMS);
+	const feedbackUniforms = React.useRef<UniformSettings>(
+		BASE_FEEDBACK_UNIFORMS
+	);
 	const [attributes, setAttributes] = React.useState<any[]>([]);
 
 	if (!isActive) return <></>;
@@ -201,8 +206,14 @@ const MotionPage = ({ isActive }: Props) => {
 				fragmentShader={translationFragmentShader}
 				vertexShader={baseVertexShader}
 				attributes={attributes}
-				uniforms={translationUniforms}>
-				<BaseCanvas fragmentShader={translationFragmentShader} vertexShader={baseVertexShader} uniforms={translationUniforms} setAttributes={setAttributes} />
+				uniforms={translationUniforms}
+			>
+				<BaseCanvas
+					fragmentShader={translationFragmentShader}
+					vertexShader={baseVertexShader}
+					uniforms={translationUniforms}
+					setAttributes={setAttributes}
+				/>
 			</Section>
 			<Section
 				title='1.1: Scale'
@@ -210,8 +221,14 @@ const MotionPage = ({ isActive }: Props) => {
 				fragmentShader={scaleFragmentShader}
 				vertexShader={baseVertexShader}
 				attributes={attributes}
-				uniforms={scaleUniforms}>
-				<BaseCanvas fragmentShader={scaleFragmentShader} vertexShader={baseVertexShader} uniforms={scaleUniforms} setAttributes={setAttributes} />
+				uniforms={scaleUniforms}
+			>
+				<BaseCanvas
+					fragmentShader={scaleFragmentShader}
+					vertexShader={baseVertexShader}
+					uniforms={scaleUniforms}
+					setAttributes={setAttributes}
+				/>
 			</Section>
 			<Section
 				title='1.2: Rotation'
@@ -219,8 +236,14 @@ const MotionPage = ({ isActive }: Props) => {
 				fragmentShader={rotationFragmentShader}
 				vertexShader={baseVertexShader}
 				attributes={attributes}
-				uniforms={rotationUniforms}>
-				<BaseCanvas fragmentShader={rotationFragmentShader} vertexShader={baseVertexShader} uniforms={rotationUniforms} setAttributes={setAttributes} />
+				uniforms={rotationUniforms}
+			>
+				<BaseCanvas
+					fragmentShader={rotationFragmentShader}
+					vertexShader={baseVertexShader}
+					uniforms={rotationUniforms}
+					setAttributes={setAttributes}
+				/>
 			</Section>
 			<Section
 				title='1.3: Signal'
@@ -228,8 +251,14 @@ const MotionPage = ({ isActive }: Props) => {
 				fragmentShader={signalFragmentShader}
 				vertexShader={baseVertexShader}
 				attributes={attributes}
-				uniforms={signalUniforms}>
-				<BaseCanvas fragmentShader={signalFragmentShader} vertexShader={baseVertexShader} uniforms={signalUniforms} setAttributes={setAttributes} />
+				uniforms={signalUniforms}
+			>
+				<BaseCanvas
+					fragmentShader={signalFragmentShader}
+					vertexShader={baseVertexShader}
+					uniforms={signalUniforms}
+					setAttributes={setAttributes}
+				/>
 			</Section>
 			<Section
 				title='1.4: Noise'
@@ -237,8 +266,14 @@ const MotionPage = ({ isActive }: Props) => {
 				fragmentShader={noiseFragmentShader}
 				vertexShader={baseVertexShader}
 				attributes={attributes}
-				uniforms={noiseUniforms}>
-				<BaseCanvas fragmentShader={noiseFragmentShader} vertexShader={baseVertexShader} uniforms={noiseUniforms} setAttributes={setAttributes} />
+				uniforms={noiseUniforms}
+			>
+				<BaseCanvas
+					fragmentShader={noiseFragmentShader}
+					vertexShader={baseVertexShader}
+					uniforms={noiseUniforms}
+					setAttributes={setAttributes}
+				/>
 			</Section>
 			<Section
 				title='1.5: Feedback'
@@ -246,8 +281,14 @@ const MotionPage = ({ isActive }: Props) => {
 				fragmentShader={feedbackFragmentShader}
 				vertexShader={baseVertexShader}
 				attributes={attributes}
-				uniforms={feedbackUniforms}>
-				<FeedbackCanvas fragmentShader={feedbackFragmentShader} vertexShader={baseVertexShader} uniforms={feedbackUniforms} setAttributes={setAttributes} />
+				uniforms={feedbackUniforms}
+			>
+				<FeedbackCanvas
+					fragmentShader={feedbackFragmentShader}
+					vertexShader={baseVertexShader}
+					uniforms={feedbackUniforms}
+					setAttributes={setAttributes}
+				/>
 			</Section>
 		</div>
 	);

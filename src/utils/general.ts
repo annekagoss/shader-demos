@@ -2,11 +2,17 @@ import { UNIFORM_TYPE, UniformSettings, Buffers } from '../../types';
 
 export const BASE_UNIFORMS: UniformSettings = {
 	uResolution: {
-		defaultValue: { x: 400, y: 400 },
+		defaultValue: {
+			x: 400 * window.devicePixelRatio,
+			y: 400 * window.devicePixelRatio
+		},
 		name: 'uResolution',
 		readonly: true,
 		type: UNIFORM_TYPE.VEC_2,
-		value: { x: 400, y: 400 }
+		value: {
+			x: 400 * window.devicePixelRatio,
+			y: 400 * window.devicePixelRatio
+		}
 	}
 };
 

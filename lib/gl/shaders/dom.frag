@@ -32,7 +32,7 @@ void main(){
 	
 	float shift=MAX_SHIFT_AMT*noise;
 	vec4 image=colorShift(uDiffuse0,shift,imageSt);
+	float brightness=(uColor.x+uColor.y+uColor.z)/3.;
 	vec4 color=uColor+image;
-	
 	gl_FragColor=color;
 }

@@ -68,7 +68,6 @@ const isValidRGBAString = (val: string): boolean => {
 const RGBAStringToRGBA = (val: string): RGBA | null => {
 	if (!isValidRGBAString(val)) return;
 	const matchRegex = /rgba\((\d{1,3}), (\d{1,3}), (\d{1,3}), (0\.[0-9]+|[0-1])\)/;
-	console.log(matchRegex.exec(val).slice(1, 5));
 	const [r, g, b, a]: number[] = matchRegex
 		.exec(val)
 		.slice(1, 5)
