@@ -13,7 +13,7 @@ const float SPEED=.00025;
 
 #pragma glslify:fractalNoise=require('./common/fractalNoise.glsl');
 
-const float MAX_SHIFT_AMT=.01;
+const float MAX_SHIFT_AMT=.005;
 vec4 colorShift(sampler2D sampler,float shift,vec2 st){
 	vec4 unshifted=texture2D(sampler,st);
 	float r=texture2D(sampler,st-vec2(shift,0.)).r;
