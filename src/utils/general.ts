@@ -14,12 +14,17 @@ export const isSafari = (): boolean =>
 	/constructor/i.test(window.HTMLElement) ||
 	(function(p) {
 		return p.toString() === '[object SafariRemoteNotification]';
-	})(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification)) ||
+	})(
+		!window['safari'] ||
+			(typeof safari !== 'undefined' && safari.pushNotification)
+	) ||
 	/iP(ad|hone|od).+Version\/[\d\.]+.*Safari/i.test(navigator.userAgent);
 
 export const glSupported = (): boolean => {
 	// Check https://github.com/AnalyticalGraphicsInc/webglreport for more detailed compatibility tests
-	const supported: boolean = Boolean(window.WebGLRenderingContext || window.WebGL2RenderingContext);
+	const supported: boolean = Boolean(
+		window.WebGLRenderingContext || window.WebGL2RenderingContext
+	);
 	if (!supported) {
 		console.warn('WebGL is not supported on this device. Skipping 3D.'); // eslint-disable-line no-console
 	}
@@ -34,12 +39,16 @@ export const parseUniform = (value: any, type: UNIFORM_TYPE) => {
 			return `x: ${value.x}, y: ${value.y}`;
 		case UNIFORM_TYPE.VEC_3:
 			return `x: ${value.x}, y: ${value.y}, z: ${value.z}`;
+		case UNIFORM_TYPE.VEC_4:
+			return `x: ${value.x}, y: ${value.y}, z: ${value.z}, w: ${value.w}`;
 		default:
 			return value;
 	}
 };
 
-export const formatAttributes = (buffersRef: React.MutableRefObject<Buffers>): Record<string, string>[] => {
+export const formatAttributes = (
+	buffersRef: React.MutableRefObject<Buffers>
+): Record<string, string>[] => {
 	if (!buffersRef.current) return [];
 	return Object.keys(buffersRef.current).reduce((result, bufferName) => {
 		const buffer = buffersRef.current[bufferName];

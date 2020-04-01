@@ -1,17 +1,45 @@
-import { Buffer, Buffers, FBO, Mesh, Material, Matrix, Vector2, FaceArray, UniformSetting, UniformSettings, MESH_TYPE, Materials, UNIFORM_TYPE, Texture } from '../../types';
+import {
+	Buffer,
+	Buffers,
+	FBO,
+	Mesh,
+	Material,
+	Matrix,
+	Vector2,
+	FaceArray,
+	UniformSetting,
+	UniformSettings,
+	MESH_TYPE,
+	Materials,
+	UNIFORM_TYPE,
+	Texture
+} from '../../types';
 import { degreesToRadians } from './math';
 import { createMat4, applyPerspective, lookAt } from './matrix';
-import { MAX_SUPPORTED_MATERIAL_TEXTURES, NEAR_CLIPPING, FAR_CLIPPING, FIELD_OF_VIEW } from './settings';
+import {
+	MAX_SUPPORTED_MATERIAL_TEXTURES,
+	NEAR_CLIPPING,
+	FAR_CLIPPING,
+	FIELD_OF_VIEW
+} from './settings';
 import outlineFragmentSource from '../../lib/gl/shaders/outline.frag';
 import outlineVertexSource from '../../lib/gl/shaders/base.vert';
-import { initBaseMeshBuffers, initMeshBuffersFromFaceArray, initBuffers } from './buffers';
+import {
+	initBaseMeshBuffers,
+	initMeshBuffersFromFaceArray,
+	initBuffers
+} from './buffers';
 import { initFrameBufferObject } from './frameBuffer';
 
 export interface InitializeProps {
 	gl: React.MutableRefObject<WebGLRenderingContext>;
 	programRef?: React.MutableRefObject<WebGLProgram>;
-	uniformLocations: React.MutableRefObject<Record<string, WebGLUniformLocation>>;
-	outlineUniformLocations?: React.MutableRefObject<Record<string, WebGLUniformLocation>>;
+	uniformLocations: React.MutableRefObject<
+		Record<string, WebGLUniformLocation>
+	>;
+	outlineUniformLocations?: React.MutableRefObject<
+		Record<string, WebGLUniformLocation>
+	>;
 	canvasRef: React.MutableRefObject<HTMLCanvasElement>;
 	fragmentSource: string;
 	vertexSource: string;
@@ -31,9 +59,23 @@ export interface InitializeProps {
 	texturesRef?: React.MutableRefObject<WebGLTexture[]>;
 }
 
-export const initializeRenderer = ({ uniformLocations, canvasRef, fragmentSource, vertexSource, uniforms, size, FBOA, FBOB, outlineUniformLocations }: InitializeProps) => {
+export const initializeRenderer = ({
+	uniformLocations,
+	canvasRef,
+	fragmentSource,
+	vertexSource,
+	uniforms,
+	size,
+	FBOA,
+	FBOB,
+	outlineUniformLocations
+}: InitializeProps) => {
 	if (!canvasRef.current) return;
-	const gl: WebGLRenderingContext = (canvasRef.current.getContext('experimental-webgl') as WebGLRenderingContext) || (canvasRef.current.getContext('webgl') as WebGLRenderingContext);
+	const gl: WebGLRenderingContext =
+		(canvasRef.current.getContext(
+			'experimental-webgl'
+		) as WebGLRenderingContext) ||
+		(canvasRef.current.getContext('webgl') as WebGLRenderingContext);
 
 	gl.clearColor(0, 0, 0, 0);
 	gl.clearDepth(1);
@@ -43,13 +85,22 @@ export const initializeRenderer = ({ uniformLocations, canvasRef, fragmentSource
 	gl.viewport(0, 0, size.current.x, size.current.y);
 	gl.enable(gl.SAMPLE_ALPHA_TO_COVERAGE); // Prevents culling for wireframes
 
-	const program: WebGLProgram = initShaderProgram(gl, vertexSource, fragmentSource);
+	const program: WebGLProgram = initShaderProgram(
+		gl,
+		vertexSource,
+		fragmentSource
+	);
 	gl.useProgram(program);
 
 	const usePingPongBuffers: boolean = Boolean(FBOA && FBOB);
 
 	uniformLocations.current = {
-		...mapUniformSettingsToLocations(uniforms, gl, program, usePingPongBuffers),
+		...mapUniformSettingsToLocations(
+			uniforms,
+			gl,
+			program,
+			usePingPongBuffers
+		),
 		uProjectionMatrix: gl.getUniformLocation(program, 'uProjectionMatrix'),
 		uModelViewMatrix: gl.getUniformLocation(program, 'uModelViewMatrix'),
 		uNormalMatrix: gl.getUniformLocation(program, 'uNormalMatrix'),
@@ -63,8 +114,16 @@ export const initializeRenderer = ({ uniformLocations, canvasRef, fragmentSource
 	};
 
 	if (usePingPongBuffers) {
-		FBOA.current = initFrameBufferObject(gl, size.current.x, size.current.y);
-		FBOB.current = initFrameBufferObject(gl, size.current.x, size.current.y);
+		FBOA.current = initFrameBufferObject(
+			gl,
+			size.current.x,
+			size.current.y
+		);
+		FBOB.current = initFrameBufferObject(
+			gl,
+			size.current.x,
+			size.current.y
+		);
 	}
 	let outlineProgram;
 	if (outlineUniformLocations) {
@@ -74,22 +133,46 @@ export const initializeRenderer = ({ uniformLocations, canvasRef, fragmentSource
 	return { gl, program, outlineProgram };
 };
 
-const initShaderProgram = (gl: WebGLRenderingContext, vertSource: string, fragSource: string): WebGLProgram => {
-	const vertexShader: WebGLShader = loadShader(gl, gl.VERTEX_SHADER, vertSource);
-	const fragmentShader: WebGLShader = loadShader(gl, gl.FRAGMENT_SHADER, fragSource);
+const initShaderProgram = (
+	gl: WebGLRenderingContext,
+	vertSource: string,
+	fragSource: string
+): WebGLProgram => {
+	const vertexShader: WebGLShader = loadShader(
+		gl,
+		gl.VERTEX_SHADER,
+		vertSource
+	);
+	const fragmentShader: WebGLShader = loadShader(
+		gl,
+		gl.FRAGMENT_SHADER,
+		fragSource
+	);
 	const program: WebGLProgram = gl.createProgram();
 	gl.attachShader(program, vertexShader);
 	gl.attachShader(program, fragmentShader);
 	gl.linkProgram(program);
 
 	if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-		console.warn('Unabled to initialize the shader program: ' + gl.getProgramInfoLog(program)); /* tslint:disable-line no-console */
+		console.warn(
+			'Unabled to initialize the shader program: ' +
+				gl.getProgramInfoLog(program)
+		); /* tslint:disable-line no-console */
 	}
 	return program;
 };
 
-const initializeOutlineProgram = (gl: WebGLRenderingContext, outlineUniformLocations: React.MutableRefObject<Record<string, WebGLUniformLocation>>) => {
-	const outlineProgram: WebGLProgram = initShaderProgram(gl, outlineVertexSource, outlineFragmentSource);
+const initializeOutlineProgram = (
+	gl: WebGLRenderingContext,
+	outlineUniformLocations: React.MutableRefObject<
+		Record<string, WebGLUniformLocation>
+	>
+) => {
+	const outlineProgram: WebGLProgram = initShaderProgram(
+		gl,
+		outlineVertexSource,
+		outlineFragmentSource
+	);
 	outlineUniformLocations.current = {
 		uSource: gl.getUniformLocation(outlineProgram, 'uSource'),
 		uOutline: gl.getUniformLocation(outlineProgram, 'uOutline'),
@@ -98,10 +181,18 @@ const initializeOutlineProgram = (gl: WebGLRenderingContext, outlineUniformLocat
 	return outlineProgram;
 };
 
-const mapUniformSettingsToLocations = (settings: UniformSettings, gl: WebGLRenderingContext, program: WebGLProgram, useFrameBuffer: boolean): Record<string, WebGLUniformLocation> => {
+const mapUniformSettingsToLocations = (
+	settings: UniformSettings,
+	gl: WebGLRenderingContext,
+	program: WebGLProgram,
+	useFrameBuffer: boolean
+): Record<string, WebGLUniformLocation> => {
 	const locations: Record<string, WebGLUniformLocation> = useFrameBuffer
 		? {
-				frameBufferTexture0: gl.getUniformLocation(program, 'frameBufferTexture0')
+				frameBufferTexture0: gl.getUniformLocation(
+					program,
+					'frameBufferTexture0'
+				)
 		  }
 		: {};
 	return Object.keys(settings).reduce((result, name) => {
@@ -110,19 +201,38 @@ const mapUniformSettingsToLocations = (settings: UniformSettings, gl: WebGLRende
 	}, locations);
 };
 
-export const initializeMesh = ({ faceArray, buffersRef, meshType, mesh, baseVertexBufferRef }: InitializeProps, gl: WebGLRenderingContext, program: WebGLProgram, outlineProgram: WebGLProgram) => {
+export const initializeMesh = (
+	{
+		faceArray,
+		buffersRef,
+		meshType,
+		mesh,
+		baseVertexBufferRef
+	}: InitializeProps,
+	gl: WebGLRenderingContext,
+	program: WebGLProgram,
+	outlineProgram: WebGLProgram
+) => {
 	switch (meshType) {
 		case MESH_TYPE.BASE_TRIANGLES:
 			initBaseMeshBuffers(gl, program);
 			break;
 		case MESH_TYPE.FACE_ARRAY:
 			if (!faceArray) return;
-			buffersRef.current = initMeshBuffersFromFaceArray(gl, program, faceArray, true);
+			buffersRef.current = initMeshBuffersFromFaceArray(
+				gl,
+				program,
+				faceArray,
+				true
+			);
 			break;
 		case MESH_TYPE.OBJ:
 			if (outlineProgram) {
 				gl.useProgram(outlineProgram);
-				baseVertexBufferRef.current = initBaseMeshBuffers(gl, outlineProgram);
+				baseVertexBufferRef.current = initBaseMeshBuffers(
+					gl,
+					outlineProgram
+				);
 			}
 			gl.useProgram(program);
 			buffersRef.current = initBuffers(gl, program, mesh, true);
@@ -132,19 +242,30 @@ export const initializeMesh = ({ faceArray, buffersRef, meshType, mesh, baseVert
 	}
 };
 
-export const loadShader = (gl: WebGLRenderingContext, type: number, source: string): WebGLShader => {
+export const loadShader = (
+	gl: WebGLRenderingContext,
+	type: number,
+	source: string
+): WebGLShader => {
 	const shader: WebGLShader = gl.createShader(type);
 	gl.shaderSource(shader, source);
 	gl.compileShader(shader);
 	if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-		console.warn('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader)); /* tslint:disable-line no-console */
+		console.warn(
+			'An error occurred compiling the shaders: ' +
+				gl.getShaderInfoLog(shader)
+		); /* tslint:disable-line no-console */
 		gl.deleteShader(shader);
 		return;
 	}
 	return shader;
 };
 
-export const assignProjectionMatrix = (gl: WebGLRenderingContext, uniformLocations: Record<string, WebGLUniformLocation>, size: Vector2): Matrix => {
+export const assignProjectionMatrix = (
+	gl: WebGLRenderingContext,
+	uniformLocations: Record<string, WebGLUniformLocation>,
+	size: Vector2
+): Matrix => {
 	if (!size) return;
 	let projectionMatrix: Matrix = applyPerspective({
 		sourceMatrix: createMat4(),
@@ -159,16 +280,32 @@ export const assignProjectionMatrix = (gl: WebGLRenderingContext, uniformLocatio
 		up: { x: 0, y: 1, z: 0 }
 	});
 
-	gl.uniformMatrix4fv(uniformLocations.uProjectionMatrix, false, projectionMatrix);
+	gl.uniformMatrix4fv(
+		uniformLocations.uProjectionMatrix,
+		false,
+		projectionMatrix
+	);
 
 	return projectionMatrix;
 };
 
 // Initialize texture to be displayed while webworker loads OBJ
-export function initPlaceholderTexture(gl: WebGLRenderingContext): WebGLTexture {
+export function initPlaceholderTexture(
+	gl: WebGLRenderingContext
+): WebGLTexture {
 	const texture: WebGLTexture = gl.createTexture();
 	gl.bindTexture(gl.TEXTURE_2D, texture);
-	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 0]));
+	gl.texImage2D(
+		gl.TEXTURE_2D,
+		0,
+		gl.RGBA,
+		1,
+		1,
+		0,
+		gl.RGBA,
+		gl.UNSIGNED_BYTE,
+		new Uint8Array([0, 0, 0, 0])
+	);
 	return texture;
 }
 
@@ -196,10 +333,22 @@ export const assignUniforms = (
 				if (uniform.name === 'uMouse') {
 					uniform.value = Object.values(mousePos);
 				}
-				gl.uniform2fv(uniformLocations[uniform.name], Object.values(uniform.value));
+				gl.uniform2fv(
+					uniformLocations[uniform.name],
+					Object.values(uniform.value)
+				);
 				break;
 			case UNIFORM_TYPE.VEC_3:
-				gl.uniform3fv(uniformLocations[uniform.name], Object.values(uniform.value));
+				gl.uniform3fv(
+					uniformLocations[uniform.name],
+					Object.values(uniform.value)
+				);
+				break;
+			case UNIFORM_TYPE.VEC_4:
+				gl.uniform4fv(
+					uniformLocations[uniform.name],
+					Object.values(uniform.value)
+				);
 				break;
 			default:
 				break;

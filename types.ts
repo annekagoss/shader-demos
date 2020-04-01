@@ -72,6 +72,13 @@ export type GLSLColor = Float32List;
 
 export type GLSLColors = Record<ColorName, GLSLColor>;
 
+export interface RGBA {
+	r: number;
+	g: number;
+	b: number;
+	a: number;
+}
+
 export enum AxisName {
 	x = 'x',
 	y = 'y',
@@ -275,7 +282,8 @@ export enum UNIFORM_TYPE {
 	INT_1 = 'uniform1i',
 	FLOAT_1 = 'uniform1f',
 	VEC_2 = 'uniform2fv',
-	VEC_3 = 'uniform3fv'
+	VEC_3 = 'uniform3fv',
+	VEC_4 = 'uniform4fv'
 }
 
 export interface UniformSetting {

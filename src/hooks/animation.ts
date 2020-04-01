@@ -9,7 +9,10 @@ interface UsePauseWhileOffScreenProps {
 	animate: (timer: number) => void;
 }
 
-export const useAnimationFrame = (canvasRef: React.MutableRefObject<HTMLCanvasElement>, callback: (time: number, pingPing: number) => void) => {
+export const useAnimationFrame = (
+	canvasRef: React.MutableRefObject<HTMLCanvasElement>,
+	callback: (time: number, pingPing: number) => void
+) => {
 	const requestRef: React.MutableRefObject<number> = useRef<number>(0);
 	const previousTimeRef: React.MutableRefObject<number> = useRef<number>(0);
 	const pingPongRef: React.MutableRefObject<number> = useRef<number>(0);
@@ -29,9 +32,12 @@ export const useAnimationFrame = (canvasRef: React.MutableRefObject<HTMLCanvasEl
 
 		// Run animation loop
 		idleTimerRef.current++;
-		if (previousTimeRef.current !== undefined) callback(time, pingPongRef.current);
+		if (previousTimeRef.current !== undefined)
+			callback(time, pingPongRef.current);
 		previousTimeRef.current = time;
-		pingPongRef.current = pingPongRef.current = Math.abs(pingPongRef.current - 1);
+		pingPongRef.current = pingPongRef.current = Math.abs(
+			pingPongRef.current - 1
+		);
 		requestRef.current = requestAnimationFrame(animate);
 	};
 
@@ -40,7 +46,13 @@ export const useAnimationFrame = (canvasRef: React.MutableRefObject<HTMLCanvasEl
 		return () => cancelAnimationFrame(requestRef.current);
 	}, []);
 
-	usePauseWhileOffScreen({ canvasRef, idleRef, idleTimerRef, requestRef, animate });
+	usePauseWhileOffScreen({
+		canvasRef,
+		idleRef,
+		idleTimerRef,
+		requestRef,
+		animate
+	});
 };
 
 const usePauseWhileOffScreen = (props: UsePauseWhileOffScreenProps) => {
@@ -51,15 +63,23 @@ const usePauseWhileOffScreen = (props: UsePauseWhileOffScreenProps) => {
 		window.addEventListener('scroll', scrollHandler);
 		window.addEventListener('mousemove', mouseMoveHandler);
 		window.addEventListener('touchmove', mouseMoveHandler);
+		window.addEventListener('keyup', mouseMoveHandler);
 		return () => {
 			window.removeEventListener('scroll', scrollHandler);
 			window.removeEventListener('mousemove', mouseMoveHandler);
 			window.removeEventListener('touchmove', mouseMoveHandler);
+			window.removeEventListener('keyup', mouseMoveHandler);
 		};
 	}, []);
 };
 
-const handleScroll = ({ canvasRef, idleRef, idleTimerRef, requestRef, animate }: UsePauseWhileOffScreenProps) => {
+const handleScroll = ({
+	canvasRef,
+	idleRef,
+	idleTimerRef,
+	requestRef,
+	animate
+}: UsePauseWhileOffScreenProps) => {
 	if (!canvasRef.current) return;
 	const { y, height } = canvasRef.current.getBoundingClientRect() as DOMRect;
 	const topAboveBottom: boolean = y < window.innerHeight;
@@ -78,7 +98,12 @@ const handleScroll = ({ canvasRef, idleRef, idleTimerRef, requestRef, animate }:
 	}
 };
 
-const resetIdleTimer = ({ idleRef, idleTimerRef, requestRef, animate }: UsePauseWhileOffScreenProps) => {
+const resetIdleTimer = ({
+	idleRef,
+	idleTimerRef,
+	requestRef,
+	animate
+}: UsePauseWhileOffScreenProps) => {
 	if (!idleRef.current) return;
 	idleTimerRef.current = 0;
 	requestRef.current = requestAnimationFrame(animate);

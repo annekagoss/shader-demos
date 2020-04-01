@@ -25,18 +25,39 @@ const BASE_RASTERIZATION_UNIFORMS: UniformSettings = {
 		readonly: true,
 		type: UNIFORM_TYPE.VEC_2,
 		value: { x: 0, y: 0 }
+	},
+	uColor: {
+		defaultValue: { x: 0.0, y: 0.0, z: 1.0, w: 1.0 },
+		name: 'uColor',
+		readonly: true,
+		type: UNIFORM_TYPE.VEC_4,
+		value: { x: 0.0, y: 0.0, z: 1.0, w: 1.0 }
 	}
 };
 
 const DOMRasterizationPage = ({ isActive }: Props) => {
-	const rasterizationUniforms = React.useRef<UniformSettings>(BASE_RASTERIZATION_UNIFORMS);
+	const rasterizationUniforms = React.useRef<UniformSettings>(
+		BASE_RASTERIZATION_UNIFORMS
+	);
 	const [attributes, setAttributes] = React.useState<any[]>([]);
 	if (!isActive) return <></>;
 
 	return (
 		<div>
-			<Section title='' fullScreen={true} fragmentShader={rasterizationFragmentShader} vertexShader={rasterizationVertexShader} attributes={attributes} uniforms={rasterizationUniforms}>
-				<DOMRasterizationCanvas fragmentShader={rasterizationFragmentShader} vertexShader={rasterizationVertexShader} uniforms={rasterizationUniforms} setAttributes={setAttributes} />
+			<Section
+				title=''
+				fullScreen={true}
+				fragmentShader={rasterizationFragmentShader}
+				vertexShader={rasterizationVertexShader}
+				attributes={attributes}
+				uniforms={rasterizationUniforms}
+			>
+				<DOMRasterizationCanvas
+					fragmentShader={rasterizationFragmentShader}
+					vertexShader={rasterizationVertexShader}
+					uniforms={rasterizationUniforms}
+					setAttributes={setAttributes}
+				/>
 			</Section>
 		</div>
 	);
