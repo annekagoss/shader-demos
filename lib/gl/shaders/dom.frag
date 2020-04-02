@@ -22,7 +22,9 @@ vec4 colorShift(sampler2D sampler, float shift, vec2 st, float backgroundLuminan
 		float ra = texture2D(sampler, st - vec2(shift, 0.)).a;
 		float ba = texture2D(sampler, st + vec2(shift, 0.)).a;
 		float a = max(max(ra, ba), unshifted.a);
-		return vec4(ra-unshifted.a, unshifted.g, ba-unshifted.a, a);
+		vec3 left = vec3(ra-unshifted.a, 0, unshifted.b);
+		vec3 right = vec3(unshifted.r, 0, ba-unshifted.a);
+		return vec4(left + right, a);
 	}
 	
 	float r = texture2D(sampler, st - vec2(shift, 0.)).r;
@@ -34,7 +36,6 @@ float luminance(vec4 color, vec3 background) {
 	vec3 rgb = mix(background, color.rgb, color.a);
 	return 0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b;
 }
-
 
 void main() {
 	vec2 st = gl_FragCoord.xy/uResolution;

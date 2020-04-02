@@ -43,7 +43,8 @@ const SourceElement = React.forwardRef(
 		const buttonRef: React.RefObject<HTMLButtonElement> = React.useRef<HTMLButtonElement>();
 		const textColor: string = isCursorCopy ? 'transparent' : contrastColor;
 		const buttonBorder: string = isCursorCopy ? 'solid 1px transparent' : `solid 1px ${contrastColor}`;
-		const hoverButtonColor: string = isCursorCopy ? 'transparent' : text;
+		const contrastColorOpposite: string = contrastColor === 'white' ? 'black' : 'white';
+		const hoverButtonColor: string = isCursorCopy ? 'transparent' : contrastColorOpposite;
 		const buttonColor: string = buttonActive ? hoverButtonColor : textColor;
 		const buttonBackground: string = buttonActive ? textColor : 'transparent';
 		const inputBorder: string = inputFocused ? `solid 1px ${textColor}` : 'solid 1px transparent';
