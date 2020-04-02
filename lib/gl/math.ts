@@ -1,15 +1,15 @@
-import {Vector3} from '../../types';
+import { Vector3 } from '../../types';
 
 export const degreesToRadians = (degrees: number): number => degrees * (Math.PI / 180);
 
 export const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), max);
 
-export const lerp = (v0: number, v1: number, t: number): number => v0 * (1 - t) + v1 * t;
+export const interpolate = (v0: number, v1: number, t: number): number => v0 * (1 - t) + v1 * t;
 
 export const interpolateVectors = (sourceVector: Vector3, targetVector: Vector3, amount: number): Vector3 => ({
-	x: lerp(sourceVector.x, targetVector.x, amount),
-	y: lerp(sourceVector.y, targetVector.y, amount),
-	z: lerp(sourceVector.z, targetVector.z, amount)
+	x: interpolate(sourceVector.x, targetVector.x, amount),
+	y: interpolate(sourceVector.y, targetVector.y, amount),
+	z: interpolate(sourceVector.z, targetVector.z, amount)
 });
 
 export const addVectors = (a: Vector3, b: Vector3): Vector3 => ({
@@ -42,7 +42,7 @@ export const normalizeVector = (v: Vector3): Vector3 => {
 	return multiplyScalar(v, 1 / magnitude);
 };
 
-export const vectorMagnitude = ({x, y, z}: Vector3): number => Math.sqrt(x * x + y * y + z * z);
+export const vectorMagnitude = ({ x, y, z }: Vector3): number => Math.sqrt(x * x + y * y + z * z);
 
 const computeFaceNormal = (face: Vector3[]): Vector3 => {
 	const [a, b, c] = face;

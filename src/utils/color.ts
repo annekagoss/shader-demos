@@ -1,4 +1,5 @@
-import { RGBA } from '../../types';
+import { RGB, RGBA } from '../../types';
+import { interpolate } from '../../lib/gl/math';
 
 export const parseColorFromString = (string: string): RGBA | null => {
 	const RGBAFromHex: RGBA | null = HexToRGBA(string);
@@ -83,3 +84,14 @@ const CSSColorStringToRGBA = (val: string): RGBA | null => {
 	const rgbString: string = window.getComputedStyle(testDiv).color;
 	return RGBStringToRGBA(rgbString);
 };
+
+export const luminanceFromRGBA = (rgba: RGBA, backgroundColor: RGB): number => {
+	const { r, g, b }: RGB = interpolateRGBColors(backgroundColor, { r: rgba.r, g: rgba.g, b: rgba.b }, rgba.a);
+	return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+
+const interpolateRGBColors = (sourceColor: RGB, targetColor: RGB, amount: number): RGB => ({
+	r: interpolate(sourceColor.r, targetColor.r, amount),
+	g: interpolate(sourceColor.g, targetColor.g, amount),
+	b: interpolate(sourceColor.b, targetColor.b, amount)
+});

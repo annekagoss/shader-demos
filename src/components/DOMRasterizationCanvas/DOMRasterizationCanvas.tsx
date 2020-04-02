@@ -8,7 +8,7 @@ import { useWindowSize } from '../../hooks/resize';
 import { useMouse } from '../../hooks/mouse';
 import styles from './DOMRasterizationCanvas.module.scss';
 import { useRasterizeToGL } from '../../hooks/rasterize';
-import { parseColorFromString } from '../../utils/color';
+import { parseColorFromString, luminanceFromRGBA } from '../../utils/color';
 
 interface Props {
 	fragmentShader: string;
@@ -35,46 +35,22 @@ interface SourceElementProps {
 	setButtonActive?: (val: boolean) => void;
 	inputFocused: boolean;
 	setInputFocused?: (val: boolean) => void;
+	contrastColor: string;
 }
 
 const SourceElement = React.forwardRef(
-	(
-		{
-			buttonActive,
-			setButtonActive,
-			inputFocused,
-			setInputFocused,
-			text,
-			setText,
-			isCursorCopy = false
-		}: SourceElementProps,
-		ref: React.RefObject<HTMLDivElement>
-	) => {
-		const buttonRef: React.RefObject<HTMLButtonElement> = React.useRef<
-			HTMLButtonElement
-		>();
-		const textColor: string = isCursorCopy ? 'transparent' : 'white';
-		const buttonBorder: string = isCursorCopy
-			? 'solid 1px transparent'
-			: 'solid 1px white';
-		const hoverButtonColor: string = isCursorCopy
-			? 'transparent'
-			: 'rgb(0, 0, 255)';
+	({ buttonActive, setButtonActive, inputFocused, setInputFocused, text, setText, contrastColor, isCursorCopy = false }: SourceElementProps, ref: React.RefObject<HTMLDivElement>) => {
+		const buttonRef: React.RefObject<HTMLButtonElement> = React.useRef<HTMLButtonElement>();
+		const textColor: string = isCursorCopy ? 'transparent' : contrastColor;
+		const buttonBorder: string = isCursorCopy ? 'solid 1px transparent' : `solid 1px ${contrastColor}`;
+		const hoverButtonColor: string = isCursorCopy ? 'transparent' : text;
 		const buttonColor: string = buttonActive ? hoverButtonColor : textColor;
-		const buttonBackground: string = buttonActive
-			? textColor
-			: 'transparent';
-		const inputBorder: string = inputFocused
-			? `solid 1px ${textColor}`
-			: 'solid 1px transparent';
+		const buttonBackground: string = buttonActive ? textColor : 'transparent';
+		const inputBorder: string = inputFocused ? `solid 1px ${textColor}` : 'solid 1px transparent';
 
 		return (
 			<div
-				className={cx(
-					styles.canvasForeground,
-					styles.sourceElement,
-					isCursorCopy && styles.cursorCopy
-				)}
+				className={cx(styles.canvasForeground, styles.sourceElement, isCursorCopy && styles.cursorCopy)}
 				ref={ref}
 				style={{
 					position: 'absolute',
@@ -87,14 +63,12 @@ const SourceElement = React.forwardRef(
 					alignItems: 'center',
 					margin: 0,
 					padding: 0
-				}}
-			>
+				}}>
 				<div
 					style={{
 						padding: 0,
 						margin: 0
-					}}
-				>
+					}}>
 					<div
 						style={{
 							marginBottom: 80,
@@ -104,8 +78,7 @@ const SourceElement = React.forwardRef(
 							fontFamily: 'Roboto, sans-serif',
 							fontWeight: 'bold',
 							letterSpacing: 1
-						}}
-					>
+						}}>
 						type a color
 					</div>
 					<form
@@ -113,8 +86,7 @@ const SourceElement = React.forwardRef(
 							display: 'flex',
 							flexDirection: 'column',
 							alignItems: 'flex-start'
-						}}
-					>
+						}}>
 						<input
 							type='text'
 							style={{
@@ -140,12 +112,8 @@ const SourceElement = React.forwardRef(
 								if (!isCursorCopy) return;
 								setText && setText(e.target.value);
 							}}
-							onFocus={() =>
-								setInputFocused && setInputFocused(true)
-							}
-							onBlur={() =>
-								setInputFocused && setInputFocused(false)
-							}
+							onFocus={() => setInputFocused && setInputFocused(true)}
+							onBlur={() => setInputFocused && setInputFocused(false)}
 						/>
 						<button
 							ref={buttonRef}
@@ -162,13 +130,8 @@ const SourceElement = React.forwardRef(
 							}}
 							type='button'
 							onClick={() => setText && setText('')}
-							onMouseEnter={() =>
-								setButtonActive && setButtonActive(true)
-							}
-							onMouseLeave={() =>
-								setButtonActive && setButtonActive(false)
-							}
-						>
+							onMouseEnter={() => setButtonActive && setButtonActive(true)}
+							onMouseLeave={() => setButtonActive && setButtonActive(false)}>
 							{' '}
 							clear
 						</button>
@@ -184,11 +147,9 @@ interface SourceProps {
 }
 
 const Source = React.forwardRef(({ uniforms }: SourceProps, ref) => {
-	const {
-		sourceRef,
-		cursorRef
-	}: Record<string, React.RefObject<HTMLDivElement>> = ref;
-	const [text, setText] = React.useState<string>('blue');
+	const { sourceRef, cursorRef }: Record<string, React.RefObject<HTMLDivElement>> = ref;
+	const [text, setText] = React.useState<string>('white');
+	const [contrastColor, setContrastColor] = React.useState<string>('white');
 	const [buttonActive, setButtonActive] = React.useState<boolean>(false);
 	const [inputFocused, setInputFocused] = React.useState<boolean>(false);
 
@@ -196,16 +157,15 @@ const Source = React.forwardRef(({ uniforms }: SourceProps, ref) => {
 		const color: RGBA = parseColorFromString(text);
 		if (Boolean(color)) {
 			uniforms.current.uColor.value = color;
+			const luminance: number = luminanceFromRGBA(color, { r: 1, g: 1, b: 1 });
+			const contrastColor: string = luminance > 0.5 ? 'black' : 'white';
+			console.log({ luminance, contrastColor });
+			setContrastColor(contrastColor);
 		}
 	}, [text]);
 	return (
 		<>
-			<SourceElement
-				ref={sourceRef}
-				text={text}
-				buttonActive={buttonActive}
-				inputFocused={inputFocused}
-			/>
+			<SourceElement ref={sourceRef} text={text} buttonActive={buttonActive} inputFocused={inputFocused} contrastColor={contrastColor} />
 			<SourceElement
 				ref={cursorRef}
 				isCursorCopy={true}
@@ -215,63 +175,37 @@ const Source = React.forwardRef(({ uniforms }: SourceProps, ref) => {
 				setButtonActive={setButtonActive}
 				inputFocused={inputFocused}
 				setInputFocused={setInputFocused}
+				contrastColor={contrastColor}
 			/>
 		</>
 	);
 });
 
-const render = ({
-	gl,
-	uniformLocations,
-	uniforms,
-	time,
-	mousePos,
-	texture
-}: RenderProps) => {
+const render = ({ gl, uniformLocations, uniforms, time, mousePos, texture }: RenderProps) => {
 	if (!gl) return;
 	assignUniforms(uniforms, uniformLocations, gl, time, mousePos);
 	gl.activeTexture(gl.TEXTURE0);
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 };
 
-const DOMRasterizatioCanvas = ({
-	fragmentShader,
-	vertexShader,
-	uniforms,
-	setAttributes
-}: Props) => {
-	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<
-		HTMLCanvasElement
-	>();
+const DOMRasterizatioCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes }: Props) => {
+	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<HTMLCanvasElement>();
 	const size: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
 		x: uniforms.current.uResolution.value.x * window.devicePixelRatio,
 		y: uniforms.current.uResolution.value.y * window.devicePixelRatio
 	});
-	const initialMousePosition = uniforms.current.uMouse
-		? uniforms.current.uMouse.defaultValue
-		: { x: 0.5, y: 0.5 };
+	const initialMousePosition = uniforms.current.uMouse ? uniforms.current.uMouse.defaultValue : { x: 0.5, y: 0.5 };
 	const mousePosRef: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
 		x: size.current.x * initialMousePosition.x,
 		y: size.current.y * -initialMousePosition.y
 	});
 	const gl = React.useRef<WebGLRenderingContext>();
-	const uniformLocations = React.useRef<
-		Record<string, WebGLUniformLocation>
-	>();
-	const imageTexturesRef: React.MutableRefObject<Record<
-		string,
-		string
-	>> = React.useRef<Record<string, string>>({});
-	const texturesRef: React.MutableRefObject<WebGLTexture[]> = React.useRef<
-		WebGLTexture[]
-	>([]);
+	const uniformLocations = React.useRef<Record<string, WebGLUniformLocation>>();
+	const imageTexturesRef: React.MutableRefObject<Record<string, string>> = React.useRef<Record<string, string>>({});
+	const texturesRef: React.MutableRefObject<WebGLTexture[]> = React.useRef<WebGLTexture[]>([]);
 
-	const sourceElementRef: React.RefObject<HTMLDivElement> = React.useRef<
-		HTMLDivElement
-	>();
-	const cursorElementRef: React.RefObject<HTMLImageElement> = React.useRef<
-		HTMLImageElement
-	>();
+	const sourceElementRef: React.RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>();
+	const cursorElementRef: React.RefObject<HTMLImageElement> = React.useRef<HTMLImageElement>();
 
 	const initializeGLProps: InitializeProps = {
 		gl,
@@ -293,9 +227,7 @@ const DOMRasterizatioCanvas = ({
 	});
 
 	React.useEffect(() => {
-		setAttributes([
-			{ name: 'aVertexPosition', value: BASE_TRIANGLE_MESH.join(', ') }
-		]);
+		setAttributes([{ name: 'aVertexPosition', value: BASE_TRIANGLE_MESH.join(', ') }]);
 	}, []);
 
 	useWindowSize(canvasRef, gl, uniforms.current, size);

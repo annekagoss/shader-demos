@@ -10,77 +10,52 @@ import DOMRasterizationPage from '../pages/DOMRasterizationPage';
 import styles from './app.module.scss';
 
 const App = () => {
-	const [activePageIndex, setActivePageIndex] = React.useState<number>(0);
-	if (!glSupported())
-		return <div>'WebGL is not supported on this device.'</div>;
+	const [activePageIndex, setActivePageIndex] = React.useState<number>(5);
+	if (!glSupported()) return <div>'WebGL is not supported on this device.'</div>;
 
 	return (
 		<div className={styles.app}>
 			<div className={styles.navigation}>
 				<div
-					className={cx(
-						styles.navItem,
-						activePageIndex === 0 && styles.active
-					)}
+					className={cx(styles.navItem, activePageIndex === 0 && styles.active)}
 					onClick={() => {
 						setActivePageIndex(0);
-					}}
-				>
+					}}>
 					0. Form
 				</div>
 				<div
-					className={cx(
-						styles.navItem,
-						activePageIndex === 1 && styles.active
-					)}
+					className={cx(styles.navItem, activePageIndex === 1 && styles.active)}
 					onClick={() => {
 						setActivePageIndex(1);
-					}}
-				>
+					}}>
 					1. Motion
 				</div>
 				<div
-					className={cx(
-						styles.navItem,
-						activePageIndex === 2 && styles.active
-					)}
+					className={cx(styles.navItem, activePageIndex === 2 && styles.active)}
 					onClick={() => {
 						setActivePageIndex(2);
-					}}
-				>
+					}}>
 					2. Depth
 				</div>
 				<div
-					className={cx(
-						styles.navItem,
-						activePageIndex === 3 && styles.active
-					)}
+					className={cx(styles.navItem, activePageIndex === 3 && styles.active)}
 					onClick={() => {
 						setActivePageIndex(3);
-					}}
-				>
+					}}>
 					3. Interaction
 				</div>
 				<div
-					className={cx(
-						styles.navItem,
-						activePageIndex === 4 && styles.active
-					)}
+					className={cx(styles.navItem, activePageIndex === 4 && styles.active)}
 					onClick={() => {
 						setActivePageIndex(4);
-					}}
-				>
+					}}>
 					4. Transition
 				</div>
 				<div
-					className={cx(
-						styles.navItem,
-						activePageIndex === 5 && styles.active
-					)}
+					className={cx(styles.navItem, activePageIndex === 5 && styles.active)}
 					onClick={() => {
 						setActivePageIndex(5);
-					}}
-				>
+					}}>
 					5. DOM Rasterization
 				</div>
 			</div>

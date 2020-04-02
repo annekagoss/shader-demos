@@ -15,12 +15,12 @@ const float SPEED = 0.00025;
 
 #pragma glslify: fractalNoise = require('./common/fractalNoise.glsl');
 
-float lerp(float start, float end, float t) {
+float interpolate(float start, float end, float t) {
   return start * (1.0 - t) + end * t;
 }
 
 float transitionWipe(vec2 st) {
-	float transition = st.x + lerp(-1.0 - blur, 1.0 + blur, uTransitionProgress);
+	float transition = st.x + interpolate(-1.0 - blur, 1.0 + blur, uTransitionProgress);
 	return smoothstep(transition - blur, transition + blur, st.y);
 }
 

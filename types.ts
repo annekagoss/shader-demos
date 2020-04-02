@@ -72,10 +72,13 @@ export type GLSLColor = Float32List;
 
 export type GLSLColors = Record<ColorName, GLSLColor>;
 
-export interface RGBA {
+export interface RGB {
 	r: number;
 	g: number;
 	b: number;
+}
+
+export interface RGBA extends RGB {
 	a: number;
 }
 
