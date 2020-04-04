@@ -21,6 +21,14 @@
 	&.sourceElement:not(.cursorCopy) {
 		visibility: hidden;
 	}
+
+	.noMotion & {
+		opacity: 1;
+
+		&.sourceElement:not(.cursorCopy) {
+			visibility: visible;
+		}
+	}
 }
 
 button {

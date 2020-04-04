@@ -11,6 +11,8 @@ import styles from './app.module.scss';
 
 const App = () => {
 	const [activePageIndex, setActivePageIndex] = React.useState<number>(0);
+	const allowMotion: boolean = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+	console.log({ allowMotion });
 	if (!glSupported()) return <div>'WebGL is not supported on this device.'</div>;
 
 	return (

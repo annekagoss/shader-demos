@@ -10,6 +10,18 @@ interface UsePauseWhileOffScreenProps {
 }
 
 export const useAnimationFrame = (canvasRef: React.MutableRefObject<HTMLCanvasElement>, callback: (time: number, pingPing: number) => void) => {
+	const allowMotion: boolean = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+
+	if (!allowMotion) {
+		useEffect(() => {
+			console.log('callback attempt');
+			setTimeout(() => {
+				callback(0, 0);
+			}, 1000);
+		}, []);
+		return;
+	}
+
 	const requestRef: React.MutableRefObject<number> = useRef<number>(0);
 	const previousTimeRef: React.MutableRefObject<number> = useRef<number>(0);
 	const pingPongRef: React.MutableRefObject<number> = useRef<number>(0);

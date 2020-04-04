@@ -1,4 +1,5 @@
 import * as React from 'react';
+import cx from 'classnames';
 import { UniformSettings, Vector2, MESH_TYPE } from '../../../types';
 import { assignUniforms, InitializeProps } from '../../../lib/gl/initialize';
 import { BASE_TRIANGLE_MESH } from '../../../lib/gl/settings';
@@ -48,9 +49,21 @@ const DOMRasterizatioCanvas = ({ fragmentShader, vertexShader, uniforms, setAttr
 	const uniformLocations = React.useRef<Record<string, WebGLUniformLocation>>();
 	const imageTexturesRef: React.MutableRefObject<Record<string, string>> = React.useRef<Record<string, string>>({});
 	const texturesRef: React.MutableRefObject<WebGLTexture[]> = React.useRef<WebGLTexture[]>([]);
-
 	const sourceElementRef: React.RefObject<HTMLDivElement> = React.useRef<HTMLDivElement>();
 	const cursorElementRef: React.RefObject<HTMLImageElement> = React.useRef<HTMLImageElement>();
+	const allowMotion: boolean = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+	if (!allowMotion)
+		return (
+			<div className={cx(styles.noMotion, styles.fullScreenCanvas)}>
+				<Source
+					ref={{
+						sourceRef: sourceElementRef,
+						cursorRef: cursorElementRef
+					}}
+					uniforms={uniforms}
+				/>
+			</div>
+		);
 
 	const initializeGLProps: InitializeProps = {
 		gl,
