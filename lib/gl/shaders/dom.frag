@@ -10,10 +10,9 @@ uniform vec4 uColor;
 
 const float SCALE = 5.;
 const float SPEED = .00025;
+const float MAX_SHIFT_AMT = .005;
 
 #pragma glslify:fractalNoise = require('./common/fractalNoise.glsl');
-
-const float MAX_SHIFT_AMT = .005;
 
 vec4 colorShift(sampler2D sampler, float shift, vec2 st, float backgroundLuminance) {
 	vec4 unshifted = texture2D(sampler, st);
