@@ -90,7 +90,7 @@ const DOMRasterizatioCanvas = ({ fragmentShader, vertexShader, uniforms, setAttr
 
 	return (
 		<div className={styles.canvasContainer}>
-			<canvas ref={canvasRef} className={styles.fullScreenCanvas} />
+			<canvas ref={canvasRef} className={styles.fullScreenCanvas} aria-label='DOM rasterization canvas' role='img' />
 			<Source
 				ref={{
 					sourceRef: sourceElementRef,

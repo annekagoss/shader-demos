@@ -19,73 +19,39 @@ export const useRasterizeToGL = (props: RasterizeToGLProps) => {
 		}
 		rasterizeElementAndInitializeGL(props);
 		const refreshImageOnEvent = throttle(30, () => refreshImage(props));
-		props.cursorElementRef.current.addEventListener(
-			'mousemove',
-			refreshImageOnEvent
-		);
-		props.cursorElementRef.current.addEventListener(
-			'keydown',
-			refreshImageOnEvent
-		);
-		props.cursorElementRef.current.addEventListener(
-			'keyup',
-			refreshImageOnEvent
-		);
+		props.cursorElementRef.current.addEventListener('mousemove', refreshImageOnEvent);
+		props.cursorElementRef.current.addEventListener('keydown', refreshImageOnEvent);
+		props.cursorElementRef.current.addEventListener('keyup', refreshImageOnEvent);
 		const mouseUpHandler = () => {
 			setTimeout(() => {
 				refreshImageOnEvent();
 			}, 0);
 		};
-		props.cursorElementRef.current.addEventListener(
-			'mouseup',
-			mouseUpHandler
-		);
+		props.cursorElementRef.current.addEventListener('mouseup', mouseUpHandler);
 		window.addEventListener('load', () => refreshImage(props));
 		window.addEventListener('resize', () => refreshImage(props));
-
+		setTimeout(() => {
+			refreshImage(props);
+		}, 0);
 		return () => {
-			props.cursorElementRef.current.removeEventListener(
-				'mousemove',
-				refreshImageOnEvent
-			);
-			props.cursorElementRef.current.removeEventListener(
-				'keydown',
-				refreshImageOnEvent
-			);
-			props.cursorElementRef.current.removeEventListener(
-				'keyup',
-				refreshImageOnEvent
-			);
-			props.cursorElementRef.current.removeEventListener(
-				'mouseup',
-				mouseUpHandler
-			);
+			props.cursorElementRef.current.removeEventListener('mousemove', refreshImageOnEvent);
+			props.cursorElementRef.current.removeEventListener('keydown', refreshImageOnEvent);
+			props.cursorElementRef.current.removeEventListener('keyup', refreshImageOnEvent);
+			props.cursorElementRef.current.removeEventListener('mouseup', mouseUpHandler);
 			window.removeEventListener('load', () => refreshImage(props));
 			window.removeEventListener('resize', () => refreshImage(props));
 		};
 	}, []);
 };
 
-const refreshImage = async ({
-	sourceElementRef,
-	imageTexturesRef,
-	initializeGLProps
-}: RasterizeToGLProps) => {
+const refreshImage = async ({ sourceElementRef, imageTexturesRef, initializeGLProps }: RasterizeToGLProps) => {
 	const { DOMImage, size } = await rasterizeElement(sourceElementRef.current);
 	imageTexturesRef.current = { DOMImage };
 	initializeGLProps.uniforms.uSamplerResolution0.value = size;
-	loadTextures(
-		initializeGLProps.gl.current,
-		initializeGLProps.uniformLocations.current,
-		{ DOMImage }
-	);
+	loadTextures(initializeGLProps.gl.current, initializeGLProps.uniformLocations.current, { DOMImage });
 };
 
-const rasterizeElementAndInitializeGL = async ({
-	sourceElementRef,
-	imageTexturesRef,
-	initializeGLProps
-}: RasterizeToGLProps) => {
+const rasterizeElementAndInitializeGL = async ({ sourceElementRef, imageTexturesRef, initializeGLProps }: RasterizeToGLProps) => {
 	const { DOMImage, size } = await rasterizeElement(sourceElementRef.current);
 	imageTexturesRef.current = { DOMImage };
 	initializeGLProps.uniforms.uSamplerResolution0.value = size;
@@ -120,8 +86,7 @@ const makeSVGDataURI = (node, width: number, height: number): string => {
 	return `data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"><foreignObject x="0" y="0" width="100%" height="100%">${escapedNode}</foreignObject></svg>`;
 };
 
-const escapeXhtml = (s: string): string =>
-	s.replace(/#/g, '%23').replace(/\n/g, '%0A');
+const escapeXhtml = (s: string): string => s.replace(/#/g, '%23').replace(/\n/g, '%0A');
 
 const createImageFromURI = (SVGDataURL: string): Promise<HTMLImageElement> =>
 	new Promise((resolve, reject) => {

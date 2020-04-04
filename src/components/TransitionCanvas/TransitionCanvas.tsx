@@ -27,37 +27,15 @@ interface RenderProps {
 	transitionProgress: number;
 }
 
-const render = ({
-	gl,
-	uniformLocations,
-	uniforms,
-	time,
-	mousePos,
-	transitionProgress
-}: RenderProps) => {
+const render = ({ gl, uniformLocations, uniforms, time, mousePos, transitionProgress }: RenderProps) => {
 	if (!gl) return;
-	assignUniforms(
-		uniforms,
-		uniformLocations,
-		gl,
-		time,
-		mousePos,
-		transitionProgress
-	);
+	assignUniforms(uniforms, uniformLocations, gl, time, mousePos, transitionProgress);
 	gl.activeTexture(gl.TEXTURE0);
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 };
 
-const BaseCanvas = ({
-	fragmentShader,
-	vertexShader,
-	uniforms,
-	setAttributes,
-	slideImages
-}: Props) => {
-	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<
-		HTMLCanvasElement
-	>();
+const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, slideImages }: Props) => {
+	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<HTMLCanvasElement>();
 	const size: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
 		x: window.innerWidth * window.devicePixelRatio,
 		y: window.innerHeight * window.devicePixelRatio * 0.75
@@ -68,27 +46,13 @@ const BaseCanvas = ({
 		y: size.current.y * -0.5
 	});
 	const gl = React.useRef<WebGLRenderingContext>();
-	const uniformLocations = React.useRef<
-		Record<string, WebGLUniformLocation>
-	>();
-	const transitionTimeRef: React.MutableRefObject<number> = React.useRef<
-		number
-	>(0);
-	const transitionDirectionRef: React.MutableRefObject<number> = React.useRef<
-		number
-	>(1);
-	const slideIndexRef: React.MutableRefObject<number> = React.useRef<number>(
-		0
-	);
-	const isTransitioningRef: React.MutableRefObject<boolean> = React.useRef<
-		boolean
-	>(false);
-	const transitionProgressRef: React.MutableRefObject<number> = React.useRef<
-		number
-	>(0);
-	const texturesRef: React.MutableRefObject<WebGLTexture[]> = React.useRef<
-		WebGLTexture[]
-	>([]);
+	const uniformLocations = React.useRef<Record<string, WebGLUniformLocation>>();
+	const transitionTimeRef: React.MutableRefObject<number> = React.useRef<number>(0);
+	const transitionDirectionRef: React.MutableRefObject<number> = React.useRef<number>(1);
+	const slideIndexRef: React.MutableRefObject<number> = React.useRef<number>(0);
+	const isTransitioningRef: React.MutableRefObject<boolean> = React.useRef<boolean>(false);
+	const transitionProgressRef: React.MutableRefObject<number> = React.useRef<number>(0);
+	const texturesRef: React.MutableRefObject<WebGLTexture[]> = React.useRef<WebGLTexture[]>([]);
 
 	useInitializeGL({
 		gl,
@@ -104,9 +68,7 @@ const BaseCanvas = ({
 	});
 
 	React.useEffect(() => {
-		setAttributes([
-			{ name: 'aVertexPosition', value: BASE_TRIANGLE_MESH.join(', ') }
-		]);
+		setAttributes([{ name: 'aVertexPosition', value: BASE_TRIANGLE_MESH.join(', ') }]);
 	}, []);
 
 	useWindowSize(canvasRef, gl, uniforms.current, size);
@@ -124,8 +86,7 @@ const BaseCanvas = ({
 			texturesRef
 		});
 		uniforms.current.uSlideIndex.value = slideIndexRef.current;
-		uniforms.current.uTransitionProgress.value =
-			transitionProgressRef.current;
+		uniforms.current.uTransitionProgress.value = transitionProgressRef.current;
 		render({
 			gl: gl.current,
 			uniformLocations: uniformLocations.current,
@@ -138,12 +99,7 @@ const BaseCanvas = ({
 
 	return (
 		<div className={styles.canvasContainer}>
-			<canvas
-				ref={canvasRef}
-				width={size.current.x}
-				height={size.current.y}
-				className={styles.fullScreenCanvas}
-			/>
+			<canvas ref={canvasRef} width={size.current.x} height={size.current.y} className={styles.fullScreenCanvas} role='img' />
 			<div className={styles.canvasForeground}>
 				<button
 					className={styles.button}
@@ -154,8 +110,7 @@ const BaseCanvas = ({
 						transitionTimeRef.current = 0;
 						transitionDirectionRef.current = -1;
 						uniforms.current.uDirection.value = -1;
-					}}
-				>
+					}}>
 					{'<'}
 				</button>
 				<button
@@ -165,8 +120,7 @@ const BaseCanvas = ({
 						isTransitioningRef.current = true;
 						transitionDirectionRef.current = 1;
 						uniforms.current.uDirection.value = 1;
-					}}
-				>
+					}}>
 					{'>'}
 				</button>
 			</div>

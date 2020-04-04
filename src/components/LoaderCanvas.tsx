@@ -196,7 +196,7 @@ const LoaderCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, O
 		});
 	});
 
-	return <canvas ref={canvasRef} width={size.current.x} height={size.current.y} />;
+	return <canvas ref={canvasRef} width={size.current.x} height={size.current.y} role='img' />;
 };
 
 export default LoaderCanvas;

@@ -1,11 +1,5 @@
 import * as React from 'react';
-import {
-	UniformSettings,
-	Vector2,
-	UNIFORM_TYPE,
-	FBO,
-	MESH_TYPE
-} from '../../../types';
+import { UniformSettings, Vector2, UNIFORM_TYPE, FBO, MESH_TYPE } from '../../../types';
 import { BASE_TRIANGLE_MESH } from '../../../lib/gl/settings';
 import { useInitializeGL } from '../../hooks/gl';
 import { useAnimationFrame } from '../../hooks/animation';
@@ -34,22 +28,12 @@ interface RenderProps {
 	size: Vector2;
 }
 
-const render = ({
-	gl,
-	uniformLocations,
-	uniforms,
-	time,
-	mousePos,
-	FBOA,
-	FBOB,
-	pingPong
-}: RenderProps) => {
+const render = ({ gl, uniformLocations, uniforms, time, mousePos, FBOA, FBOB, pingPong }: RenderProps) => {
 	if (!gl) return;
 	assignUniforms(uniforms, uniformLocations, gl, time, mousePos);
 
 	const buffer: WebGLFramebuffer = pingPong === 0 ? FBOA.buffer : FBOB.buffer;
-	const targetTexture: WebGLTexture =
-		pingPong === 0 ? FBOA.targetTexture : FBOB.targetTexture;
+	const targetTexture: WebGLTexture = pingPong === 0 ? FBOA.targetTexture : FBOB.targetTexture;
 
 	// Draw to frame buffer
 	gl.bindFramebuffer(gl.FRAMEBUFFER, buffer);
@@ -65,23 +49,14 @@ const render = ({
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 };
 
-const FeedbackCanvas = ({
-	fragmentShader,
-	vertexShader,
-	uniforms,
-	setAttributes
-}: Props) => {
-	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<
-		HTMLCanvasElement
-	>();
+const FeedbackCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes }: Props) => {
+	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<HTMLCanvasElement>();
 	const size: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
 		x: uniforms.current.uResolution.value.x,
 		y: uniforms.current.uResolution.value.y
 	});
 	const gl = React.useRef<WebGLRenderingContext>();
-	const uniformLocations = React.useRef<
-		Record<string, WebGLUniformLocation>
-	>();
+	const uniformLocations = React.useRef<Record<string, WebGLUniformLocation>>();
 	const mousePosRef: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
 		x: size.current.x * 0.5,
 		y: size.current.y * -0.5
@@ -105,9 +80,7 @@ const FeedbackCanvas = ({
 	});
 
 	React.useEffect(() => {
-		setAttributes([
-			{ name: 'aVertexPosition', value: BASE_TRIANGLE_MESH.join(', ') }
-		]);
+		setAttributes([{ name: 'aVertexPosition', value: BASE_TRIANGLE_MESH.join(', ') }]);
 	}, []);
 
 	useMouse(mousePosRef, canvasRef);
@@ -126,7 +99,7 @@ const FeedbackCanvas = ({
 		});
 	});
 
-	return <canvas ref={canvasRef} className={styles.feedbackCanvas} />;
+	return <canvas ref={canvasRef} className={styles.feedbackCanvas} role='img' />;
 };
 
 export default FeedbackCanvas;

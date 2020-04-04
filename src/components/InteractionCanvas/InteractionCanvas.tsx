@@ -240,7 +240,7 @@ const InteractionCanvas = ({ fragmentShader, vertexShader, uniforms, setAttribut
 				<div className={cx(styles.text, !IS_MOBILE && styles.enabled)}>HOVER {IS_MOBILE ? 'OFF' : 'ON'}</div>
 				<div className={cx(styles.text, IS_MOBILE && styles.enabled)}>DRAG {IS_MOBILE ? 'ON' : 'OFF'}</div>
 			</div>
-			<canvas ref={canvasRef} width={size.current.x} height={size.current.y} className={styles.fullScreenCanvas} />
+			<canvas ref={canvasRef} width={size.current.x} height={size.current.y} className={styles.fullScreenCanvas} role='img' />
 		</div>
 	);
 };

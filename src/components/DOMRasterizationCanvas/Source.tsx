@@ -51,26 +51,28 @@ const SourceElement = React.forwardRef(
 						padding: 0,
 						margin: 0
 					}}>
-					<div
-						style={{
-							marginBottom: 80,
-							fontSize: 40,
-							color: textColor,
-							lineHeight: 1,
-							fontFamily: 'Roboto, sans-serif',
-							fontWeight: 'bold',
-							letterSpacing: 1
-						}}>
-						type a color
-					</div>
 					<form
 						style={{
 							display: 'flex',
 							flexDirection: 'column',
 							alignItems: 'flex-start'
 						}}>
+						<label
+							htmlFor={'color-field'}
+							style={{
+								marginBottom: 80,
+								fontSize: 40,
+								color: textColor,
+								lineHeight: 1,
+								fontFamily: 'Roboto, sans-serif',
+								fontWeight: 'bold',
+								letterSpacing: 1
+							}}>
+							type a color
+						</label>
 						<input
 							type='text'
+							id='color-field'
 							style={{
 								width: 200,
 								backgroundColor: 'transparent',

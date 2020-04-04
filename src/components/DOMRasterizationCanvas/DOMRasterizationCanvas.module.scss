@@ -15,8 +15,11 @@
 .canvasForeground {
 	opacity: 0;
 
-	&.cursorCopy {
+	&.sourceElement.cursorCopy {
 		opacity: 1;
+	}
+	&.sourceElement:not(.cursorCopy) {
+		visibility: hidden;
 	}
 }
 
