@@ -82,4 +82,6 @@ const cleanUpGL = (props: InitializeProps) => {
 		gl.deleteFramebuffer(props.FBOB.current.buffer);
 		gl.deleteRenderbuffer(props.FBOA.current.depthBuffer);
 	}
+
+	gl.getExtension('WEBGL_lose_context').loseContext();
 };
