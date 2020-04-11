@@ -2,7 +2,7 @@ export enum Direction {
 	BOTTOM = 'bottom',
 	LEFT = 'left',
 	RIGHT = 'right',
-	TOP = 'top'
+	TOP = 'top',
 }
 
 export enum LightTypes {
@@ -10,7 +10,7 @@ export enum LightTypes {
 	BOTTOM = 'bottom',
 	LEFT = 'left',
 	RIGHT = 'right',
-	TOP = 'top'
+	TOP = 'top',
 }
 
 export enum ColorName {
@@ -20,7 +20,7 @@ export enum ColorName {
 	LEFT = 'leftLight',
 	RIGHT = 'rightLight',
 	TOP = 'topSpot',
-	BOTTOM = 'bottomSpot'
+	BOTTOM = 'bottomSpot',
 }
 
 export enum BufferType {
@@ -29,7 +29,7 @@ export enum BufferType {
 	TEXTURE = 'textureBuffer',
 	TEXTURE_ADDRESS = 'textureAddressBuffer',
 	INDEX = 'indexBuffer',
-	BARYCENTRIC = 'barycentricBuffer'
+	BARYCENTRIC = 'barycentricBuffer',
 }
 
 export type DiffuseSources = Record<string, string>;
@@ -85,7 +85,7 @@ export interface RGBA extends RGB {
 export enum AxisName {
 	x = 'x',
 	y = 'y',
-	z = 'z'
+	z = 'z',
 }
 
 export type Axis = keyof typeof AxisName;
@@ -212,6 +212,7 @@ export interface Mesh extends Geometry {
 
 export interface FBO {
 	buffer: WebGLBuffer;
+	depthBuffer: WebGLRenderbuffer;
 	targetTexture: WebGLTexture;
 	textureWidth: number;
 	textureHeight: number;
@@ -286,7 +287,7 @@ export enum UNIFORM_TYPE {
 	FLOAT_1 = 'uniform1f',
 	VEC_2 = 'uniform2fv',
 	VEC_3 = 'uniform3fv',
-	VEC_4 = 'uniform4fv'
+	VEC_4 = 'uniform4fv',
 }
 
 export interface UniformSetting {
@@ -323,7 +324,7 @@ export interface WebWorkerLoadMessage {
 export enum MESH_TYPE {
 	BASE_TRIANGLES,
 	FACE_ARRAY,
-	OBJ
+	OBJ,
 }
 
 export interface GyroscopeData {

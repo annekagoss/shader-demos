@@ -34,12 +34,12 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes }: P
 	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<HTMLCanvasElement>();
 	const size: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
 		x: uniforms.current.uResolution.value.x,
-		y: uniforms.current.uResolution.value.y
+		y: uniforms.current.uResolution.value.y,
 	});
 	const initialMousePosition = uniforms.current.uMouse ? uniforms.current.uMouse.defaultValue : { x: 0.5, y: 0.5 };
 	const mousePosRef: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
 		x: size.current.x * initialMousePosition.x,
-		y: size.current.y * -initialMousePosition.y
+		y: size.current.y * -initialMousePosition.y,
 	});
 	const gl = React.useRef<WebGLRenderingContext>();
 	const uniformLocations = React.useRef<Record<string, WebGLUniformLocation>>();
@@ -52,7 +52,7 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes }: P
 		vertexSource: vertexShader,
 		uniforms: uniforms.current,
 		size,
-		meshType: MESH_TYPE.BASE_TRIANGLES
+		meshType: MESH_TYPE.BASE_TRIANGLES,
 	});
 
 	React.useEffect(() => {
@@ -62,14 +62,15 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes }: P
 	useWindowSize(canvasRef, gl, uniforms.current, size);
 	useMouse(mousePosRef, canvasRef);
 
+	console.log('render');
+
 	useAnimationFrame(canvasRef, (time: number) => {
-		console.log('render');
 		render({
 			gl: gl.current,
 			uniformLocations: uniformLocations.current,
 			uniforms: uniforms.current,
 			time,
-			mousePos: mousePosRef.current
+			mousePos: mousePosRef.current,
 		});
 	});
 
