@@ -17,22 +17,29 @@ const BASE_RASTERIZATION_UNIFORMS: UniformSettings = {
 		name: 'uTime',
 		readonly: true,
 		type: UNIFORM_TYPE.FLOAT_1,
-		value: 0
+		value: 0,
 	},
 	uSamplerResolution0: {
 		defaultValue: { x: 0, y: 0 },
 		name: 'uSamplerResolution0',
 		readonly: true,
 		type: UNIFORM_TYPE.VEC_2,
-		value: { x: 0, y: 0 }
+		value: { x: 0, y: 0 },
 	},
 	uColor: {
-		defaultValue: { x: 1.0, y: 1.0, z: 1.0, w: 1.0 },
+		defaultValue: { x: 1.0, y: 0.647, z: 1.0, w: 1.0 },
 		name: 'uColor',
 		readonly: true,
 		type: UNIFORM_TYPE.VEC_4,
-		value: { x: 1.0, y: 1.0, z: 1.0, w: 1.0 }
-	}
+		value: { x: 1.0, y: 0.647, z: 1.0, w: 1.0 },
+	},
+	uDitherSteps: {
+		defaultValue: 6.0,
+		name: 'uDitherSteps',
+		readonly: false,
+		type: UNIFORM_TYPE.FLOAT_1,
+		value: 6.0,
+	},
 };
 
 const DOMRasterizationPage = ({ isActive }: Props) => {

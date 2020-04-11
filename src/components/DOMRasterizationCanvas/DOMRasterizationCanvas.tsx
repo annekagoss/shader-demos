@@ -34,16 +34,16 @@ const render = ({ gl, uniformLocations, uniforms, time, mousePos, texture }: Ren
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 };
 
-const DOMRasterizatioCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes }: Props) => {
+const DOMRasterizationCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes }: Props) => {
 	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<HTMLCanvasElement>();
 	const size: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
 		x: uniforms.current.uResolution.value.x * window.devicePixelRatio,
-		y: uniforms.current.uResolution.value.y * window.devicePixelRatio
+		y: uniforms.current.uResolution.value.y * window.devicePixelRatio,
 	});
 	const initialMousePosition = uniforms.current.uMouse ? uniforms.current.uMouse.defaultValue : { x: 0.5, y: 0.5 };
 	const mousePosRef: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
 		x: size.current.x * initialMousePosition.x,
-		y: size.current.y * -initialMousePosition.y
+		y: size.current.y * -initialMousePosition.y,
 	});
 	const gl = React.useRef<WebGLRenderingContext>();
 	const uniformLocations = React.useRef<Record<string, WebGLUniformLocation>>();
@@ -58,7 +58,7 @@ const DOMRasterizatioCanvas = ({ fragmentShader, vertexShader, uniforms, setAttr
 				<Source
 					ref={{
 						sourceRef: sourceElementRef,
-						cursorRef: cursorElementRef
+						cursorRef: cursorElementRef,
 					}}
 					uniforms={uniforms}
 				/>
@@ -75,13 +75,13 @@ const DOMRasterizatioCanvas = ({ fragmentShader, vertexShader, uniforms, setAttr
 		size,
 		meshType: MESH_TYPE.BASE_TRIANGLES,
 		imageTextures: imageTexturesRef.current,
-		texturesRef
+		texturesRef,
 	};
 	useRasterizeToGL({
 		sourceElementRef,
 		cursorElementRef,
 		imageTexturesRef,
-		initializeGLProps
+		initializeGLProps,
 	});
 
 	React.useEffect(() => {
@@ -97,7 +97,7 @@ const DOMRasterizatioCanvas = ({ fragmentShader, vertexShader, uniforms, setAttr
 			uniformLocations: uniformLocations.current,
 			uniforms: uniforms.current,
 			time,
-			mousePos: mousePosRef.current
+			mousePos: mousePosRef.current,
 		});
 	});
 
@@ -107,7 +107,7 @@ const DOMRasterizatioCanvas = ({ fragmentShader, vertexShader, uniforms, setAttr
 			<Source
 				ref={{
 					sourceRef: sourceElementRef,
-					cursorRef: cursorElementRef
+					cursorRef: cursorElementRef,
 				}}
 				uniforms={uniforms}
 			/>
@@ -115,4 +115,4 @@ const DOMRasterizatioCanvas = ({ fragmentShader, vertexShader, uniforms, setAttr
 	);
 };
 
-export default DOMRasterizatioCanvas;
+export default DOMRasterizationCanvas;

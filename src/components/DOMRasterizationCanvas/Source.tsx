@@ -44,18 +44,18 @@ const SourceElement = React.forwardRef(
 					justifyContent: 'center',
 					alignItems: 'center',
 					margin: 0,
-					padding: 0
+					padding: 0,
 				}}>
 				<div
 					style={{
 						padding: 0,
-						margin: 0
+						margin: 0,
 					}}>
 					<form
 						style={{
 							display: 'flex',
 							flexDirection: 'column',
-							alignItems: 'flex-start'
+							alignItems: 'flex-start',
 						}}>
 						<label
 							htmlFor={'color-field'}
@@ -66,7 +66,7 @@ const SourceElement = React.forwardRef(
 								lineHeight: 1,
 								fontFamily: 'Roboto, sans-serif',
 								fontWeight: 'bold',
-								letterSpacing: 1
+								letterSpacing: 1,
 							}}>
 							type a color
 						</label>
@@ -89,10 +89,10 @@ const SourceElement = React.forwardRef(
 								lineHeight: 1,
 								fontWeight: 'bold',
 								marginBottom: 40,
-								letterSpacing: 1
+								letterSpacing: 1,
 							}}
 							value={text}
-							onChange={e => {
+							onChange={(e) => {
 								if (!isCursorCopy) return;
 								setText && setText(e.target.value);
 							}}
@@ -110,7 +110,7 @@ const SourceElement = React.forwardRef(
 								lineHeight: 1,
 								fontWeight: 'bold',
 								padding: '10px 20px',
-								letterSpacing: 1
+								letterSpacing: 1,
 							}}
 							type='button'
 							onClick={() => setText && setText('')}
@@ -128,8 +128,8 @@ const SourceElement = React.forwardRef(
 
 const Source = React.forwardRef(({ uniforms }: SourceProps, ref) => {
 	const { sourceRef, cursorRef }: Record<string, React.RefObject<HTMLDivElement>> = ref;
-	const [text, setText] = React.useState<string>('white');
-	const [contrastColor, setContrastColor] = React.useState<string>('white');
+	const [text, setText] = React.useState<string>('orange');
+	const [contrastColor, setContrastColor] = React.useState<string>('black');
 	const [buttonActive, setButtonActive] = React.useState<boolean>(false);
 	const [inputFocused, setInputFocused] = React.useState<boolean>(false);
 
