@@ -5,4 +5,6 @@ vec3 normalColor(vec3 normal) {
   return vec3(x, y, z);
 }
 
-#pragma glslify: export(normalColor) 
+// clang-format off
+#pragma glslify: export(normalColor)
+// clang-format on

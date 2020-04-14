@@ -6,6 +6,8 @@ import rasterizationVertexShader from '../../lib/gl/shaders/base.vert';
 import Section from '../components/Section/Section';
 import DOMRasterizationCanvas from '../components/DOMRasterizationCanvas/DOMRasterizationCanvas';
 
+import domRasterizationDiagram from '../assets/diagrams/5.0 Dom Rasterization.png';
+
 interface Props {
 	isActive: boolean;
 }
@@ -43,14 +45,30 @@ const BASE_RASTERIZATION_UNIFORMS: UniformSettings = {
 };
 
 const DOMRasterizationPage = ({ isActive }: Props) => {
-	const rasterizationUniforms = React.useRef<UniformSettings>(BASE_RASTERIZATION_UNIFORMS);
+	const rasterizationUniforms = React.useRef<UniformSettings>(
+		BASE_RASTERIZATION_UNIFORMS
+	);
 	const [attributes, setAttributes] = React.useState<any[]>([]);
 	if (!isActive) return <></>;
 
 	return (
 		<div>
-			<Section title='' fullScreen={true} fragmentShader={rasterizationFragmentShader} vertexShader={rasterizationVertexShader} attributes={attributes} uniforms={rasterizationUniforms}>
-				<DOMRasterizationCanvas fragmentShader={rasterizationFragmentShader} vertexShader={rasterizationVertexShader} uniforms={rasterizationUniforms} setAttributes={setAttributes} />
+			<Section
+				title=''
+				notes={`It's possible to maintain accessibility in rasterized DOM elements. Keep a copy of the original dom element with transparent content, but full cursor events, focus states and user selection.`}
+				image={domRasterizationDiagram}
+				fullScreen={true}
+				fragmentShader={rasterizationFragmentShader}
+				vertexShader={rasterizationVertexShader}
+				attributes={attributes}
+				uniforms={rasterizationUniforms}
+			>
+				<DOMRasterizationCanvas
+					fragmentShader={rasterizationFragmentShader}
+					vertexShader={rasterizationVertexShader}
+					uniforms={rasterizationUniforms}
+					setAttributes={setAttributes}
+				/>
 			</Section>
 		</div>
 	);

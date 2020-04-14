@@ -39,7 +39,9 @@ uniform vec3 uRightLightColor;
 uniform vec3 uTopLightColor;
 uniform vec3 uBottomLightColor;
 
+// clang-format off
 #pragma glslify: shadow = require('./common/shadow-map.glsl');
+// clang-format on
 
 vec4 readTextures() {
   if (vTextureAddress == 0.) {
@@ -55,7 +57,7 @@ vec4 readTextures() {
       return vec4(uDiffuseColor1, 1.);
     }
   } else {
-      return vec4(uDiffuseColor2, 1.);
+    return vec4(uDiffuseColor2, 1.);
   }
 }
 
@@ -77,11 +79,13 @@ void main() {
 
   vec3 lightedColor;
   if (uDepthEnabled == 1) {
-    vec3 shadowColor = shadow(uDepthMap, vPositionFromLeftLight, uShadowStrength);
-    lightedColor = (texelColor.xyz - shadowColor) * (vLighting + (vSpecular * specularColor) );
+    vec3 shadowColor =
+        shadow(uDepthMap, vPositionFromLeftLight, uShadowStrength);
+    lightedColor = (texelColor.xyz - shadowColor) *
+                   (vLighting + (vSpecular * specularColor));
   } else {
     lightedColor = texelColor.xyz * (vLighting + (vSpecular * specularColor));
   }
 
-  gl_FragColor = vec4(lightedColor, opacity*texelColor.w);
+  gl_FragColor = vec4(lightedColor, opacity * texelColor.w);
 }

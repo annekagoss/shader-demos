@@ -55,9 +55,10 @@
 	margin-top: 10px;
 	font-family: 'Inconsolata', monospace;
 	line-height: 1.25rem;
-	width: 50%;
+}
 
-	@media (max-width: 900px) {
-		width: 100%;
-	}
+.image {
+	border: solid 1px black;
+	width: 100%;
+	margin-top: 10px;
 }

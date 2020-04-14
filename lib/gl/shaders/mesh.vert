@@ -16,18 +16,15 @@ varying vec3 vLighting;
 varying vec3 vBarycentric;
 varying vec3 vVertexPosition;
 
+// clang-format off
 #pragma glslify: calculateLighting = require('./common/lighting.glsl');
+// clang-format on
 
 void main() {
-	gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-	vec4 normalDirection = normalize(uModelViewMatrix * vec4(aVertexNormal, 1.));
-	vLighting = calculateLighting(
-		normalDirection,
-		uLightPositionA,
-		uLightPositionB,
-		uLightColorA,
-		uLightColorB
-	);
-	vBarycentric = aBarycentric;
-	vVertexPosition = aVertexPosition.xyz * .5 + .5;
+  gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+  vec4 normalDirection = normalize(uModelViewMatrix * vec4(aVertexNormal, 1.));
+  vLighting = calculateLighting(normalDirection, uLightPositionA,
+                                uLightPositionB, uLightColorA, uLightColorB);
+  vBarycentric = aBarycentric;
+  vVertexPosition = aVertexPosition.xyz * .5 + .5;
 }

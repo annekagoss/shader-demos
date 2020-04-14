@@ -7,14 +7,16 @@ uniform float uTime;
 uniform int uFractal;
 uniform int uOctaves;
 
-const float SCALE= 3.0;
-const float SPEED = 0.00025;
+const float SCALE = 3.;
+const float SPEED = .00025;
 
+// clang-format off
 #pragma glslify: fractalNoise = require('./common/fractalNoise.glsl');
+// clang-format on
 
 void main() {
-	vec2 st = gl_FragCoord.xy/uResolution;
-	st.x *= uResolution.x/uResolution.y;
-	float value = fractalNoise(st, uTime*SPEED, uFractal, SCALE, uOctaves);
-	gl_FragColor = vec4(vec3(value), 1.0);
+  vec2 st = gl_FragCoord.xy / uResolution;
+  st.x *= uResolution.x / uResolution.y;
+  float value = fractalNoise(st, uTime * SPEED, uFractal, SCALE, uOctaves);
+  gl_FragColor = vec4(vec3(value), 1.);
 }

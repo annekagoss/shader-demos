@@ -8,6 +8,7 @@ import Inputs from '../Inputs/Inputs';
 interface Props {
 	children: React.ReactNode;
 	notes?: string;
+	image?: string;
 	title: string;
 	fullScreen?: boolean;
 	fragmentShader: string;
@@ -16,17 +17,31 @@ interface Props {
 	attributes: any;
 }
 
-const Section = ({ children, notes = ``, title, fullScreen, fragmentShader, vertexShader, uniforms, attributes }: Props) => (
+const Section = ({
+	children,
+	notes = ``,
+	image,
+	title,
+	fullScreen,
+	fragmentShader,
+	vertexShader,
+	uniforms,
+	attributes,
+}: Props) => (
 	<div className={cx(styles.root, fullScreen && styles.fullScreen)}>
 		<div className={styles.title}>{title}</div>
 		<div className={styles.contentWrapper}>
 			{children}
 			<div className={styles.textWrapper}>
-				<ShaderText fragmentShader={fragmentShader} vertexShader={vertexShader} />
+				<ShaderText
+					fragmentShader={fragmentShader}
+					vertexShader={vertexShader}
+				/>
 				<Inputs uniforms={uniforms} attributes={attributes} />
 			</div>
 		</div>
 		<div className={styles.notes}>{notes}</div>
+		{!!image && <img src={image} className={styles.image} />}
 	</div>
 );
 

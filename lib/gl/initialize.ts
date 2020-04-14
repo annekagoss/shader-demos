@@ -3,31 +3,23 @@ import {
 	Buffers,
 	FBO,
 	Mesh,
-	Material,
 	Matrix,
 	Vector2,
 	FaceArray,
 	UniformSetting,
 	UniformSettings,
 	MESH_TYPE,
-	Materials,
 	UNIFORM_TYPE,
-	Texture
 } from '../../types';
 import { degreesToRadians } from './math';
 import { createMat4, applyPerspective, lookAt } from './matrix';
-import {
-	MAX_SUPPORTED_MATERIAL_TEXTURES,
-	NEAR_CLIPPING,
-	FAR_CLIPPING,
-	FIELD_OF_VIEW
-} from './settings';
+import { NEAR_CLIPPING, FAR_CLIPPING, FIELD_OF_VIEW } from './settings';
 import outlineFragmentSource from '../../lib/gl/shaders/outline.frag';
 import outlineVertexSource from '../../lib/gl/shaders/base.vert';
 import {
 	initBaseMeshBuffers,
 	initMeshBuffersFromFaceArray,
-	initBuffers
+	initBuffers,
 } from './buffers';
 import { initFrameBufferObject } from './frameBuffer';
 
@@ -68,7 +60,7 @@ export const initializeRenderer = ({
 	size,
 	FBOA,
 	FBOB,
-	outlineUniformLocations
+	outlineUniformLocations,
 }: InitializeProps) => {
 	if (!canvasRef.current) return;
 	const gl: WebGLRenderingContext =
@@ -110,7 +102,7 @@ export const initializeRenderer = ({
 		uDiffuse1: gl.getUniformLocation(program, 'uDiffuse1'),
 		uDiffuse2: gl.getUniformLocation(program, 'uDiffuse2'),
 		uDiffuse3: gl.getUniformLocation(program, 'uDiffuse3'),
-		uDiffuse4: gl.getUniformLocation(program, 'uDiffuse4')
+		uDiffuse4: gl.getUniformLocation(program, 'uDiffuse4'),
 	};
 
 	if (usePingPongBuffers) {
@@ -169,7 +161,7 @@ const initializeOutlineProgram = (
 	outlineUniformLocations.current = {
 		uSource: gl.getUniformLocation(outlineProgram, 'uSource'),
 		uOutline: gl.getUniformLocation(outlineProgram, 'uOutline'),
-		uResolution: gl.getUniformLocation(outlineProgram, 'uResolution')
+		uResolution: gl.getUniformLocation(outlineProgram, 'uResolution'),
 	};
 	return outlineProgram;
 };
@@ -185,7 +177,7 @@ const mapUniformSettingsToLocations = (
 				frameBufferTexture0: gl.getUniformLocation(
 					program,
 					'frameBufferTexture0'
-				)
+				),
 		  }
 		: {};
 	return Object.keys(settings).reduce((result, name) => {
@@ -200,7 +192,7 @@ export const initializeMesh = (
 		buffersRef,
 		meshType,
 		mesh,
-		baseVertexBufferRef
+		baseVertexBufferRef,
 	}: InitializeProps,
 	gl: WebGLRenderingContext,
 	program: WebGLProgram,
@@ -265,12 +257,12 @@ export const assignProjectionMatrix = (
 		fieldOfView: degreesToRadians(FIELD_OF_VIEW),
 		aspect: size.x / size.y,
 		near: NEAR_CLIPPING,
-		far: FAR_CLIPPING
+		far: FAR_CLIPPING,
 	});
 	projectionMatrix = lookAt(projectionMatrix, {
 		target: { x: 0, y: 0, z: 0 },
 		origin: { x: 0, y: 0, z: 6 },
-		up: { x: 0, y: 1, z: 0 }
+		up: { x: 0, y: 1, z: 0 },
 	});
 
 	gl.uniformMatrix4fv(
@@ -307,8 +299,7 @@ export const assignUniforms = (
 	uniformLocations: Record<string, WebGLUniformLocation>,
 	gl: WebGLRenderingContext,
 	time: number,
-	mousePos?: Vector2,
-	transitionProgress?: number
+	mousePos?: Vector2
 ) => {
 	Object.keys(uniforms).forEach((name: string) => {
 		const uniform: UniformSetting = uniforms[name];

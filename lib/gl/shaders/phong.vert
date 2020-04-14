@@ -32,46 +32,39 @@ varying vec4 vNormalDirection;
 
 const vec3 eye = vec3(0, 0, 6); // TODO pass in camera position as uniform
 
+// clang-format off
 #pragma glslify: calculateLighting = require('./common/lighting.glsl');
 #pragma glslify: calculateSpecular = require('./common/specular.glsl');
+// clang-format on
 
 void main() {
-	vec4 position = aVertexPosition;
-	vec3 normal = aVertexNormal;
-	
-	if (uOutlinePass == 1) {
-		position.xyz *= 1.025;
-		normal *= 1.025;
-	}
-	
-	if (uDisplacement == 1) {
-		position.xy *= 1.0 + sin((uTime * 0.001) + (position.z * .5)) * .1;
-		normal.xy *= 1.0 + sin((uTime * 0.001) + (normal.z * .5)) * .1;
-	}	
-	
-	gl_Position = uProjectionMatrix * uModelViewMatrix * position;
-	vec4 normalDirection = normalize(uNormalMatrix * vec4(normal, 1.));
-	vec3 lighting = calculateLighting(
-		normalDirection,
-		uLightPositionA,
-		uLightPositionB,
-		uLightColorA,
-		uLightColorB
-	);
-	float specular = calculateSpecular(
-		normalDirection,
-		lighting,
-		eye,
-		uSpecular
-	);
-	vLighting = lighting;
-	vSpecular = specular;
-	vTextureCoord = aTextureCoord;
-	vTextureAddress = aTextureAddress;
-	vBarycentric = aBarycentric;
-	vNormal = normal;
-	
-	// TOON
-	vPosition = position * uModelViewMatrix;
-	vNormalDirection = normalDirection;
+  vec4 position = aVertexPosition;
+  vec3 normal = aVertexNormal;
+
+  if (uOutlinePass == 1) {
+    position.xyz *= 1.025;
+    normal *= 1.025;
+  }
+
+  if (uDisplacement == 1) {
+    position.xy *= 1.0 + sin((uTime * 0.001) + (position.z * .5)) * .1;
+    normal.xy *= 1.0 + sin((uTime * 0.001) + (normal.z * .5)) * .1;
+  }
+
+  gl_Position = uProjectionMatrix * uModelViewMatrix * position;
+  vec4 normalDirection = normalize(uNormalMatrix * vec4(normal, 1.));
+  vec3 lighting =
+      calculateLighting(normalDirection, uLightPositionA, uLightPositionB,
+                        uLightColorA, uLightColorB);
+  float specular = calculateSpecular(normalDirection, lighting, eye, uSpecular);
+  vLighting = lighting;
+  vSpecular = specular;
+  vTextureCoord = aTextureCoord;
+  vTextureAddress = aTextureAddress;
+  vBarycentric = aBarycentric;
+  vNormal = normal;
+
+  // TOON
+  vPosition = position * uModelViewMatrix;
+  vNormalDirection = normalDirection;
 }

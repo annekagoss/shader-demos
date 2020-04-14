@@ -6,11 +6,13 @@ import transitionVertexShader from '../../lib/gl/shaders/base.vert';
 import Section from '../components/Section/Section';
 import TransitionCanvas from '../components/TransitionCanvas/TransitionCanvas';
 
-import slideImage1 from '../assets/purple-desert-1.jpg';
-import slideImage2 from '../assets/red-cave-1.jpg';
-import slideImage3 from '../assets/red-boulder-1.jpg';
-import slideImage4 from '../assets/purple-desert-2.jpg';
-import slideImage5 from '../assets/red-boulder-2.jpg';
+import transitionDiagram from '../assets/diagrams/4.0 Transition.png';
+
+import slideImage1 from '../assets/slides/purple-desert-1.jpg';
+import slideImage2 from '../assets/slides/red-cave-1.jpg';
+import slideImage3 from '../assets/slides/red-boulder-1.jpg';
+import slideImage4 from '../assets/slides/purple-desert-2.jpg';
+import slideImage5 from '../assets/slides/red-boulder-2.jpg';
 
 interface Props {
 	isActive: boolean;
@@ -23,33 +25,28 @@ const BASE_TRANSITION_UNIFORMS: UniformSettings = {
 		name: 'uTime',
 		readonly: true,
 		type: UNIFORM_TYPE.FLOAT_1,
-		value: 0
-	},
-	uSlideIndex: {
-		defaultValue: 0,
-		name: 'uSlideIndex',
-		readonly: true,
-		type: UNIFORM_TYPE.INT_1,
-		value: 0
+		value: 0,
 	},
 	uDirection: {
 		defaultValue: 1,
 		name: 'uDirection',
 		readonly: true,
 		type: UNIFORM_TYPE.INT_1,
-		value: 1
+		value: 1,
 	},
 	uTransitionProgress: {
 		defaultValue: 0.0,
 		name: 'uTransitionProgress',
 		readonly: true,
 		type: UNIFORM_TYPE.FLOAT_1,
-		value: 0.0
-	}
+		value: 0.0,
+	},
 };
 
 const TransitionPage = ({ isActive }: Props) => {
-	const transitionUniforms = React.useRef<UniformSettings>(BASE_TRANSITION_UNIFORMS);
+	const transitionUniforms = React.useRef<UniformSettings>(
+		BASE_TRANSITION_UNIFORMS
+	);
 	const [attributes, setAttributes] = React.useState<any[]>([]);
 	if (!isActive) return <></>;
 
@@ -58,11 +55,20 @@ const TransitionPage = ({ isActive }: Props) => {
 		slideImage2,
 		slideImage3,
 		slideImage4,
-		slideImage5
+		slideImage5,
 	};
 	return (
 		<div>
-			<Section title='' fullScreen={true} fragmentShader={transitionFragmentShader} vertexShader={transitionVertexShader} attributes={attributes} uniforms={transitionUniforms}>
+			<Section
+				title=''
+				notes={`An inifite carousel with an arbitrary number of slides can be made by swapping out the texture data of two texture samplers.`}
+				image={transitionDiagram}
+				fullScreen={true}
+				fragmentShader={transitionFragmentShader}
+				vertexShader={transitionVertexShader}
+				attributes={attributes}
+				uniforms={transitionUniforms}
+			>
 				<TransitionCanvas
 					fragmentShader={transitionFragmentShader}
 					vertexShader={transitionVertexShader}

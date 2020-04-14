@@ -9,8 +9,13 @@ interface UsePauseWhileOffScreenProps {
 	animate: (timer: number) => void;
 }
 
-export const useAnimationFrame = (canvasRef: React.MutableRefObject<HTMLCanvasElement>, callback: (time: number, pingPing: number) => void) => {
-	const allowMotion: boolean = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+export const useAnimationFrame = (
+	canvasRef: React.MutableRefObject<HTMLCanvasElement>,
+	callback: (time: number, pingPing: number) => void
+) => {
+	const allowMotion: boolean = window.matchMedia(
+		'(prefers-reduced-motion: no-preference)'
+	).matches;
 
 	if (!allowMotion) {
 		useEffect(() => {
@@ -28,7 +33,7 @@ export const useAnimationFrame = (canvasRef: React.MutableRefObject<HTMLCanvasEl
 	const idleRef: React.MutableRefObject<boolean> = useRef<boolean>(false);
 	const idleTimerRef: React.MutableRefObject<number> = useRef<number>(0);
 
-	const animate = time => {
+	const animate = (time) => {
 		// Keep animation paused while idle
 		if (idleRef.current) return;
 
@@ -41,9 +46,12 @@ export const useAnimationFrame = (canvasRef: React.MutableRefObject<HTMLCanvasEl
 
 		// Run animation loop
 		idleTimerRef.current++;
-		if (previousTimeRef.current !== undefined) callback(time, pingPongRef.current);
+		if (previousTimeRef.current !== undefined)
+			callback(time, pingPongRef.current);
 		previousTimeRef.current = time;
-		pingPongRef.current = pingPongRef.current = Math.abs(pingPongRef.current - 1);
+		pingPongRef.current = pingPongRef.current = Math.abs(
+			pingPongRef.current - 1
+		);
 		requestRef.current = requestAnimationFrame(animate);
 	};
 
@@ -57,7 +65,7 @@ export const useAnimationFrame = (canvasRef: React.MutableRefObject<HTMLCanvasEl
 		idleRef,
 		idleTimerRef,
 		requestRef,
-		animate
+		animate,
 	});
 };
 
@@ -79,7 +87,13 @@ const usePauseWhileOffScreen = (props: UsePauseWhileOffScreenProps) => {
 	}, []);
 };
 
-const handleScroll = ({ canvasRef, idleRef, idleTimerRef, requestRef, animate }: UsePauseWhileOffScreenProps) => {
+const handleScroll = ({
+	canvasRef,
+	idleRef,
+	idleTimerRef,
+	requestRef,
+	animate,
+}: UsePauseWhileOffScreenProps) => {
 	if (!canvasRef.current) return;
 	const { y, height } = canvasRef.current.getBoundingClientRect() as DOMRect;
 	const topAboveBottom: boolean = y < window.innerHeight;
@@ -98,7 +112,12 @@ const handleScroll = ({ canvasRef, idleRef, idleTimerRef, requestRef, animate }:
 	}
 };
 
-const resetIdleTimer = ({ idleRef, idleTimerRef, requestRef, animate }: UsePauseWhileOffScreenProps) => {
+const resetIdleTimer = ({
+	idleRef,
+	idleTimerRef,
+	requestRef,
+	animate,
+}: UsePauseWhileOffScreenProps) => {
 	if (!idleRef.current) return;
 	idleTimerRef.current = 0;
 	requestRef.current = requestAnimationFrame(animate);

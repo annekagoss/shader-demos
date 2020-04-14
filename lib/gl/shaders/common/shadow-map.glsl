@@ -3,18 +3,20 @@ float distanceFromLight(vec4 position) {
 }
 
 float falloff(vec4 position) {
-  return max(1.-distanceFromLight(position), 0.);
+  return max(1. - distanceFromLight(position), 0.);
 }
 
 float unpackDepth(vec4 rgbaDepth) {
-  const vec4 bitShift = vec4(1.0, 1.0/256.0, 1.0/(256.0 * 256.0), 1.0/(256.0*256.0*256.0));
+  const vec4 bitShift = vec4(1.0, 1.0 / 256.0, 1.0 / (256.0 * 256.0),
+                             1.0 / (256.0 * 256.0 * 256.0));
   float depth = dot(rgbaDepth, bitShift);
   return depth;
 }
 
 float hardShadow(vec4 coordinates, float offset, sampler2D depthMap) {
-  vec3 shadowCoord = (coordinates.xyz/coordinates.w)/2. + .5;
-  vec4 rgbaDepth = texture2D(depthMap, vec2(shadowCoord.x * (1. + offset*.0005), shadowCoord.y));
+  vec3 shadowCoord = (coordinates.xyz / coordinates.w) / 2. + .5;
+  vec4 rgbaDepth = texture2D(
+      depthMap, vec2(shadowCoord.x * (1. + offset * .0005), shadowCoord.y));
   float depth = unpackDepth(rgbaDepth);
   return (shadowCoord.z > depth + 0.0005) ? 1. : .0;
 }
@@ -36,9 +38,11 @@ float softShadow(vec4 position, sampler2D depthMap) {
 }
 
 vec3 shadow(sampler2D depthMap, vec4 positionFromLight, float strength) {
-    float soft = softShadow(positionFromLight, depthMap);
-    float falloffShadow = soft * falloff(positionFromLight);
-    return vec3(falloffShadow) * strength;
+  float soft = softShadow(positionFromLight, depthMap);
+  float falloffShadow = soft * falloff(positionFromLight);
+  return vec3(falloffShadow) * strength;
 }
 
- #pragma glslify: export(shadow) 
+// clang-format off
+#pragma glslify: export(shadow)
+// clang-format on
