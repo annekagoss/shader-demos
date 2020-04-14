@@ -36,11 +36,11 @@ const BASE_RASTERIZATION_UNIFORMS: UniformSettings = {
 		value: { x: 1.0, y: 0.647, z: 1.0, w: 1.0 },
 	},
 	uDownSampleFidelity: {
-		defaultValue: 1.0,
+		defaultValue: 2.0,
 		name: 'uDownSampleFidelity',
 		readonly: false,
 		type: UNIFORM_TYPE.FLOAT_1,
-		value: 1.0,
+		value: 2.0,
 	},
 };
 
