@@ -42,13 +42,6 @@ const BASE_RASTERIZATION_UNIFORMS: UniformSettings = {
 		type: UNIFORM_TYPE.FLOAT_1,
 		value: 1.0,
 	},
-	uDitherSteps: {
-		defaultValue: 18.0,
-		name: 'uDitherSteps',
-		readonly: false,
-		type: UNIFORM_TYPE.FLOAT_1,
-		value: 18.0,
-	},
 };
 
 const DOMRasterizationPage = ({ isActive }: Props) => {

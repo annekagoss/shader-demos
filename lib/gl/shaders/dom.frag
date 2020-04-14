@@ -7,7 +7,6 @@ uniform sampler2D uDiffuse0;
 uniform vec2 uSamplerResolution0;
 uniform float uTime;
 uniform vec4 uColor;
-uniform float uDitherSteps;
 uniform float uDownSampleFidelity;
 
 const float SCALE = 5.;
@@ -92,7 +91,7 @@ void main() {
 
   vec2 imageSt = gl_FragCoord.xy / uSamplerResolution0;
   imageSt.y = (uResolution.y / uSamplerResolution0.y) - imageSt.y;
-  imageSt = downsample(imageSt, uDownSampleFidelity * 400.0);
+  imageSt = downsample(imageSt, uDownSampleFidelity * 500.0);
   imageSt = mix(imageSt, imageSt * noise + .2, .05);
 
   float backgroundLuminance = luminance(uColor, vec3(1.));
@@ -114,10 +113,6 @@ void main() {
   } else {
     color = colorGradient + image;
   }
-
-  color = vec4(dither(downsample(gl_FragCoord.xy, uDownSampleFidelity * .25),
-                      color.rgb, uDitherSteps),
-               color.a);
 
   gl_FragColor = color;
 }
