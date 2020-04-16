@@ -352,3 +352,8 @@ export interface Interaction {
 	rotation: Vector3;
 	initialRotation: Vector3;
 }
+
+export interface LoadedShaders {
+	fragmentShader: WebGLShader;
+	vertexShader: WebGLShader;
+}

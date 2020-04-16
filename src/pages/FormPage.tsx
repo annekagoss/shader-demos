@@ -2,7 +2,7 @@ import * as React from 'react';
 import { BASE_UNIFORMS } from '../utils/general';
 import Section from '../components/Section/Section';
 import BaseCanvas from '../components/BaseCanvas';
-import baseVertexShader from '../../lib/gl/shaders/base.vert';
+import initialBaseVertexShader from '../../lib/gl/shaders/base.vert';
 import helloWorldFragmentShader from '../../lib/gl/shaders/hello-world.frag';
 import stepFragmentShader from '../../lib/gl/shaders/step.frag';
 import lineFragmentShader from '../../lib/gl/shaders/line.frag';
@@ -115,9 +115,11 @@ const FormPage = ({ isActive }: Props) => {
 	const lineUniforms = React.useRef<UniformSettings>(BASE_LINE_UNIFORMS);
 	const rectUniforms = React.useRef<UniformSettings>(BASE_RECTANGLE_UNIFORMS);
 	const circleUniforms = React.useRef<UniformSettings>(BASE_CIRCLE_UNIFORMS);
-	const polygonUniforms = React.useRef<UniformSettings>(
-		BASE_POLYGON_UNIFORMS
-	);
+	const polygonUniforms = React.useRef<UniformSettings>(BASE_POLYGON_UNIFORMS);
+	const [baseFragmentShader, setBaseFragmentShader] = React.useState<string>(helloWorldFragmentShader);
+	const [baseFragmentError, setBaseFragmentError] = React.useState<Error | null>();
+	const [baseVertexShader, setBaseVertexShader] = React.useState<string>(initialBaseVertexShader);
+	const [baseVertexError, setBaseVertexError] = React.useState<Error | null>();
 	const [attributes, setAttributes] = React.useState<any[]>([]);
 
 	if (!isActive) return <></>;
@@ -131,19 +133,24 @@ const FormPage = ({ isActive }: Props) => {
               The aVertexPosition attribute holds an array of 3-vector coordinates for each vertex of the base mesh.
 			`}
 				image={helloWorldDiagram}
-				fragmentShader={helloWorldFragmentShader}
+				fragmentShader={baseFragmentShader}
+				setFragmentShader={setBaseFragmentShader}
+				fragmentError={baseFragmentError}
 				vertexShader={baseVertexShader}
+				setVertexShader={setBaseVertexShader}
+				vertexError={baseVertexError}
 				uniforms={baseUniforms}
-				attributes={attributes}
-			>
+				attributes={attributes}>
 				<BaseCanvas
-					fragmentShader={helloWorldFragmentShader}
+					fragmentShader={baseFragmentShader}
 					vertexShader={baseVertexShader}
 					uniforms={baseUniforms}
 					setAttributes={setAttributes}
+					setFragmentError={setBaseFragmentError}
+					setVertexError={setBaseVertexError}
 				/>
 			</Section>
-			<Section
+			{/* <Section
 				title='0.1: Step'
 				notes={` Step is one of the hardware accelerated functions that are native to GLSL. It returns either 1.0 or 0.0 based on whether a value has passed a given threshold.`}
 				image={stepDiagram}
@@ -224,7 +231,7 @@ const FormPage = ({ isActive }: Props) => {
 					uniforms={polygonUniforms}
 					setAttributes={setAttributes}
 				/>
-			</Section>
+			</Section> */}
 		</div>
 	);
 };
