@@ -3,12 +3,12 @@ import { BASE_UNIFORMS } from '../utils/general';
 import Section from '../components/Section/Section';
 import BaseCanvas from '../components/BaseCanvas';
 import initialBaseVertexShader from '../../lib/gl/shaders/base.vert';
-import helloWorldFragmentShader from '../../lib/gl/shaders/hello-world.frag';
-import stepFragmentShader from '../../lib/gl/shaders/step.frag';
-import lineFragmentShader from '../../lib/gl/shaders/line.frag';
-import rectangleFragmentShader from '../../lib/gl/shaders/rectangle.frag';
-import circleFragmentShader from '../../lib/gl/shaders/circle.frag';
-import polygonFragmentShader from '../../lib/gl/shaders/polygon.frag';
+import initialBaseFragmentShader from '../../lib/gl/shaders/hello-world.frag';
+import initialStepFragmentShader from '../../lib/gl/shaders/step.frag';
+import initialLineFragmentShader from '../../lib/gl/shaders/line.frag';
+import initialRectFragmentShader from '../../lib/gl/shaders/rectangle.frag';
+import initialCircleFragmentShader from '../../lib/gl/shaders/circle.frag';
+import initialPolygonFragmentShader from '../../lib/gl/shaders/polygon.frag';
 import { UNIFORM_TYPE, UniformSettings } from '../../types';
 
 import helloWorldDiagram from '../assets/diagrams/0.0 Hello World.png';
@@ -110,17 +110,43 @@ interface Props {
 }
 
 const FormPage = ({ isActive }: Props) => {
+	const [attributes, setAttributes] = React.useState<any[]>([]);
+
 	const baseUniforms = React.useRef<UniformSettings>(BASE_UNIFORMS);
-	const stepUniforms = React.useRef<UniformSettings>(BASE_STEP_UNIFORMS);
-	const lineUniforms = React.useRef<UniformSettings>(BASE_LINE_UNIFORMS);
-	const rectUniforms = React.useRef<UniformSettings>(BASE_RECTANGLE_UNIFORMS);
-	const circleUniforms = React.useRef<UniformSettings>(BASE_CIRCLE_UNIFORMS);
-	const polygonUniforms = React.useRef<UniformSettings>(BASE_POLYGON_UNIFORMS);
-	const [baseFragmentShader, setBaseFragmentShader] = React.useState<string>(helloWorldFragmentShader);
+	const [baseFragmentShader, setBaseFragmentShader] = React.useState<string>(initialBaseFragmentShader);
 	const [baseFragmentError, setBaseFragmentError] = React.useState<Error | null>();
 	const [baseVertexShader, setBaseVertexShader] = React.useState<string>(initialBaseVertexShader);
 	const [baseVertexError, setBaseVertexError] = React.useState<Error | null>();
-	const [attributes, setAttributes] = React.useState<any[]>([]);
+
+	const stepUniforms = React.useRef<UniformSettings>(BASE_STEP_UNIFORMS);
+	const [stepFragmentShader, setStepFragmentShader] = React.useState<string>(initialStepFragmentShader);
+	const [stepFragmentError, setStepFragmentError] = React.useState<Error | null>();
+	const [stepVertexShader, setStepVertexShader] = React.useState<string>(initialBaseVertexShader);
+	const [stepVertexError, setStepVertexError] = React.useState<Error | null>();
+
+	const lineUniforms = React.useRef<UniformSettings>(BASE_LINE_UNIFORMS);
+	const [lineFragmentShader, setLineFragmentShader] = React.useState<string>(initialLineFragmentShader);
+	const [lineFragmentError, setLineFragmentError] = React.useState<Error | null>();
+	const [lineVertexShader, setLineVertexShader] = React.useState<string>(initialBaseVertexShader);
+	const [lineVertexError, setLineVertexError] = React.useState<Error | null>();
+
+	const rectUniforms = React.useRef<UniformSettings>(BASE_RECTANGLE_UNIFORMS);
+	const [rectFragmentShader, setRectFragmentShader] = React.useState<string>(initialRectFragmentShader);
+	const [rectFragmentError, setRectFragmentError] = React.useState<Error | null>();
+	const [rectVertexShader, setRectVertexShader] = React.useState<string>(initialBaseVertexShader);
+	const [rectVertexError, setRectVertexError] = React.useState<Error | null>();
+
+	const circleUniforms = React.useRef<UniformSettings>(BASE_CIRCLE_UNIFORMS);
+	const [circleFragmentShader, setCircleFragmentShader] = React.useState<string>(initialCircleFragmentShader);
+	const [circleFragmentError, setCircleFragmentError] = React.useState<Error | null>();
+	const [circleVertexShader, setCircleVertexShader] = React.useState<string>(initialBaseVertexShader);
+	const [circleVertexError, setCircleVertexError] = React.useState<Error | null>();
+
+	const polygonUniforms = React.useRef<UniformSettings>(BASE_POLYGON_UNIFORMS);
+	const [polygonFragmentShader, setPolygonFragmentShader] = React.useState<string>(initialPolygonFragmentShader);
+	const [polygonFragmentError, setPolygonFragmentError] = React.useState<Error | null>();
+	const [polygonVertexShader, setPolygonVertexShader] = React.useState<string>(initialBaseVertexShader);
+	const [polygonVertexError, setPolygonVertexError] = React.useState<Error | null>();
 
 	if (!isActive) return <></>;
 
@@ -150,20 +176,25 @@ const FormPage = ({ isActive }: Props) => {
 					setVertexError={setBaseVertexError}
 				/>
 			</Section>
-			{/* <Section
+			<Section
 				title='0.1: Step'
 				notes={` Step is one of the hardware accelerated functions that are native to GLSL. It returns either 1.0 or 0.0 based on whether a value has passed a given threshold.`}
 				image={stepDiagram}
 				fragmentShader={stepFragmentShader}
-				vertexShader={baseVertexShader}
+				setFragmentShader={setStepFragmentShader}
+				fragmentError={stepFragmentError}
+				vertexShader={stepVertexShader}
+				setVertexShader={setStepVertexShader}
+				vertexError={stepVertexError}
 				attributes={attributes}
-				uniforms={stepUniforms}
-			>
+				uniforms={stepUniforms}>
 				<BaseCanvas
 					fragmentShader={stepFragmentShader}
-					vertexShader={baseVertexShader}
+					vertexShader={stepVertexShader}
 					uniforms={stepUniforms}
 					setAttributes={setAttributes}
+					setFragmentError={setStepFragmentError}
+					setVertexError={setStepVertexError}
 				/>
 			</Section>
 			<Section
@@ -173,31 +204,41 @@ const FormPage = ({ isActive }: Props) => {
 				}
 				image={lineDiagram}
 				fragmentShader={lineFragmentShader}
-				vertexShader={baseVertexShader}
+				setFragmentShader={setLineFragmentShader}
+				fragmentError={lineFragmentError}
+				vertexShader={lineVertexShader}
+				setVertexShader={setLineVertexShader}
+				vertexError={lineVertexError}
 				attributes={attributes}
-				uniforms={lineUniforms}
-			>
+				uniforms={lineUniforms}>
 				<BaseCanvas
 					fragmentShader={lineFragmentShader}
-					vertexShader={baseVertexShader}
+					vertexShader={lineVertexShader}
 					uniforms={lineUniforms}
 					setAttributes={setAttributes}
+					setFragmentError={setLineFragmentError}
+					setVertexError={setLineVertexError}
 				/>
 			</Section>
 			<Section
 				title='0.3: Rectangle'
 				notes={`Adding, subtracting, multiplying and dividing operations work exactly like blending modes in CSS or Photoshop.  Here we're using multiply  to combine the dark edges around the rectangle.`}
 				image={rectangleDiagram}
-				fragmentShader={rectangleFragmentShader}
-				vertexShader={baseVertexShader}
+				fragmentShader={rectFragmentShader}
+				setFragmentShader={setRectFragmentShader}
+				fragmentError={rectFragmentError}
+				vertexShader={rectVertexShader}
+				setVertexShader={setRectVertexShader}
+				vertexError={rectVertexError}
 				attributes={attributes}
-				uniforms={rectUniforms}
-			>
+				uniforms={rectUniforms}>
 				<BaseCanvas
-					fragmentShader={rectangleFragmentShader}
-					vertexShader={baseVertexShader}
+					fragmentShader={rectFragmentShader}
+					vertexShader={rectVertexShader}
 					uniforms={rectUniforms}
 					setAttributes={setAttributes}
+					setFragmentError={setRectFragmentError}
+					setVertexError={setRectVertexError}
 				/>
 			</Section>
 			<Section
@@ -205,15 +246,20 @@ const FormPage = ({ isActive }: Props) => {
 				notes={`Distance is a very useful hardware accelerated function that return the distance between two points.  The points can be represented as two floats or two n-dimensional vectors.`}
 				image={circleDiagram}
 				fragmentShader={circleFragmentShader}
-				vertexShader={baseVertexShader}
+				setFragmentShader={setCircleFragmentShader}
+				fragmentError={circleFragmentError}
+				vertexShader={circleVertexShader}
+				setVertexShader={setCircleVertexShader}
+				vertexError={circleVertexError}
 				attributes={attributes}
-				uniforms={circleUniforms}
-			>
+				uniforms={circleUniforms}>
 				<BaseCanvas
 					fragmentShader={circleFragmentShader}
-					vertexShader={baseVertexShader}
+					vertexShader={circleVertexShader}
 					uniforms={circleUniforms}
 					setAttributes={setAttributes}
+					setFragmentError={setCircleFragmentError}
+					setVertexError={setCircleVertexError}
 				/>
 			</Section>
 			<Section
@@ -221,17 +267,22 @@ const FormPage = ({ isActive }: Props) => {
 				notes={`Signed Distance Functions are tricky, but very powerful.  They define a field of values based on each point's distance from a given boundary, where the sign determined whether the point is within the boundary.  Here we have a function that determines if a pixel is inside the boundaries of an n-sided polygon.`}
 				image={polygonDiagram}
 				fragmentShader={polygonFragmentShader}
-				vertexShader={baseVertexShader}
+				setFragmentShader={setPolygonFragmentShader}
+				fragmentError={polygonFragmentError}
+				vertexShader={polygonVertexShader}
+				setVertexShader={setPolygonVertexShader}
+				vertexError={polygonVertexError}
 				attributes={attributes}
-				uniforms={polygonUniforms}
-			>
+				uniforms={polygonUniforms}>
 				<BaseCanvas
 					fragmentShader={polygonFragmentShader}
-					vertexShader={baseVertexShader}
+					vertexShader={polygonVertexShader}
 					uniforms={polygonUniforms}
 					setAttributes={setAttributes}
+					setFragmentError={setPolygonFragmentError}
+					setVertexError={setPolygonVertexError}
 				/>
-			</Section> */}
+			</Section>
 		</div>
 	);
 };
