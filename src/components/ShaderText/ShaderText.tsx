@@ -80,6 +80,7 @@ const ShaderText = ({ fragmentShader, setFragmentShader, fragmentError, vertexSh
 							enableLiveAutocompletion={true}
 							enableSnippets={true}
 							scrollMargin={[14, 0, 0, 0]}
+							width='100%'
 						/>
 					</div>
 					<div className={cx(styles.errorMessage, Boolean(fragmentError) && styles.visible)}>{fragmentError && fragmentError.message}</div>
