@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { UNIFORM_TYPE, Vector2, UniformSettings, Vector3 } from '../../types';
 import { BASE_UNIFORMS } from '../utils/general';
-import meshFragmentShader from '../../lib/gl/shaders/mesh.frag';
-import meshVertexShader from '../../lib/gl/shaders/mesh.vert';
-import phongFragmentShader from '../../lib/gl/shaders/phong.frag';
-import phongVertexShader from '../../lib/gl/shaders/phong.vert';
-import mandelbulbFragmentShader from '../../lib/gl/shaders/mandelbulb.frag';
+import initialMeshFragmentShader from '../../lib/gl/shaders/mesh.frag';
+import initialMeshVertexShader from '../../lib/gl/shaders/mesh.vert';
+import initialPhongFragmentShader from '../../lib/gl/shaders/phong.frag';
+import initialPhongVertexShader from '../../lib/gl/shaders/phong.vert';
+import initialFractalFragmentShader from '../../lib/gl/shaders/mandelbulb.frag';
 import baseVertexShader from '../../lib/gl/shaders/base.vert';
 import Section from '../components/Section/Section';
 import BaseCanvas from '../components/BaseCanvas';
@@ -274,12 +274,25 @@ const CUBE_ROTATION_DELTA: Vector3 = { x: 0.0025, y: 0.01, z: 0 };
 const OBJ_ROTATION_DELTA: Vector3 = { x: 0, y: 0.01, z: 0 };
 
 const DepthPage = ({ isActive }: Props) => {
-	const meshUniforms = React.useRef<UniformSettings>(BASE_MESH_UNIFORMS);
-	const phongUniforms = React.useRef<UniformSettings>(BASE_PHONG_UNIFORMS);
-	const fractalUniforms = React.useRef<UniformSettings>(
-		BASE_FRACTAL_UNIFORMS
-	);
 	const [attributes, setAttributes] = React.useState<any[]>([]);
+
+	const meshUniforms = React.useRef<UniformSettings>(BASE_MESH_UNIFORMS);
+	const [meshFragmentShader, setMeshFragmentShader] = React.useState<string>(initialMeshFragmentShader);
+	const [meshFragmentError, setMeshFragmentError] = React.useState<Error | null>();
+	const [meshVertexShader, setMeshVertexShader] = React.useState<string>(initialMeshVertexShader);
+	const [meshVertexError, setMeshVertexError] = React.useState<Error | null>();
+
+	const phongUniforms = React.useRef<UniformSettings>(BASE_PHONG_UNIFORMS);
+	const [phongFragmentShader, setPhongFragmentShader] = React.useState<string>(initialPhongFragmentShader);
+	const [phongFragmentError, setPhongFragmentError] = React.useState<Error | null>();
+	const [phongVertexShader, setPhongVertexShader] = React.useState<string>(initialPhongVertexShader);
+	const [phongVertexError, setPhongVertexError] = React.useState<Error | null>();
+
+	const fractalUniforms = React.useRef<UniformSettings>(BASE_FRACTAL_UNIFORMS);
+	const [fractalFragmentShader, setFractalFragmentShader] = React.useState<string>(initialFractalFragmentShader);
+	const [fractalFragmentError, setFractalFragmentError] = React.useState<Error | null>();
+	const [fractalVertexShader, setFractalVertexShader] = React.useState<string>(baseVertexShader);
+	const [fractalVertexError, setFractalVertexError] = React.useState<Error | null>();
 
 	if (!isActive) return <></>;
 
@@ -303,10 +316,13 @@ const DepthPage = ({ isActive }: Props) => {
 				`}
 				image={meshDiagram}
 				fragmentShader={meshFragmentShader}
+				setFragmentShader={setMeshFragmentShader}
+				fragmentError={meshFragmentError}
 				vertexShader={meshVertexShader}
+				setVertexShader={setMeshVertexShader}
+				vertexError={meshVertexError}
 				attributes={attributes}
-				uniforms={meshUniforms}
-			>
+				uniforms={meshUniforms}>
 				<DepthCanvas
 					fragmentShader={meshFragmentShader}
 					vertexShader={meshVertexShader}
@@ -314,6 +330,8 @@ const DepthPage = ({ isActive }: Props) => {
 					setAttributes={setAttributes}
 					faceArray={CUBE_MESH}
 					rotationDelta={CUBE_ROTATION_DELTA}
+					setFragmentError={setMeshFragmentError}
+					setVertexError={setMeshVertexError}
 				/>
 			</Section>
 			<Section
@@ -321,10 +339,13 @@ const DepthPage = ({ isActive }: Props) => {
 				notes={`Loading a file to WebGL requires parsing the original format to raw position, material and texture data. Textures are mapped to corresponding vertex positions with texture coordinates parsed from a MTL file.`}
 				image={fileLoaderDiagram}
 				fragmentShader={phongFragmentShader}
-				attributes={attributes}
-				uniforms={phongUniforms}
+				setFragmentShader={setPhongFragmentShader}
+				fragmentError={phongFragmentError}
 				vertexShader={phongVertexShader}
-			>
+				setVertexShader={setPhongVertexShader}
+				vertexError={phongVertexError}
+				attributes={attributes}
+				uniforms={phongUniforms}>
 				<LoaderCanvas
 					fragmentShader={phongFragmentShader}
 					vertexShader={phongVertexShader}
@@ -332,6 +353,8 @@ const DepthPage = ({ isActive }: Props) => {
 					setAttributes={setAttributes}
 					OBJData={foxOBJData}
 					rotationDelta={OBJ_ROTATION_DELTA}
+					setFragmentError={setPhongFragmentError}
+					setVertexError={setPhongVertexError}
 				/>
 			</Section>
 			{!IS_MOBILE && (
@@ -339,16 +362,21 @@ const DepthPage = ({ isActive }: Props) => {
 					title='2.2: Fractal'
 					notes={`Raymarching is a powerful technique for rendering purely procedural 3D geometry, without needing to load a mesh. For each step along a ray from the camera to the geometry, an SDF slice is created and combined to form a volume.  See 0.5 for a 2D SDF example.`}
 					image={fractalDiagram}
-					fragmentShader={mandelbulbFragmentShader}
-					vertexShader={baseVertexShader}
+					fragmentShader={fractalFragmentShader}
+					setFragmentShader={setFractalFragmentShader}
+					fragmentError={fractalFragmentError}
+					vertexShader={fractalVertexShader}
+					setVertexShader={setFractalVertexShader}
+					vertexError={fractalVertexError}
 					attributes={attributes}
-					uniforms={fractalUniforms}
-				>
+					uniforms={fractalUniforms}>
 					<BaseCanvas
-						fragmentShader={mandelbulbFragmentShader}
-						vertexShader={baseVertexShader}
+						fragmentShader={fractalFragmentShader}
+						vertexShader={fractalVertexShader}
 						uniforms={fractalUniforms}
 						setAttributes={setAttributes}
+						setFragmentError={setFractalFragmentError}
+						setVertexError={setFractalVertexError}
 					/>
 				</Section>
 			)}

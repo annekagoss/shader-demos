@@ -1,32 +1,14 @@
 import * as React from 'react';
-import {
-	UniformSettings,
-	Vector2,
-	Matrix,
-	Vector3,
-	Mesh,
-	Buffers,
-	MESH_TYPE,
-	Buffer,
-	OBJData,
-	FBO,
-} from '../../types';
+import { UniformSettings, Vector2, Matrix, Vector3, Mesh, Buffers, MESH_TYPE, Buffer, OBJData, FBO, LoadedShaders } from '../../types';
 import { initializeGL } from '../hooks/gl';
 import { useAnimationFrame } from '../hooks/animation';
 import { useWindowSize, updateRendererSize } from '../hooks/resize';
-import {
-	assignProjectionMatrix,
-	assignUniforms,
-} from '../../lib/gl/initialize';
-import {
-	createMat4,
-	applyTransformation,
-	invertMatrix,
-	transposeMatrix,
-} from '../../lib/gl/matrix';
+import { assignProjectionMatrix, assignUniforms } from '../../lib/gl/initialize';
+import { createMat4, applyTransformation, invertMatrix, transposeMatrix } from '../../lib/gl/matrix';
 import { addVectors } from '../../lib/gl/math';
 import { useOBJLoaderWebWorker } from '../hooks/webWorker';
 import { formatAttributes, isSafari } from '../utils/general';
+import { useUpdateShaders } from '../hooks/updateShaders';
 
 interface Props {
 	fragmentShader: string;
@@ -35,6 +17,8 @@ interface Props {
 	setAttributes: (attributes: any[]) => void;
 	OBJData: OBJData;
 	rotationDelta: Vector3;
+	setFragmentError: (error: Error | null) => void;
+	setVertexError: (error: Error | null) => void;
 }
 
 interface RenderProps {
@@ -61,17 +45,7 @@ const ENABLE_WEBWORKER: boolean = !IS_SAFARI && !IS_MOBILE;
 
 const render = (props: RenderProps) => {
 	if (!props.gl) return;
-	const {
-		gl,
-		size,
-		uniforms,
-		uniformLocations,
-		outlineUniformLocations,
-		program,
-		outlineProgram,
-		FBOA,
-		FBOB,
-	} = props;
+	const { gl, size, uniforms, uniformLocations, outlineUniformLocations, program, outlineProgram, FBOA, FBOB } = props;
 
 	if (!ENABLE_FRAMEBUFFER || uniforms.uMaterialType.value !== 2) {
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -112,15 +86,8 @@ const render = (props: RenderProps) => {
 	drawOutlines(props);
 };
 
-const drawOutlines = ({
-	gl,
-	outlineProgram,
-	baseVertexBuffer,
-}: RenderProps) => {
-	const vertexPosition = gl.getAttribLocation(
-		outlineProgram,
-		'aBaseVertexPosition'
-	);
+const drawOutlines = ({ gl, outlineProgram, baseVertexBuffer }: RenderProps) => {
+	const vertexPosition = gl.getAttribLocation(outlineProgram, 'aBaseVertexPosition');
 	gl.enableVertexAttribArray(vertexPosition);
 	gl.bindBuffer(gl.ARRAY_BUFFER, baseVertexBuffer.buffer);
 	gl.vertexAttribPointer(vertexPosition, 3, gl.FLOAT, false, 0, 0);
@@ -128,16 +95,7 @@ const drawOutlines = ({
 	gl.disableVertexAttribArray(vertexPosition);
 };
 
-const draw = ({
-	gl,
-	uniformLocations,
-	uniforms,
-	buffers,
-	time,
-	size,
-	rotation,
-	program,
-}: RenderProps): void => {
+const draw = ({ gl, uniformLocations, uniforms, buffers, time, size, rotation, program }: RenderProps): void => {
 	assignProjectionMatrix(gl, uniformLocations, size);
 	const modelViewMatrix: Matrix = applyTransformation(createMat4(), {
 		translation: uniforms.uTranslation.value,
@@ -148,11 +106,7 @@ const draw = ({
 		},
 		scale: uniforms.uScale.value,
 	});
-	gl.uniformMatrix4fv(
-		uniformLocations.uModelViewMatrix,
-		false,
-		modelViewMatrix
-	);
+	gl.uniformMatrix4fv(uniformLocations.uModelViewMatrix, false, modelViewMatrix);
 	let normalMatrix: Float32Array = invertMatrix(modelViewMatrix);
 	normalMatrix = transposeMatrix(normalMatrix);
 	gl.uniformMatrix4fv(uniformLocations.uNormalMatrix, false, normalMatrix);
@@ -169,26 +123,16 @@ const draw = ({
 	gl.drawElements(gl.TRIANGLES, vertexCount, indexType, indexOffset);
 };
 
-const LoaderCanvas = ({
-	fragmentShader,
-	vertexShader,
-	uniforms,
-	setAttributes,
-	OBJData,
-	rotationDelta,
-}: Props) => {
-	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<
-		HTMLCanvasElement
-	>();
+const LoaderCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, OBJData, rotationDelta, setFragmentError, setVertexError }: Props) => {
+	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<HTMLCanvasElement>();
 	const size: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
 		x: uniforms.current.uResolution.value.x * window.devicePixelRatio,
 		y: uniforms.current.uResolution.value.y * window.devicePixelRatio,
 	});
 	const gl = React.useRef<WebGLRenderingContext>();
-	const uniformLocations: React.MutableRefObject<Record<
-		string,
-		WebGLUniformLocation
-	>> = React.useRef<Record<string, WebGLUniformLocation>>();
+	const programRef: React.MutableRefObject<WebGLProgram> = React.useRef<WebGLProgram>();
+	const loadedShadersRef: React.MutableRefObject<LoadedShaders> = React.useRef<LoadedShaders>({ fragmentShader: null, vertexShader: null });
+	const uniformLocations: React.MutableRefObject<Record<string, WebGLUniformLocation>> = React.useRef<Record<string, WebGLUniformLocation>>();
 	const buffersRef: React.MutableRefObject<Buffers> = React.useRef<Buffers>({
 		vertexBuffer: null,
 		normalBuffer: null,
@@ -204,19 +148,9 @@ const LoaderCanvas = ({
 	});
 	const meshRef: React.MutableRefObject<Mesh> = React.useRef<Mesh>();
 	// Toon outline pass
-	const programRef: React.MutableRefObject<WebGLProgram> = React.useRef<
-		WebGLProgram
-	>();
-	const outlineProgramRef: React.MutableRefObject<WebGLProgram> = React.useRef<
-		WebGLProgram
-	>();
-	const outlineUniformLocations: React.MutableRefObject<Record<
-		string,
-		WebGLUniformLocation
-	>> = React.useRef<Record<string, WebGLUniformLocation>>();
-	const baseVertexBufferRef: React.MutableRefObject<Buffer> = React.useRef<
-		Buffer
-	>();
+	const outlineProgramRef: React.MutableRefObject<WebGLProgram> = React.useRef<WebGLProgram>();
+	const outlineUniformLocations: React.MutableRefObject<Record<string, WebGLUniformLocation>> = React.useRef<Record<string, WebGLUniformLocation>>();
+	const baseVertexBufferRef: React.MutableRefObject<Buffer> = React.useRef<Buffer>();
 	const FBOA: React.MutableRefObject<FBO> = React.useRef();
 	const FBOB: React.MutableRefObject<FBO> = React.useRef();
 
@@ -230,12 +164,13 @@ const LoaderCanvas = ({
 				buffersRef: buffersRef,
 				fragmentSource: fragmentShader,
 				vertexSource: vertexShader,
+				programRef,
+				loadedShadersRef,
 				uniforms: uniforms.current,
 				size,
 				mesh: meshRef.current,
 				meshType: MESH_TYPE.OBJ,
 				outlineProgramRef,
-				programRef,
 				outlineUniformLocations,
 				baseVertexBufferRef,
 				FBOA,
@@ -247,6 +182,8 @@ const LoaderCanvas = ({
 		OBJData,
 		useWebWorker: ENABLE_WEBWORKER,
 	});
+
+	useUpdateShaders({ gl, programRef, loadedShadersRef, uniformLocations, uniforms, fragmentShader, vertexShader, setFragmentError, setVertexError });
 
 	useWindowSize(canvasRef, gl, uniforms.current, size);
 
@@ -270,14 +207,7 @@ const LoaderCanvas = ({
 		});
 	});
 
-	return (
-		<canvas
-			ref={canvasRef}
-			width={size.current.x}
-			height={size.current.y}
-			role='img'
-		/>
-	);
+	return <canvas ref={canvasRef} width={size.current.x} height={size.current.y} role='img' />;
 };
 
 export default LoaderCanvas;

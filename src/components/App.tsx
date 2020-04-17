@@ -10,7 +10,7 @@ import DOMRasterizationPage from '../pages/DOMRasterizationPage';
 import styles from './app.module.scss';
 
 const App = () => {
-	const [activePageIndex, setActivePageIndex] = React.useState<number>(0);
+	const [activePageIndex, setActivePageIndex] = React.useState<number>(5);
 	if (!glSupported()) return <div>'WebGL is not supported on this device.'</div>;
 
 	return (
@@ -63,11 +63,11 @@ const App = () => {
 			</nav>
 			<div className={styles.PagesContainer}>
 				<FormPage isActive={activePageIndex === 0} />
-				{/* <MotionPage isActive={activePageIndex === 1} />
+				<MotionPage isActive={activePageIndex === 1} />
 				<DepthPage isActive={activePageIndex === 2} />
 				<InteractionPage isActive={activePageIndex === 3} />
 				<TransitionPage isActive={activePageIndex === 4} />
-				<DOMRasterizationPage isActive={activePageIndex === 5} /> */}
+				<DOMRasterizationPage isActive={activePageIndex === 5} />
 			</div>
 		</div>
 	);

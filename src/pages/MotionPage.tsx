@@ -5,12 +5,12 @@ import Section from '../components/Section/Section';
 import BaseCanvas from '../components/BaseCanvas';
 import FeedbackCanvas from '../components/FeedbackCanvas/FeedbackCanvas';
 import baseVertexShader from '../../lib/gl/shaders/base.vert';
-import translationFragmentShader from '../../lib/gl/shaders/translate.frag';
-import scaleFragmentShader from '../../lib/gl/shaders/scale.frag';
-import rotationFragmentShader from '../../lib/gl/shaders/rotation.frag';
-import signalFragmentShader from '../../lib/gl/shaders/signal.frag';
-import noiseFragmentShader from '../../lib/gl/shaders/noise.frag';
-import feedbackFragmentShader from '../../lib/gl/shaders/feedback.frag';
+import initialTranslationFragmentShader from '../../lib/gl/shaders/translate.frag';
+import initialScaleFragmentShader from '../../lib/gl/shaders/scale.frag';
+import initialRotationFragmentShader from '../../lib/gl/shaders/rotation.frag';
+import initialSignalFragmentShader from '../../lib/gl/shaders/signal.frag';
+import initialNoiseFragmentShader from '../../lib/gl/shaders/noise.frag';
+import initialFeedbackFragmentShader from '../../lib/gl/shaders/feedback.frag';
 
 import translationDiagram from '../assets/diagrams/1.0 Translation.png';
 import scaleDiagram from '../assets/diagrams/1.1 Scale.png';
@@ -187,19 +187,43 @@ interface Props {
 }
 
 const MotionPage = ({ isActive }: Props) => {
-	const translationUniforms = React.useRef<UniformSettings>(
-		BASE_TRANSLATION_UNIFORMS
-	);
-	const scaleUniforms = React.useRef<UniformSettings>(BASE_SCALE_UNIFORMS);
-	const rotationUniforms = React.useRef<UniformSettings>(
-		BASE_ROTATION_UNIFORMS
-	);
-	const signalUniforms = React.useRef<UniformSettings>(BASE_SIGNAL_UNIFORMS);
-	const noiseUniforms = React.useRef<UniformSettings>(BASE_NOISE_UNIFORMS);
-	const feedbackUniforms = React.useRef<UniformSettings>(
-		BASE_FEEDBACK_UNIFORMS
-	);
 	const [attributes, setAttributes] = React.useState<any[]>([]);
+
+	const translationUniforms = React.useRef<UniformSettings>(BASE_TRANSLATION_UNIFORMS);
+	const [translationFragmentShader, setTranslationFragmentShader] = React.useState<string>(initialTranslationFragmentShader);
+	const [translationVertexShader, setTranslationVertexShader] = React.useState<string>(baseVertexShader);
+	const [translationFragmentError, setTranslationFragmentError] = React.useState<Error | null>();
+	const [translationVertexError, setTranslationVertexError] = React.useState<Error | null>();
+
+	const scaleUniforms = React.useRef<UniformSettings>(BASE_SCALE_UNIFORMS);
+	const [scaleFragmentShader, setScaleFragmentShader] = React.useState<string>(initialScaleFragmentShader);
+	const [scaleVertexShader, setScaleVertexShader] = React.useState<string>(baseVertexShader);
+	const [scaleFragmentError, setScaleFragmentError] = React.useState<Error | null>();
+	const [scaleVertexError, setScaleVertexError] = React.useState<Error | null>();
+
+	const rotationUniforms = React.useRef<UniformSettings>(BASE_ROTATION_UNIFORMS);
+	const [rotationFragmentShader, setRotationFragmentShader] = React.useState<string>(initialRotationFragmentShader);
+	const [rotationVertexShader, setRotationVertexShader] = React.useState<string>(baseVertexShader);
+	const [rotationFragmentError, setRotationFragmentError] = React.useState<Error | null>();
+	const [rotationVertexError, setRotationVertexError] = React.useState<Error | null>();
+
+	const signalUniforms = React.useRef<UniformSettings>(BASE_SIGNAL_UNIFORMS);
+	const [signalFragmentShader, setSignalFragmentShader] = React.useState<string>(initialSignalFragmentShader);
+	const [signalVertexShader, setSignalVertexShader] = React.useState<string>(baseVertexShader);
+	const [signalFragmentError, setSignalFragmentError] = React.useState<Error | null>();
+	const [signalVertexError, setSignalVertexError] = React.useState<Error | null>();
+
+	const noiseUniforms = React.useRef<UniformSettings>(BASE_NOISE_UNIFORMS);
+	const [noiseFragmentShader, setNoiseFragmentShader] = React.useState<string>(initialNoiseFragmentShader);
+	const [noiseVertexShader, setNoiseVertexShader] = React.useState<string>(baseVertexShader);
+	const [noiseFragmentError, setNoiseFragmentError] = React.useState<Error | null>();
+	const [noiseVertexError, setNoiseVertexError] = React.useState<Error | null>();
+
+	const feedbackUniforms = React.useRef<UniformSettings>(BASE_FEEDBACK_UNIFORMS);
+	const [feedbackFragmentShader, setFeedbackFragmentShader] = React.useState<string>(initialFeedbackFragmentShader);
+	const [feedbackVertexShader, setFeedbackVertexShader] = React.useState<string>(baseVertexShader);
+	const [feedbackFragmentError, setFeedbackFragmentError] = React.useState<Error | null>();
+	const [feedbackVertexError, setFeedbackVertexError] = React.useState<Error | null>();
 
 	if (!isActive) return <></>;
 
@@ -210,15 +234,20 @@ const MotionPage = ({ isActive }: Props) => {
 				notes={`To change the position of a shape in a shader, you actually change the coordinate system itself.  In this example we move the screen space around in a circle, and then draw the square inside it.  If there are multiple Form that are moving independantly would each have their own unique coordinate system.`}
 				image={translationDiagram}
 				fragmentShader={translationFragmentShader}
-				vertexShader={baseVertexShader}
+				setFragmentShader={setTranslationFragmentShader}
+				fragmentError={translationFragmentError}
+				vertexShader={translationVertexShader}
+				setVertexShader={setTranslationVertexShader}
+				vertexError={translationVertexError}
 				attributes={attributes}
-				uniforms={translationUniforms}
-			>
+				uniforms={translationUniforms}>
 				<BaseCanvas
 					fragmentShader={translationFragmentShader}
-					vertexShader={baseVertexShader}
+					vertexShader={translationVertexShader}
 					uniforms={translationUniforms}
 					setAttributes={setAttributes}
+					setFragmentError={setTranslationFragmentError}
+					setVertexError={setTranslationVertexError}
 				/>
 			</Section>
 			<Section
@@ -226,15 +255,20 @@ const MotionPage = ({ isActive }: Props) => {
 				notes={`GLSL's native support for matrices allows us to apply complex spatial transformations efficiently. Scaling is probably the simplest of these transformations.  Notice that we need to normalize and then re-center the coordinate system before and after applying the matrix.`}
 				image={scaleDiagram}
 				fragmentShader={scaleFragmentShader}
-				vertexShader={baseVertexShader}
+				setFragmentShader={setScaleFragmentShader}
+				fragmentError={scaleFragmentError}
+				vertexShader={scaleVertexShader}
+				setVertexShader={setScaleVertexShader}
+				vertexError={scaleVertexError}
 				attributes={attributes}
-				uniforms={scaleUniforms}
-			>
+				uniforms={scaleUniforms}>
 				<BaseCanvas
 					fragmentShader={scaleFragmentShader}
-					vertexShader={baseVertexShader}
+					vertexShader={scaleVertexShader}
 					uniforms={scaleUniforms}
 					setAttributes={setAttributes}
+					setFragmentError={setScaleFragmentError}
+					setVertexError={setScaleVertexError}
 				/>
 			</Section>
 			<Section
@@ -242,15 +276,20 @@ const MotionPage = ({ isActive }: Props) => {
 				notes={`Here we use another 2x2 matrix to rotate the coordinate system around the origin x:0 y: 0.`}
 				image={rotationDiagram}
 				fragmentShader={rotationFragmentShader}
-				vertexShader={baseVertexShader}
+				setFragmentShader={setRotationFragmentShader}
+				fragmentError={rotationFragmentError}
+				vertexShader={rotationVertexShader}
+				setVertexShader={setRotationVertexShader}
+				vertexError={rotationVertexError}
 				attributes={attributes}
-				uniforms={rotationUniforms}
-			>
+				uniforms={rotationUniforms}>
 				<BaseCanvas
 					fragmentShader={rotationFragmentShader}
-					vertexShader={baseVertexShader}
+					vertexShader={rotationVertexShader}
 					uniforms={rotationUniforms}
 					setAttributes={setAttributes}
+					setFragmentError={setRotationFragmentError}
+					setVertexError={setRotationVertexError}
 				/>
 			</Section>
 			<Section
@@ -258,15 +297,20 @@ const MotionPage = ({ isActive }: Props) => {
 				notes={`Like noise, signals can be a powerful tool for generating and animating graphics. If with think of the x-axis as the time domain we can draw signals by offsetting them in time instead of space.`}
 				image={signalDiagram}
 				fragmentShader={signalFragmentShader}
-				vertexShader={baseVertexShader}
+				setFragmentShader={setSignalFragmentShader}
+				fragmentError={signalFragmentError}
+				vertexShader={signalVertexShader}
+				setVertexShader={setSignalVertexShader}
+				vertexError={signalVertexError}
 				attributes={attributes}
-				uniforms={signalUniforms}
-			>
+				uniforms={signalUniforms}>
 				<BaseCanvas
 					fragmentShader={signalFragmentShader}
-					vertexShader={baseVertexShader}
+					vertexShader={signalVertexShader}
 					uniforms={signalUniforms}
 					setAttributes={setAttributes}
+					setFragmentError={setSignalFragmentError}
+					setVertexError={setSignalVertexError}
 				/>
 			</Section>
 			<Section
@@ -274,15 +318,20 @@ const MotionPage = ({ isActive }: Props) => {
 				notes={`Noise is a powerful tool to create organic effects.  This is an example of 3D Simplex Noise, where we animate the noise by mapping the 3rd dimension to time.`}
 				image={noiseDiagram}
 				fragmentShader={noiseFragmentShader}
-				vertexShader={baseVertexShader}
+				setFragmentShader={setNoiseFragmentShader}
+				fragmentError={noiseFragmentError}
+				vertexShader={noiseVertexShader}
+				setVertexShader={setNoiseVertexShader}
+				vertexError={noiseVertexError}
 				attributes={attributes}
-				uniforms={noiseUniforms}
-			>
+				uniforms={noiseUniforms}>
 				<BaseCanvas
 					fragmentShader={noiseFragmentShader}
-					vertexShader={baseVertexShader}
+					vertexShader={noiseVertexShader}
 					uniforms={noiseUniforms}
 					setAttributes={setAttributes}
+					setFragmentError={setNoiseFragmentError}
+					setVertexError={setNoiseVertexError}
 				/>
 			</Section>
 			<Section
@@ -290,15 +339,20 @@ const MotionPage = ({ isActive }: Props) => {
 				notes={`This shader takes in itself as in input to generate this smear effect. On each frame it recursively applies an offset and opacity to the frame before it.  To achieve this we need two offscreen frame buffers and target textures that are alternated each frame (called PingPonging.)`}
 				image={feedbackDiagram}
 				fragmentShader={feedbackFragmentShader}
-				vertexShader={baseVertexShader}
+				setFragmentShader={setFeedbackFragmentShader}
+				fragmentError={feedbackFragmentError}
+				vertexShader={feedbackVertexShader}
+				setVertexShader={setFeedbackVertexShader}
+				vertexError={feedbackVertexError}
 				attributes={attributes}
-				uniforms={feedbackUniforms}
-			>
+				uniforms={feedbackUniforms}>
 				<FeedbackCanvas
 					fragmentShader={feedbackFragmentShader}
-					vertexShader={baseVertexShader}
+					vertexShader={feedbackVertexShader}
 					uniforms={feedbackUniforms}
 					setAttributes={setAttributes}
+					setFragmentError={setFeedbackFragmentError}
+					setVertexError={setFeedbackVertexError}
 				/>
 			</Section>
 		</div>

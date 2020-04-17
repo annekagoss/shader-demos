@@ -1,24 +1,14 @@
 import * as React from 'react';
-import {
-	UniformSettings,
-	Vector2,
-	Matrix,
-	Vector3,
-	FaceArray,
-	MESH_TYPE,
-	Buffers,
-} from '../../types';
-import {
-	assignProjectionMatrix,
-	assignUniforms,
-} from '../../lib/gl/initialize';
+import { UniformSettings, Vector2, Matrix, Vector3, FaceArray, MESH_TYPE, Buffers, LoadedShaders } from '../../types';
+import { assignProjectionMatrix, assignUniforms } from '../../lib/gl/initialize';
 import { applyRotation, createMat4 } from '../../lib/gl/matrix';
 import { addVectors } from '../../lib/gl/math';
 import { useInitializeGL } from '../hooks/gl';
 import { useAnimationFrame } from '../hooks/animation';
-import { useWindowSize, updateRendererSize } from '../hooks/resize';
+import { useWindowSize } from '../hooks/resize';
 import { formatAttributes } from '../utils/general';
 import { useMouse } from '../hooks/mouse';
+import { useUpdateShaders } from '../hooks/updateShaders';
 
 interface Props {
 	fragmentShader: string;
@@ -27,6 +17,8 @@ interface Props {
 	setAttributes: (attributes: any[]) => void;
 	faceArray: FaceArray;
 	rotationDelta: Vector3;
+	setFragmentError: (error: Error | null) => void;
+	setVertexError: (error: Error | null) => void;
 }
 
 interface RenderProps {
@@ -40,42 +32,17 @@ interface RenderProps {
 	rotation: Vector3;
 }
 
-const render = ({
-	gl,
-	uniformLocations,
-	uniforms,
-	time,
-	mousePos,
-	size,
-	numVertices,
-	rotation,
-}: RenderProps) => {
+const render = ({ gl, uniformLocations, uniforms, time, mousePos, size, numVertices, rotation }: RenderProps) => {
 	if (!gl) return;
 	assignProjectionMatrix(gl, uniformLocations, size);
-	const modelViewMatrix: Matrix = applyRotation(
-		createMat4().slice(),
-		rotation
-	);
-	gl.uniformMatrix4fv(
-		uniformLocations.uModelViewMatrix,
-		false,
-		modelViewMatrix
-	);
+	const modelViewMatrix: Matrix = applyRotation(createMat4().slice(), rotation);
+	gl.uniformMatrix4fv(uniformLocations.uModelViewMatrix, false, modelViewMatrix);
 	assignUniforms(uniforms, uniformLocations, gl, time, mousePos);
 	gl.drawArrays(gl.TRIANGLES, 0, numVertices);
 };
 
-const DepthCanvas = ({
-	fragmentShader,
-	vertexShader,
-	uniforms,
-	setAttributes,
-	faceArray,
-	rotationDelta,
-}: Props) => {
-	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<
-		HTMLCanvasElement
-	>();
+const DepthCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, faceArray, rotationDelta, setFragmentError, setVertexError }: Props) => {
+	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<HTMLCanvasElement>();
 	const size: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
 		x: uniforms.current.uResolution.value.x,
 		y: uniforms.current.uResolution.value.y,
@@ -85,9 +52,9 @@ const DepthCanvas = ({
 		y: size.current.y * -0.5,
 	});
 	const gl = React.useRef<WebGLRenderingContext>();
-	const uniformLocations = React.useRef<
-		Record<string, WebGLUniformLocation>
-	>();
+	const programRef: React.MutableRefObject<WebGLProgram> = React.useRef<WebGLProgram>();
+	const loadedShadersRef: React.MutableRefObject<LoadedShaders> = React.useRef<LoadedShaders>({ fragmentShader: null, vertexShader: null });
+	const uniformLocations = React.useRef<Record<string, WebGLUniformLocation>>();
 	const numVertices: number = faceArray.flat().length;
 	const buffersRef: React.MutableRefObject<Buffers> = React.useRef<Buffers>({
 		vertexBuffer: null,
@@ -110,6 +77,8 @@ const DepthCanvas = ({
 		buffersRef,
 		fragmentSource: fragmentShader,
 		vertexSource: vertexShader,
+		programRef,
+		loadedShadersRef,
 		uniforms: uniforms.current,
 		size,
 		faceArray,
@@ -119,6 +88,8 @@ const DepthCanvas = ({
 	React.useEffect(() => {
 		setAttributes(formatAttributes(buffersRef));
 	}, []);
+
+	useUpdateShaders({ gl, programRef, loadedShadersRef, uniformLocations, uniforms, fragmentShader, vertexShader, setFragmentError, setVertexError });
 
 	useWindowSize(canvasRef, gl, uniforms.current, size);
 	useMouse(mousePosRef, canvasRef);

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { UNIFORM_TYPE, UniformSettings } from '../../types';
 import { BASE_UNIFORMS } from '../utils/general';
-import rasterizationFragmentShader from '../../lib/gl/shaders/dom.frag';
-import rasterizationVertexShader from '../../lib/gl/shaders/base.vert';
+import initialRasterizationFragmentShader from '../../lib/gl/shaders/dom.frag';
+import initialRasterizationVertexShader from '../../lib/gl/shaders/base.vert';
 import Section from '../components/Section/Section';
 import DOMRasterizationCanvas from '../components/DOMRasterizationCanvas/DOMRasterizationCanvas';
 
@@ -45,10 +45,13 @@ const BASE_RASTERIZATION_UNIFORMS: UniformSettings = {
 };
 
 const DOMRasterizationPage = ({ isActive }: Props) => {
-	const rasterizationUniforms = React.useRef<UniformSettings>(
-		BASE_RASTERIZATION_UNIFORMS
-	);
 	const [attributes, setAttributes] = React.useState<any[]>([]);
+	const rasterizationUniforms = React.useRef<UniformSettings>(BASE_RASTERIZATION_UNIFORMS);
+	const [rasterizationFragmentShader, setRasterizationFragmentShader] = React.useState<string>(initialRasterizationFragmentShader);
+	const [rasterizationFragmentError, setRasterizationFragmentError] = React.useState<Error | null>();
+	const [rasterizationVertexShader, setRasterizationVertexShader] = React.useState<string>(initialRasterizationVertexShader);
+	const [rasterizationVertexError, setRasterizationVertexError] = React.useState<Error | null>();
+
 	if (!isActive) return <></>;
 
 	return (
@@ -59,15 +62,20 @@ const DOMRasterizationPage = ({ isActive }: Props) => {
 				image={domRasterizationDiagram}
 				fullScreen={true}
 				fragmentShader={rasterizationFragmentShader}
+				setFragmentShader={setRasterizationFragmentShader}
+				fragmentError={rasterizationFragmentError}
 				vertexShader={rasterizationVertexShader}
+				setVertexShader={setRasterizationVertexShader}
+				vertexError={rasterizationVertexError}
 				attributes={attributes}
-				uniforms={rasterizationUniforms}
-			>
+				uniforms={rasterizationUniforms}>
 				<DOMRasterizationCanvas
 					fragmentShader={rasterizationFragmentShader}
 					vertexShader={rasterizationVertexShader}
 					uniforms={rasterizationUniforms}
 					setAttributes={setAttributes}
+					setFragmentError={setRasterizationFragmentError}
+					setVertexError={setRasterizationVertexError}
 				/>
 			</Section>
 		</div>

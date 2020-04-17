@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { UNIFORM_TYPE, UniformSettings } from '../../types';
 import { BASE_UNIFORMS } from '../utils/general';
-import transitionFragmentShader from '../../lib/gl/shaders/transition.frag';
-import transitionVertexShader from '../../lib/gl/shaders/base.vert';
+import initialTransitionFragmentShader from '../../lib/gl/shaders/transition.frag';
+import initialTransitionVertexShader from '../../lib/gl/shaders/base.vert';
 import Section from '../components/Section/Section';
 import TransitionCanvas from '../components/TransitionCanvas/TransitionCanvas';
 
@@ -44,10 +44,13 @@ const BASE_TRANSITION_UNIFORMS: UniformSettings = {
 };
 
 const TransitionPage = ({ isActive }: Props) => {
-	const transitionUniforms = React.useRef<UniformSettings>(
-		BASE_TRANSITION_UNIFORMS
-	);
 	const [attributes, setAttributes] = React.useState<any[]>([]);
+	const transitionUniforms = React.useRef<UniformSettings>(BASE_TRANSITION_UNIFORMS);
+	const [transitionFragmentShader, setTransitionFragmentShader] = React.useState<string>(initialTransitionFragmentShader);
+	const [transitionFragmentError, setTransitionFragmentError] = React.useState<Error | null>();
+	const [transitionVertexShader, setTransitionVertexShader] = React.useState<string>(initialTransitionVertexShader);
+	const [transitionVertexError, setTransitionVertexError] = React.useState<Error | null>();
+
 	if (!isActive) return <></>;
 
 	const slideImages: Record<string, string> = {
@@ -65,16 +68,21 @@ const TransitionPage = ({ isActive }: Props) => {
 				image={transitionDiagram}
 				fullScreen={true}
 				fragmentShader={transitionFragmentShader}
+				setFragmentShader={setTransitionFragmentShader}
+				fragmentError={transitionFragmentError}
 				vertexShader={transitionVertexShader}
+				setVertexShader={setTransitionVertexShader}
+				vertexError={transitionVertexError}
 				attributes={attributes}
-				uniforms={transitionUniforms}
-			>
+				uniforms={transitionUniforms}>
 				<TransitionCanvas
 					fragmentShader={transitionFragmentShader}
 					vertexShader={transitionVertexShader}
 					uniforms={transitionUniforms}
 					setAttributes={setAttributes}
 					slideImages={slideImages}
+					setFragmentError={setTransitionFragmentError}
+					setVertexError={setTransitionVertexError}
 				/>
 			</Section>
 		</div>

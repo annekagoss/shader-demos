@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { UNIFORM_TYPE, UniformSettings } from '../../types';
 import { BASE_UNIFORMS } from '../utils/general';
-import interactionVertexShader from '../../lib/gl/shaders/phong.vert';
-import interactionFragmentShader from '../../lib/gl/shaders/toon.frag';
+import initialInteractionVertexShader from '../../lib/gl/shaders/phong.vert';
+import initialInteractionFragmentShader from '../../lib/gl/shaders/toon.frag';
 import Section from '../components/Section/Section';
 import InteractionCanvas from '../components/InteractionCanvas/InteractionCanvas';
 
@@ -51,10 +51,13 @@ const BASE_INTERACTION_UNIFORMS: UniformSettings = {
 };
 
 const InteractionPage = ({ isActive }: Props) => {
-	const interactionUniforms = React.useRef<UniformSettings>(
-		BASE_INTERACTION_UNIFORMS
-	);
 	const [attributes, setAttributes] = React.useState<any[]>([]);
+	const interactionUniforms = React.useRef<UniformSettings>(BASE_INTERACTION_UNIFORMS);
+	const [interactionFragmentShader, setInteractionFragmentShader] = React.useState<string>(initialInteractionFragmentShader);
+	const [interactionFragmentError, setInteractionFragmentError] = React.useState<Error | null>();
+	const [interactionVertexShader, setInteractionVertexShader] = React.useState<string>(initialInteractionVertexShader);
+	const [interactionVertexError, setInteractionVertexError] = React.useState<Error | null>();
+
 	if (!isActive) return <></>;
 	const foxOBJData = {
 		OBJSource: foxOBJ,
@@ -76,16 +79,21 @@ const InteractionPage = ({ isActive }: Props) => {
 				image={interactionDiagram}
 				fullScreen={true}
 				fragmentShader={interactionFragmentShader}
+				setFragmentShader={setInteractionFragmentShader}
+				fragmentError={interactionFragmentError}
 				vertexShader={interactionVertexShader}
+				setVertexShader={setInteractionVertexShader}
+				vertexError={interactionVertexError}
 				attributes={attributes}
-				uniforms={interactionUniforms}
-			>
+				uniforms={interactionUniforms}>
 				<InteractionCanvas
 					fragmentShader={interactionFragmentShader}
 					vertexShader={interactionVertexShader}
 					uniforms={interactionUniforms}
 					setAttributes={setAttributes}
 					OBJData={foxOBJData}
+					setFragmentError={setInteractionFragmentError}
+					setVertexError={setInteractionVertexError}
 				/>
 			</Section>
 		</div>

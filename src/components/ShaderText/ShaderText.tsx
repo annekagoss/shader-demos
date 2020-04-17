@@ -41,7 +41,7 @@ const ShaderText = ({ fragmentShader, setFragmentShader, fragmentError, vertexSh
 					Fragment Shader
 				</button>
 				<button
-					className={cx(styles.tab, vertVisible && styles.active, Boolean(fragmentError) && styles.error)}
+					className={cx(styles.tab, vertVisible && styles.active, Boolean(vertexError) && styles.error)}
 					onClick={() => {
 						if (!vertVisible) {
 							setVertVisible(true);
