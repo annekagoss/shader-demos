@@ -30,7 +30,7 @@ export const updateRendererSize = (
 	const { width, height } = canvas.current.getBoundingClientRect();
 	size.current = {
 		x: width * window.devicePixelRatio,
-		y: height * window.devicePixelRatio
+		y: height * window.devicePixelRatio,
 	};
 	canvas.current.width = size.current.x;
 	canvas.current.height = size.current.y;

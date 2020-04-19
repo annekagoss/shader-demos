@@ -41,7 +41,6 @@ export const parseUniform = (value: any, type: UNIFORM_TYPE) => {
 		case UNIFORM_TYPE.VEC_3:
 			return `x: ${value.x || value.r}, y: ${value.y || value.g}, z: ${value.z || value.b}`;
 		case UNIFORM_TYPE.VEC_4:
-			console.log(value);
 			return `x: ${value.x || value.r}, y: ${value.y || value.g}, z: ${value.z || value.b}, w: ${value.w || value.a}`;
 		default:
 			return value;

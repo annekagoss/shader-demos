@@ -81,7 +81,7 @@ const BaseCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, set
 		});
 	});
 
-	return <canvas ref={canvasRef} role='img' />;
+	return <canvas ref={canvasRef} width={size.current.x} height={size.current.y} role='img' />;
 };
 
 export default BaseCanvas;
