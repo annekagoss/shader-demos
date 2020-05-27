@@ -5,12 +5,10 @@ precision mediump float;
 uniform vec2 uResolution;
 uniform vec2 uRectDimensions;
 
-// clang-format off
-#pragma glslify: rectangle = require('./common/rectangle.glsl');
-// clang-format on
+#pragma glslify:rectangle=require('./common/rectangle.glsl');
 
-void main() {
+void main(){
   vec2 st = gl_FragCoord.xy / uResolution;
   float value = rectangle(st, uRectDimensions, uResolution);
-  gl_FragColor = vec4(vec3(value), 1.0);
+  gl_FragColor = vec4(vec3(value), 1.);
 }

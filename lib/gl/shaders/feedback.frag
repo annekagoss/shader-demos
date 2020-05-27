@@ -4,10 +4,9 @@ precision mediump float;
 
 #define TAU 6.2831853071
 
-// clang-format off
-#pragma glslify: circle = require('./common/circle.glsl');
-#pragma glslify: fractalNoise = require('./common/fractalNoise.glsl');
-// clang-format on
+#pragma glslify:circle = require('./common/circle.glsl');
+#pragma glslify:fractalNoise = require('./common/fractalNoise.glsl');
+
 
 uniform vec2 uResolution;
 uniform sampler2D frameBufferTexture0;
@@ -33,7 +32,7 @@ vec2 sampleCoordinate(vec2 st) {
 
   float time = uTime * NOISE_SPEED;
   vec2 multiplier =
-      (1. + fractalNoise(st, time, 1, NOISE_SCALE * 3., 4)) / uResolution.xy;
+  (1. + fractalNoise(st, time, 1, NOISE_SCALE * 3., 4)) / uResolution.xy;
   offset = uOffset * 100. * multiplier;
 
   // Two passes of simplex noise are applied to the offset
@@ -48,15 +47,15 @@ vec2 sampleCoordinate(vec2 st) {
   float angleB = noiseB * TAU + time;
   offset += vec2(cos(angleB), sin(angleB)) * multiplier / 3.;
 
-  return st + offset;
+  return st+offset;
 }
 
 void main() {
   vec2 st = gl_FragCoord.xy / uResolution;
   float frameBufferValue =
-      texture2D(frameBufferTexture0, sampleCoordinate(st)).r * uAlpha;
+  texture2D(frameBufferTexture0, sampleCoordinate(st)).r * uAlpha;
   vec2 mouseSt = translateWithMouse(st);
   float baseShape = circle(mouseSt, vec2(.5), .125, uResolution);
 
-  gl_FragColor = vec4(vec3(baseShape + frameBufferValue), 1.);
+  gl_FragColor = vec4(vec3(baseShape+frameBufferValue), 1.);
 }

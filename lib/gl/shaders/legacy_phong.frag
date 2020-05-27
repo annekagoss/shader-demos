@@ -39,53 +39,52 @@ uniform vec3 uRightLightColor;
 uniform vec3 uTopLightColor;
 uniform vec3 uBottomLightColor;
 
-// clang-format off
-#pragma glslify: shadow = require('./common/shadow-map.glsl');
-// clang-format on
+#pragma glslify:shadow=require('./common/shadow-map.glsl');
 
-vec4 readTextures() {
-  if (vTextureAddress == 0.) {
-    if (uHasTexture == 1.) {
-      return texture2D(uSampler0, vTextureCoord);
-    } else {
-      return vec4(uDiffuseColor0, 1.);
+
+vec4 readTextures(){
+  if(vTextureAddress==0.){
+    if(uHasTexture==1.){
+      return texture2D(uSampler0,vTextureCoord);
+    }else{
+      return vec4(uDiffuseColor0,1.);
     }
-  } else if (vTextureAddress == 1.) {
-    if (uHasTexture == 1.) {
-      return texture2D(uSampler1, vTextureCoord);
-    } else {
-      return vec4(uDiffuseColor1, 1.);
+  }else if(vTextureAddress==1.){
+    if(uHasTexture==1.){
+      return texture2D(uSampler1,vTextureCoord);
+    }else{
+      return vec4(uDiffuseColor1,1.);
     }
-  } else {
-    return vec4(uDiffuseColor2, 1.);
+  }else{
+    return vec4(uDiffuseColor2,1.);
   }
 }
 
-void main() {
-  vec4 texelColor = readTextures();
+void main(){
+  vec4 texelColor=readTextures();
   vec3 specularColor;
   float opacity;
 
-  if (vTextureAddress == 0.) {
-    specularColor = uSpecularColor0;
-    opacity = uOpacity0;
-  } else if (vTextureAddress == 1.) {
-    specularColor = uSpecularColor1;
-    opacity = uOpacity1;
-  } else {
-    specularColor = uSpecularColor2;
-    opacity = uOpacity2;
+  if(vTextureAddress==0.){
+    specularColor=uSpecularColor0;
+    opacity=uOpacity0;
+  }else if(vTextureAddress==1.){
+    specularColor=uSpecularColor1;
+    opacity=uOpacity1;
+  }else{
+    specularColor=uSpecularColor2;
+    opacity=uOpacity2;
   }
 
   vec3 lightedColor;
-  if (uDepthEnabled == 1) {
-    vec3 shadowColor =
-        shadow(uDepthMap, vPositionFromLeftLight, uShadowStrength);
-    lightedColor = (texelColor.xyz - shadowColor) *
-                   (vLighting + (vSpecular * specularColor));
-  } else {
-    lightedColor = texelColor.xyz * (vLighting + (vSpecular * specularColor));
+  if(uDepthEnabled==1){
+    vec3 shadowColor=
+    shadow(uDepthMap,vPositionFromLeftLight,uShadowStrength);
+    lightedColor=(texelColor.xyz-shadowColor)*
+    (vLighting+(vSpecular*specularColor));
+  }else{
+    lightedColor=texelColor.xyz*(vLighting+(vSpecular*specularColor));
   }
 
-  gl_FragColor = vec4(lightedColor, opacity * texelColor.w);
+  gl_FragColor=vec4(lightedColor,opacity*texelColor.w);
 }

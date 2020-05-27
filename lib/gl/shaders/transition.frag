@@ -2,7 +2,7 @@
 precision mediump float;
 #endif
 
-#define blur .8
+#define blur.8
 
 uniform vec2 uResolution;
 uniform float uTransitionProgress;
@@ -13,18 +13,15 @@ uniform float uTime;
 
 const float SPEED = .00025;
 
-// clang-format off
-#pragma glslify: fractalNoise = require('./common/fractalNoise.glsl');
-// clang-format on
+#pragma glslify:fractalNoise = require('./common/fractalNoise.glsl');
 
 float interpolate(float start, float end, float t) {
   return start * (1. - t) + end * t;
 }
 
 float transitionWipe(vec2 st) {
-  float transition =
-      st.x + interpolate(-1. - blur, 1. + blur, uTransitionProgress);
-  return smoothstep(transition - blur, transition + blur, st.y);
+  float transition = st.x + interpolate(-1. - blur, 1. + blur, uTransitionProgress);
+  return smoothstep(transition-blur, transition + blur, st.y);
 }
 
 void main() {

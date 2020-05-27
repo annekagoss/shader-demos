@@ -14,25 +14,21 @@ const float SPEED = .00025;
 const float MAX_SHIFT_AMT = .005;
 const float GRADIENT_STEPS = 15.;
 
-// clang-format off
-#pragma glslify: fractalNoise = require('./common/fractalNoise.glsl');
-#pragma glslify: dither = require('./common/dither.glsl');
-// clang-format on
+#pragma glslify:fractalNoise = require('./common/fractalNoise.glsl');
 
-vec4 colorShift(sampler2D sampler, float shift, vec2 st,
-                float backgroundLuminance) {
+vec4 colorShift(sampler2D sampler, float shift, vec2 st, float backgroundLuminance) {
   vec4 unshifted = texture2D(sampler, st);
 
   if (backgroundLuminance > .5) {
     float ra = texture2D(sampler, st - vec2(shift, 0.)).a;
-    float ba = texture2D(sampler, st + vec2(shift, 0.)).a;
+    float ba = texture2D(sampler, st+vec2(shift, 0.)).a;
     float a = max(max(ra, ba), unshifted.a);
     vec3 left = vec3(ra - unshifted.a, 0, unshifted.b);
     vec3 right = vec3(unshifted.r, 0, ba - unshifted.a);
     return vec4(left + right, a);
   }
 
-  float r = texture2D(sampler, st - vec2(shift, 0.)).r;
+  float r = texture2D(sampler, st-vec2(shift, 0.)).r;
   float b = texture2D(sampler, st + vec2(shift, 0.)).b;
   return vec4(r, unshifted.g, b, unshifted.a);
 }
@@ -53,8 +49,8 @@ vec3 rgbTohsl(vec3 c) {
   float cMax = max(r, max(g, b));
 
   l = (cMax + cMin) / 2.;
-  if (cMax > cMin) {
-    float cDelta = cMax - cMin;
+  if (cMax > cMin){
+    float cDelta = cMax-cMin;
 
     s = l < .0 ? cDelta / (cMax + cMin) : cDelta / (2. - (cMax + cMin));
 
@@ -66,7 +62,7 @@ vec3 rgbTohsl(vec3 c) {
       h = 4. + (r - g) / cDelta;
     }
 
-    if (h < 0.) {
+    if (h < 0.){
       h += 6.;
     }
     h = h / 6.;
@@ -86,12 +82,12 @@ vec2 downsample(vec2 st, float fidelity) {
 
 void main() {
   vec2 st = gl_FragCoord.xy / uResolution;
-  st = downsample(st, uDownSampleFidelity * 100.0);
+  st = downsample(st, uDownSampleFidelity * 100.);
   float noise = fractalNoise(st, uTime * SPEED, 1, SCALE, 4);
 
   vec2 imageSt = gl_FragCoord.xy / uSamplerResolution0;
   imageSt.y = (uResolution.y / uSamplerResolution0.y) - imageSt.y;
-  imageSt = downsample(imageSt, uDownSampleFidelity * 500.0);
+  imageSt = downsample(imageSt, uDownSampleFidelity * 500.);
   imageSt = mix(imageSt, imageSt * noise + .2, .05);
 
   float backgroundLuminance = luminance(uColor, vec3(1.));
@@ -102,10 +98,10 @@ void main() {
   vec3 HSLColor = rgbTohsl(uColor.rgb);
   vec3 darkHSL = vec3(1. - HSLColor.x, HSLColor.y, min(HSLColor.z, .25));
   vec3 lightHSL = vec3(HSLColor.x, HSLColor.y, max(HSLColor.z, .75));
-  vec4 colorGradient =
-      vec4(mix(hslTorgb(darkHSL), hslTorgb(lightHSL),
-               floor(gradientSt.y * GRADIENT_STEPS) * (1. / GRADIENT_STEPS)),
-           uColor.a);
+  vec4 colorGradient = vec4(
+    mix(hslTorgb(darkHSL), hslTorgb(lightHSL), floor(gradientSt.y * GRADIENT_STEPS) * (1. / GRADIENT_STEPS)),
+    uColor.a
+  );
 
   vec4 color;
   if (backgroundLuminance > .5) {

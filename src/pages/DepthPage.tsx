@@ -270,29 +270,61 @@ const CUBE_MESH: Vector3[][] = [
 	],
 ];
 
-const CUBE_ROTATION_DELTA: Vector3 = { x: 0.0025, y: 0.01, z: 0 };
+const CUBE_ROTATION_DELTA: Vector3 = { x: 0.0, y: 0.01, z: 0 };
 const OBJ_ROTATION_DELTA: Vector3 = { x: 0, y: 0.01, z: 0 };
 
 const DepthPage = ({ isActive }: Props) => {
 	const [attributes, setAttributes] = React.useState<any[]>([]);
 
 	const meshUniforms = React.useRef<UniformSettings>(BASE_MESH_UNIFORMS);
-	const [meshFragmentShader, setMeshFragmentShader] = React.useState<string>(initialMeshFragmentShader);
-	const [meshFragmentError, setMeshFragmentError] = React.useState<Error | null>();
-	const [meshVertexShader, setMeshVertexShader] = React.useState<string>(initialMeshVertexShader);
-	const [meshVertexError, setMeshVertexError] = React.useState<Error | null>();
+	const [meshFragmentShader, setMeshFragmentShader] = React.useState<string>(
+		initialMeshFragmentShader
+	);
+	const [
+		meshFragmentError,
+		setMeshFragmentError,
+	] = React.useState<Error | null>();
+	const [meshVertexShader, setMeshVertexShader] = React.useState<string>(
+		initialMeshVertexShader
+	);
+	const [
+		meshVertexError,
+		setMeshVertexError,
+	] = React.useState<Error | null>();
 
 	const phongUniforms = React.useRef<UniformSettings>(BASE_PHONG_UNIFORMS);
-	const [phongFragmentShader, setPhongFragmentShader] = React.useState<string>(initialPhongFragmentShader);
-	const [phongFragmentError, setPhongFragmentError] = React.useState<Error | null>();
-	const [phongVertexShader, setPhongVertexShader] = React.useState<string>(initialPhongVertexShader);
-	const [phongVertexError, setPhongVertexError] = React.useState<Error | null>();
+	const [phongFragmentShader, setPhongFragmentShader] = React.useState<
+		string
+	>(initialPhongFragmentShader);
+	const [
+		phongFragmentError,
+		setPhongFragmentError,
+	] = React.useState<Error | null>();
+	const [phongVertexShader, setPhongVertexShader] = React.useState<string>(
+		initialPhongVertexShader
+	);
+	const [
+		phongVertexError,
+		setPhongVertexError,
+	] = React.useState<Error | null>();
 
-	const fractalUniforms = React.useRef<UniformSettings>(BASE_FRACTAL_UNIFORMS);
-	const [fractalFragmentShader, setFractalFragmentShader] = React.useState<string>(initialFractalFragmentShader);
-	const [fractalFragmentError, setFractalFragmentError] = React.useState<Error | null>();
-	const [fractalVertexShader, setFractalVertexShader] = React.useState<string>(baseVertexShader);
-	const [fractalVertexError, setFractalVertexError] = React.useState<Error | null>();
+	const fractalUniforms = React.useRef<UniformSettings>(
+		BASE_FRACTAL_UNIFORMS
+	);
+	const [fractalFragmentShader, setFractalFragmentShader] = React.useState<
+		string
+	>(initialFractalFragmentShader);
+	const [
+		fractalFragmentError,
+		setFractalFragmentError,
+	] = React.useState<Error | null>();
+	const [fractalVertexShader, setFractalVertexShader] = React.useState<
+		string
+	>(baseVertexShader);
+	const [
+		fractalVertexError,
+		setFractalVertexError,
+	] = React.useState<Error | null>();
 
 	if (!isActive) return <></>;
 
@@ -322,7 +354,8 @@ const DepthPage = ({ isActive }: Props) => {
 				setVertexShader={setMeshVertexShader}
 				vertexError={meshVertexError}
 				attributes={attributes}
-				uniforms={meshUniforms}>
+				uniforms={meshUniforms}
+			>
 				<DepthCanvas
 					fragmentShader={meshFragmentShader}
 					vertexShader={meshVertexShader}
@@ -345,7 +378,8 @@ const DepthPage = ({ isActive }: Props) => {
 				setVertexShader={setPhongVertexShader}
 				vertexError={phongVertexError}
 				attributes={attributes}
-				uniforms={phongUniforms}>
+				uniforms={phongUniforms}
+			>
 				<LoaderCanvas
 					fragmentShader={phongFragmentShader}
 					vertexShader={phongVertexShader}
@@ -369,7 +403,8 @@ const DepthPage = ({ isActive }: Props) => {
 					setVertexShader={setFractalVertexShader}
 					vertexError={fractalVertexError}
 					attributes={attributes}
-					uniforms={fractalUniforms}>
+					uniforms={fractalUniforms}
+				>
 					<BaseCanvas
 						fragmentShader={fractalFragmentShader}
 						vertexShader={fractalVertexShader}

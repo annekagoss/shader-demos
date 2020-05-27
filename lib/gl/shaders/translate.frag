@@ -7,10 +7,9 @@ uniform vec2 uRectDimensions;
 uniform float uTime;
 uniform vec2 uMouse;
 
-// clang-format off
-#pragma glslify: rectangle = require('./common/rectangle.glsl');
-#pragma glslify: circle = require('./common/circle.glsl');
-// clang-format on
+#pragma glslify:rectangle=require('./common/rectangle.glsl');
+#pragma glslify:circle=require('./common/circle.glsl');
+
 
 vec2 translateInCircle(vec2 st) {
   vec2 translation = vec2(cos(uTime * .001), sin(uTime * .001));

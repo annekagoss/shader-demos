@@ -9,9 +9,7 @@ varying vec3 vVertexPosition;
 uniform vec2 uResolution;
 uniform int uMaterialType;
 
-// clang-format off
-#pragma glslify: wireframe = require('./common/wireframe.glsl');
-// clang-format on
+#pragma glslify:wireframe = require('./common/wireframe.glsl');
 
 void main() {
   vec2 st = gl_FragCoord.xy / uResolution;

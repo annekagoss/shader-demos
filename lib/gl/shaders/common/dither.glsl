@@ -1,49 +1,47 @@
-float noise(vec2 n, float x) {
-  n += x;
-  return fract(sin(dot(n.xy, vec2(12.9898, 78.233))) * 43758.5453) * 2.0 - 1.0;
+float noise(vec2 n,float x){
+  n+=x;
+  return fract(sin(dot(n.xy,vec2(12.9898,78.233)))*43758.5453)*2.-1.;
 }
 
-float noisePass(vec2 uv, float n) {
-  float a = 1.0;
-  float b = 2.0;
-  float c = -12.0;
-  float t = 1.0;
+float noisePass(vec2 uv,float n){
+  float a=1.;
+  float b=2.;
+  float c=-12.;
+  float t=1.;
 
-  return (1.0 / (a * 4.0 + b * 4.0 - c)) *
-         (noise(uv + vec2(-1.0, -1.0) * t, n) * a +
-          noise(uv + vec2(0.0, -1.0) * t, n) * b +
-          noise(uv + vec2(1.0, -1.0) * t, n) * a +
-          noise(uv + vec2(-1.0, 0.0) * t, n) * b +
-          noise(uv + vec2(0.0, 0.0) * t, n) * c +
-          noise(uv + vec2(1.0, 0.0) * t, n) * b +
-          noise(uv + vec2(-1.0, 1.0) * t, n) * a +
-          noise(uv + vec2(0.0, 1.0) * t, n) * b +
-          noise(uv + vec2(1.0, 1.0) * t, n) * a);
+  return(1./(a*4.+b*4.-c))*
+  (noise(uv+vec2(-1.,-1.)*t,n)*a+
+  noise(uv+vec2(0.,-1.)*t,n)*b+
+  noise(uv+vec2(1.,-1.)*t,n)*a+
+  noise(uv+vec2(-1.,0.)*t,n)*b+
+  noise(uv+vec2(0.,0.)*t,n)*c+
+  noise(uv+vec2(1.,0.)*t,n)*b+
+  noise(uv+vec2(-1.,1.)*t,n)*a+
+  noise(uv+vec2(0.,1.)*t,n)*b+
+  noise(uv+vec2(1.,1.)*t,n)*a);
 }
 
-float createDither(vec2 uv, float n) {
-  float a = 1.0;
-  float b = 2.0;
-  float c = -2.0;
-  float t = 1.0;
+float createDither(vec2 uv,float n){
+  float a=1.;
+  float b=2.;
+  float c=-2.;
+  float t=1.;
 
-  return (4.0 / (a * 4.0 + b * 4.0 - c)) *
-         (noisePass(uv + vec2(-1.0, -1.0) * t, n) * a +
-          noisePass(uv + vec2(0.0, -1.0) * t, n) * b +
-          noisePass(uv + vec2(1.0, -1.0) * t, n) * a +
-          noisePass(uv + vec2(-1.0, 0.0) * t, n) * b +
-          noisePass(uv + vec2(0.0, 0.0) * t, n) * c +
-          noisePass(uv + vec2(1.0, 0.0) * t, n) * b +
-          noisePass(uv + vec2(-1.0, 1.0) * t, n) * a +
-          noisePass(uv + vec2(0.0, 1.0) * t, n) * b +
-          noisePass(uv + vec2(1.0, 1.0) * t, n) * a);
+  return(4./(a*4.+b*4.-c))*
+  (noisePass(uv+vec2(-1.,-1.)*t,n)*a+
+  noisePass(uv+vec2(0.,-1.)*t,n)*b+
+  noisePass(uv+vec2(1.,-1.)*t,n)*a+
+  noisePass(uv+vec2(-1.,0.)*t,n)*b+
+  noisePass(uv+vec2(0.,0.)*t,n)*c+
+  noisePass(uv+vec2(1.,0.)*t,n)*b+
+  noisePass(uv+vec2(-1.,1.)*t,n)*a+
+  noisePass(uv+vec2(0.,1.)*t,n)*b+
+  noisePass(uv+vec2(1.,1.)*t,n)*a);
 }
 
-vec3 dither(vec2 uv, vec3 color, float steps) {
-  float ditherValue = createDither(uv, 0.0);
-  return floor(0.5 + color * steps - 0.5 + ditherValue) * (1.0 / (steps - 1.0));
+vec3 dither(vec2 uv,vec3 color,float steps){
+  float ditherValue=createDither(uv,0.);
+  return floor(.5+color*steps-.5+ditherValue)*(1./(steps-1.));
 }
 
-// clang-format off
-#pragma glslify: export(dither)
-// clang-format on
+#pragma glslify:export(dither)

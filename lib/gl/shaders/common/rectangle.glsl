@@ -7,10 +7,8 @@ float rectangle(vec2 st, vec2 dimensions, vec2 resolution) {
   vec2 origin = vec2(1.);
   origin.x *= aspect;
   vec2 uv = smoothstep(size, size + vec2(.005), st);
-  uv *= smoothstep(size, size + vec2(.005), origin - st);
+  uv *= smoothstep(size, size+vec2(.005), origin - st);
   return uv.x * uv.y;
 }
 
-// clang-format off
-#pragma glslify: export(rectangle)
-// clang-format on
+#pragma glslify:export(rectangle)
