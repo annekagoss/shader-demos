@@ -7,8 +7,9 @@ import DepthPage from '../pages/DepthPage';
 import InteractionPage from '../pages/InteractionPage';
 import TransitionPage from '../pages/TransitionPage';
 import DOMRasterizationPage from '../pages/DOMRasterizationPage';
+import Header from './Header/Header';
+import Footer from './Footer/Footer';
 import Loader from './Loader/Loader';
-
 import styles from './app.module.scss';
 
 const App = () => {
@@ -24,18 +25,20 @@ const App = () => {
 	}, []);
 
 	return (
-		<>
-			<div className={styles.app}>
-				{isLoaded && (
+		<div className={styles.app}>
+			{isLoaded && (
+				<>
+					<Header />
 					<Nav
 						activePageIndex={activePageIndex}
 						setActivePageIndex={setActivePageIndex}
 					/>
-				)}
-				{!isLoaded && <Loader />}
-				{isLoaded && <Pages activePageIndex={activePageIndex} />}
-			</div>
-		</>
+					<Pages activePageIndex={activePageIndex} />
+					<Footer />
+				</>
+			)}
+			{!isLoaded && <Loader />}
+		</div>
 	);
 };
 

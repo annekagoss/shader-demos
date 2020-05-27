@@ -1,5 +1,5 @@
 {
-	"name": "ahder-talk",
+	"name": "shaders-webgl-react",
 	"version": "1.0.0",
 	"description": "",
 	"main": "index.js",
@@ -7,8 +7,8 @@
 		"type": "git",
 		"url": "git+https://github.com/annekagoss/webgl-portfolio.git"
 	},
-	"author": "",
-	"license": "ISC",
+	"author": "Anneka Goss",
+	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/annekagoss/webgl-portfolio/issues"
 	},
