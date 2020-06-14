@@ -113,102 +113,40 @@ const FormPage = ({ isActive }: Props) => {
 	const [attributes, setAttributes] = React.useState<any[]>([]);
 
 	const baseUniforms = React.useRef<UniformSettings>(BASE_UNIFORMS);
-	const [baseFragmentShader, setBaseFragmentShader] = React.useState<string>(
-		initialBaseFragmentShader
-	);
-	const [
-		baseFragmentError,
-		setBaseFragmentError,
-	] = React.useState<Error | null>();
-	const [baseVertexShader, setBaseVertexShader] = React.useState<string>(
-		initialBaseVertexShader
-	);
-	const [
-		baseVertexError,
-		setBaseVertexError,
-	] = React.useState<Error | null>();
+	const [baseFragmentShader, setBaseFragmentShader] = React.useState<string>(initialBaseFragmentShader);
+	const [baseFragmentError, setBaseFragmentError] = React.useState<Error | null>();
+	const [baseVertexShader, setBaseVertexShader] = React.useState<string>(initialBaseVertexShader);
+	const [baseVertexError, setBaseVertexError] = React.useState<Error | null>();
 
 	const stepUniforms = React.useRef<UniformSettings>(BASE_STEP_UNIFORMS);
-	const [stepFragmentShader, setStepFragmentShader] = React.useState<string>(
-		initialStepFragmentShader
-	);
-	const [
-		stepFragmentError,
-		setStepFragmentError,
-	] = React.useState<Error | null>();
-	const [stepVertexShader, setStepVertexShader] = React.useState<string>(
-		initialBaseVertexShader
-	);
-	const [
-		stepVertexError,
-		setStepVertexError,
-	] = React.useState<Error | null>();
+	const [stepFragmentShader, setStepFragmentShader] = React.useState<string>(initialStepFragmentShader);
+	const [stepFragmentError, setStepFragmentError] = React.useState<Error | null>();
+	const [stepVertexShader, setStepVertexShader] = React.useState<string>(initialBaseVertexShader);
+	const [stepVertexError, setStepVertexError] = React.useState<Error | null>();
 
 	const lineUniforms = React.useRef<UniformSettings>(BASE_LINE_UNIFORMS);
-	const [lineFragmentShader, setLineFragmentShader] = React.useState<string>(
-		initialLineFragmentShader
-	);
-	const [
-		lineFragmentError,
-		setLineFragmentError,
-	] = React.useState<Error | null>();
-	const [lineVertexShader, setLineVertexShader] = React.useState<string>(
-		initialBaseVertexShader
-	);
-	const [
-		lineVertexError,
-		setLineVertexError,
-	] = React.useState<Error | null>();
+	const [lineFragmentShader, setLineFragmentShader] = React.useState<string>(initialLineFragmentShader);
+	const [lineFragmentError, setLineFragmentError] = React.useState<Error | null>();
+	const [lineVertexShader, setLineVertexShader] = React.useState<string>(initialBaseVertexShader);
+	const [lineVertexError, setLineVertexError] = React.useState<Error | null>();
 
 	const rectUniforms = React.useRef<UniformSettings>(BASE_RECTANGLE_UNIFORMS);
-	const [rectFragmentShader, setRectFragmentShader] = React.useState<string>(
-		initialRectFragmentShader
-	);
-	const [
-		rectFragmentError,
-		setRectFragmentError,
-	] = React.useState<Error | null>();
-	const [rectVertexShader, setRectVertexShader] = React.useState<string>(
-		initialBaseVertexShader
-	);
-	const [
-		rectVertexError,
-		setRectVertexError,
-	] = React.useState<Error | null>();
+	const [rectFragmentShader, setRectFragmentShader] = React.useState<string>(initialRectFragmentShader);
+	const [rectFragmentError, setRectFragmentError] = React.useState<Error | null>();
+	const [rectVertexShader, setRectVertexShader] = React.useState<string>(initialBaseVertexShader);
+	const [rectVertexError, setRectVertexError] = React.useState<Error | null>();
 
 	const circleUniforms = React.useRef<UniformSettings>(BASE_CIRCLE_UNIFORMS);
-	const [circleFragmentShader, setCircleFragmentShader] = React.useState<
-		string
-	>(initialCircleFragmentShader);
-	const [
-		circleFragmentError,
-		setCircleFragmentError,
-	] = React.useState<Error | null>();
-	const [circleVertexShader, setCircleVertexShader] = React.useState<string>(
-		initialBaseVertexShader
-	);
-	const [
-		circleVertexError,
-		setCircleVertexError,
-	] = React.useState<Error | null>();
+	const [circleFragmentShader, setCircleFragmentShader] = React.useState<string>(initialCircleFragmentShader);
+	const [circleFragmentError, setCircleFragmentError] = React.useState<Error | null>();
+	const [circleVertexShader, setCircleVertexShader] = React.useState<string>(initialBaseVertexShader);
+	const [circleVertexError, setCircleVertexError] = React.useState<Error | null>();
 
-	const polygonUniforms = React.useRef<UniformSettings>(
-		BASE_POLYGON_UNIFORMS
-	);
-	const [polygonFragmentShader, setPolygonFragmentShader] = React.useState<
-		string
-	>(initialPolygonFragmentShader);
-	const [
-		polygonFragmentError,
-		setPolygonFragmentError,
-	] = React.useState<Error | null>();
-	const [polygonVertexShader, setPolygonVertexShader] = React.useState<
-		string
-	>(initialBaseVertexShader);
-	const [
-		polygonVertexError,
-		setPolygonVertexError,
-	] = React.useState<Error | null>();
+	const polygonUniforms = React.useRef<UniformSettings>(BASE_POLYGON_UNIFORMS);
+	const [polygonFragmentShader, setPolygonFragmentShader] = React.useState<string>(initialPolygonFragmentShader);
+	const [polygonFragmentError, setPolygonFragmentError] = React.useState<Error | null>();
+	const [polygonVertexShader, setPolygonVertexShader] = React.useState<string>(initialBaseVertexShader);
+	const [polygonVertexError, setPolygonVertexError] = React.useState<Error | null>();
 
 	// React.useEffect(() => {
 	// 	console.log('LOADED');
@@ -236,8 +174,7 @@ const FormPage = ({ isActive }: Props) => {
 				setVertexShader={setBaseVertexShader}
 				vertexError={baseVertexError}
 				uniforms={baseUniforms}
-				attributes={attributes}
-			>
+				attributes={attributes}>
 				<BaseCanvas
 					fragmentShader={baseFragmentShader}
 					vertexShader={baseVertexShader}
@@ -258,8 +195,7 @@ const FormPage = ({ isActive }: Props) => {
 				setVertexShader={setStepVertexShader}
 				vertexError={stepVertexError}
 				attributes={attributes}
-				uniforms={stepUniforms}
-			>
+				uniforms={stepUniforms}>
 				<BaseCanvas
 					fragmentShader={stepFragmentShader}
 					vertexShader={stepVertexShader}
@@ -282,8 +218,7 @@ const FormPage = ({ isActive }: Props) => {
 				setVertexShader={setLineVertexShader}
 				vertexError={lineVertexError}
 				attributes={attributes}
-				uniforms={lineUniforms}
-			>
+				uniforms={lineUniforms}>
 				<BaseCanvas
 					fragmentShader={lineFragmentShader}
 					vertexShader={lineVertexShader}
@@ -304,8 +239,7 @@ const FormPage = ({ isActive }: Props) => {
 				setVertexShader={setRectVertexShader}
 				vertexError={rectVertexError}
 				attributes={attributes}
-				uniforms={rectUniforms}
-			>
+				uniforms={rectUniforms}>
 				<BaseCanvas
 					fragmentShader={rectFragmentShader}
 					vertexShader={rectVertexShader}
@@ -326,8 +260,7 @@ const FormPage = ({ isActive }: Props) => {
 				setVertexShader={setCircleVertexShader}
 				vertexError={circleVertexError}
 				attributes={attributes}
-				uniforms={circleUniforms}
-			>
+				uniforms={circleUniforms}>
 				<BaseCanvas
 					fragmentShader={circleFragmentShader}
 					vertexShader={circleVertexShader}
@@ -348,8 +281,7 @@ const FormPage = ({ isActive }: Props) => {
 				setVertexShader={setPolygonVertexShader}
 				vertexError={polygonVertexError}
 				attributes={attributes}
-				uniforms={polygonUniforms}
-			>
+				uniforms={polygonUniforms}>
 				<BaseCanvas
 					fragmentShader={polygonFragmentShader}
 					vertexShader={polygonVertexShader}
