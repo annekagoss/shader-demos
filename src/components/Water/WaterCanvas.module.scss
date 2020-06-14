@@ -1,7 +1,9 @@
 .fullScreenCanvas {
 	width: 100vw;
 	height: 100vh;
-	position: relative;
+	position: absolute;
+	z-index: 1;
+	pointer-events: none;
 }
 
 .canvasContainer {
@@ -11,8 +13,13 @@
 .canvasForeground {
 	opacity: 0;
 
+	position: absolute;
+	top: 0;
+
 	&.sourceElement.cursorCopy {
 		opacity: 1;
+		// background: transparent;
+		// color: transparent;
 	}
 	&.sourceElement:not(.cursorCopy) {
 		visibility: hidden;

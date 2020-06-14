@@ -9,6 +9,7 @@ import { useMouse } from '../../hooks/mouse';
 import styles from './WaterCanvas.module.scss';
 import { useRasterizeToGL } from '../../hooks/rasterize';
 import { useUpdateShaders } from '../../hooks/updateShaders';
+import WaterSource from './WaterSource';
 
 interface Props {
 	fragmentShader: string;
@@ -18,7 +19,7 @@ interface Props {
 	textureSource?: string;
 	setFragmentError: (error: Error | null) => void;
 	setVertexError: (error: Error | null) => void;
-	Source: React.ForwardRefExoticComponent<Record<string, any>>;
+	foregroundContent: React.ReactNode;
 }
 
 interface RenderProps {
@@ -37,7 +38,7 @@ const render = ({ gl, uniformLocations, uniforms, time, mousePos }: RenderProps)
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 };
 
-const WaterCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, setFragmentError, setVertexError, Source }: Props) => {
+const WaterCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, setFragmentError, setVertexError, foregroundContent }: Props) => {
 	const canvasRef: React.RefObject<HTMLCanvasElement> = React.useRef<HTMLCanvasElement>();
 	const size: React.MutableRefObject<Vector2> = React.useRef<Vector2>({
 		x: uniforms.current.uResolution.value.x * window.devicePixelRatio,
@@ -60,11 +61,12 @@ const WaterCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, se
 	if (!allowMotion)
 		return (
 			<div className={cx(styles.noMotion, styles.fullScreenCanvas)}>
-				<Source
+				<WaterSource
 					ref={{
 						sourceRef: sourceElementRef,
 						cursorRef: cursorElementRef,
 					}}
+					content={foregroundContent}
 				/>
 			</div>
 		);
@@ -111,11 +113,12 @@ const WaterCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, se
 	return (
 		<div className={styles.canvasContainer}>
 			<canvas ref={canvasRef} className={styles.fullScreenCanvas} width={size.current.x} height={size.current.y} aria-label='DOM rasterization canvas' role='img' />
-			<Source
+			<WaterSource
 				ref={{
 					sourceRef: sourceElementRef,
 					cursorRef: cursorElementRef,
 				}}
+				content={foregroundContent}
 			/>
 		</div>
 	);

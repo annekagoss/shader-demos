@@ -9,20 +9,23 @@ precision mediump float;
 
 #define SPEED 0.0005
 #define WIDTH 10.0
-#define DEPTH 6.0
+#define DEPTH 8.0
 #define STEP_SIZE 0.3
 #define PI_HALF 1.5707963267949
-#define REFLECTION_FRESNEL 0.99
+#define REFLECTION_FRESNEL .99
 #define BACKGROUND_COLOR vec4(0.0)
 #define WATER_COLOR vec4(vec3(0.0), 1.0)
-#define FOG_THRESHOLD -1.0
-#define FOG_AMOUNT 0.075
+#define FOG_THRESHOLD_Z -0.5
+#define FOG_THRESHOLD_X 3.0
+#define FOG_AMOUNT 0.05
 
 const float X_BOUND = WIDTH * 0.5;
 const float Z_BOUND = DEPTH * 0.5;
 
 uniform vec2 uMouse;
 uniform vec2 uResolution;
+uniform vec2 uSamplerResolution0;
+uniform sampler2D uDiffuse0;
 uniform float uTime;
 float time = uTime * SPEED;
 
@@ -169,16 +172,33 @@ float getHeight(vec3 p) {
     return 0.5 * fnoise(vec3(0.5 * (p.x + 0.0 * time), 0.5 * p.z,  0.4 * time));   
 }
 
-vec4 getSky(vec3 rd) {
-	// return vec4(vec3(0.1), 1.0);
-    if (rd.y > 0.3) return vec4(vec3(0.5), 1.0); // bright sky
-    if (rd.y < 0.0) return vec4(vec3(0.0), 1.0); // no reflection from below
-    
-    if (rd.z > 0.9 && rd.x > 0.1) {
-    	return 1.5*vec4(vec3(1.0), 1.0); // orange houses
-    } 
-	return vec4(vec3(0.0), 1.0); // bright sky
+vec4 getReflection(vec3 rd) {
+ 	vec2 st = gl_FragCoord.xy / uSamplerResolution0;
+	st.y = 1.0 - st.y;
+	vec2 sampleCoords = mix(st, rd.xy, vec2(0.1, 1.0));
+	float shift = .002 * rd.z;
+	
+	vec4 unshifted = texture2D(uDiffuse0, sampleCoords);
+	unshifted = mix(unshifted, vec4(1.0), 1.0 - unshifted.a);
+
+	vec4 rImage = texture2D(uDiffuse0, sampleCoords - vec2(shift, 0.));
+	rImage = mix(rImage, vec4(1.0), 1.0 - rImage.a);
+	
+	vec4 bImage = texture2D(uDiffuse0, sampleCoords + vec2(shift, 0.));
+	bImage = mix(bImage, vec4(1.0), 1.0 - bImage.a);
+	
+	return vec4(rImage.r, unshifted.g, bImage.b, unshifted.a);
+
+	  
+	// float ra = texture2D(uDiffuse0, sampleCoords - vec2(shift, 0.)).a;
+	// float ba = texture2D(uDiffuse0, sampleCoords + vec2(shift, 0.)).a;
+	// float a = max(max(ra, ba), unshifted.a);
+	// vec3 left = vec3(ra - unshifted.a, 0, unshifted.b);
+    // vec3 right = vec3(unshifted.r, 0, ba - unshifted.a);
+	// vec4 shifted = vec4(left + right, a);
+	// return mix(shifted * 3., vec4(1.0), 1.0 - shifted.a);
 }
+
 
 vec4 shade(vec3 normal, vec3 pos, vec3 rayDirection)
 {
@@ -187,18 +207,28 @@ vec4 shade(vec3 normal, vec3 pos, vec3 rayDirection)
 	   + (1.0 - REFLECTION_FRESNEL
 	);
 	vec3 refVec = reflect(rayDirection, normal);
-	vec4 reflection = getSky(refVec);
+	vec4 reflection = getReflection(refVec);
 	
     float deep = 1.0 + 0.5 * pos.y;
 	vec4 col = fresnel * reflection;
     col += vec4(vec3(deep * 0.4), 1.0) * WATER_COLOR;
 	col = clamp(col, vec4(0.0), vec4(1.0));
 	
-	if (pos.z > FOG_THRESHOLD) {
-		float dist = pow(abs(pos.z - FOG_THRESHOLD), 2.0);
-		float fog = clamp((dist / Z_BOUND) * FOG_AMOUNT, 0.0, 1.0);
-		col = mix(col, BACKGROUND_COLOR, fog);
-	}    
+	float zDist = 0.0;
+	if (pos.z > FOG_THRESHOLD_Z) {
+		zDist = pow(abs(pos.z - FOG_THRESHOLD_Z), 2.25);
+	}
+
+	float xDist = 0.0;
+	if (pos.x > FOG_THRESHOLD_X) {
+		xDist = pow(abs(pos.x - FOG_THRESHOLD_X), 3.0);
+	} else if (pos.x < -FOG_THRESHOLD_X) {
+		xDist = pow(abs(pos.x + FOG_THRESHOLD_X), 3.0);
+	}
+	float fogZ = clamp((zDist / Z_BOUND) * FOG_AMOUNT, 0.0, 1.0);
+	float fogX = clamp((xDist / (X_BOUND * .5)) * FOG_AMOUNT, 0.0, 1.0);
+	float fog = min(fogX + fogZ, 1.0);
+	col = mix(col, BACKGROUND_COLOR, fog);  
     return clamp(col, 0.0, 1.0);
 }
 
@@ -253,8 +283,7 @@ vec4 trace_heightfield(vec3 rayOrigin, vec3 rayDirection)
  	return shade(normal, p, rayDirection);
 }
 
-mat3 setCamera(in vec3 ro, in vec3 ta, float cr) 
-{
+mat3 setCamera(in vec3 ro, in vec3 ta, float cr) {
 	vec3 cw = normalize(ta-ro);
 	vec3 cp = vec3(sin(cr), cos(cr),0.0);
 	vec3 cu = normalize(cross(cw,cp));
@@ -262,12 +291,11 @@ mat3 setCamera(in vec3 ro, in vec3 ta, float cr)
     return mat3(cu, cv, cw);
 }
 
-void main()
-{
+void main() {
     vec2 st = (-uResolution.xy + 2.0*gl_FragCoord.xy)/ uResolution.y;
     vec2 mouse = uMouse/uResolution;
-	vec3 cameraPosition = 9.0*normalize(vec3(0.0, 0.35, cos(2.5)));
-	vec3 cameraTarget = vec3(0.0, 1.5, 0.0);
+	vec3 cameraPosition = 10.*normalize(vec3(0.0, 0.35, -.8));
+	vec3 cameraTarget = vec3(0.0, 2.5, 0.0);
     mat3 camera = setCamera(cameraPosition, cameraTarget, 0.0);
 	vec3 rayDirection = camera * normalize(vec3(st.xy, 4.0));
     gl_FragColor = trace_heightfield(cameraPosition, rayDirection);

@@ -4,20 +4,31 @@ import { UniformSettings, RGBA } from '../../../types';
 import { parseColorFromString, luminanceFromRGBA } from '../../utils/color';
 import styles from './WaterCanvas.module.scss';
 
-interface SourceElementProps {
-	isCursorCopy?: boolean;
+interface Props {
+	content: React.ReactNode;
 }
 
-const SourceElement = React.forwardRef(({ isCursorCopy = false }: SourceElementProps, ref: React.RefObject<HTMLDivElement>) => {
-	return <div className={cx(styles.canvasForeground, styles.sourceElement, isCursorCopy && styles.cursorCopy)} ref={ref}></div>;
+interface SourceElementProps {
+	isCursorCopy?: boolean;
+	children: React.ReactNode;
+}
+
+const SourceElement = React.forwardRef(({ children, isCursorCopy = false }: SourceElementProps, ref: React.RefObject<HTMLDivElement>) => {
+	return (
+		<div className={cx(styles.canvasForeground, styles.sourceElement, isCursorCopy && styles.cursorCopy)} ref={ref}>
+			{children}
+		</div>
+	);
 });
 
-const WaterSource = React.forwardRef((ref) => {
+const WaterSource = React.forwardRef(({ content }: Props, ref) => {
 	const { sourceRef, cursorRef }: Record<string, React.RefObject<HTMLDivElement>> = ref;
 	return (
 		<>
-			<SourceElement ref={sourceRef} />
-			<SourceElement ref={cursorRef} isCursorCopy={true} />
+			<SourceElement ref={sourceRef}>{content}</SourceElement>
+			<SourceElement ref={cursorRef} isCursorCopy={true}>
+				{content}
+			</SourceElement>
 		</>
 	);
 });
