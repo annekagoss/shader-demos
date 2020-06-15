@@ -32,7 +32,7 @@ const BASE_WATER_UNIFORMS: UniformSettings = {
 	},
 };
 
-const Water = ({ children }) => {
+const Water = () => {
 	const [attributes, setAttributes] = React.useState<any[]>([]);
 	const baseUniforms = React.useRef<UniformSettings>(BASE_WATER_UNIFORMS);
 	const [waterFragmentShader, setBaseFragmentShader] = React.useState<string>(initialWaterFragmentShader);
@@ -48,7 +48,7 @@ const Water = ({ children }) => {
 			setAttributes={setAttributes}
 			setFragmentError={setWaterFragmentError}
 			setVertexError={setBaseVertexError}
-			foregroundContent={children}
+			Source={WaterSource}
 		/>
 	);
 };

@@ -2,7 +2,6 @@ import * as React from 'react';
 import cx from 'classnames';
 import { glSupported } from '../utils/general';
 import Water from './Water/Water';
-import Content from './Content/Content';
 import Header from './Header/Header';
 import Footer from './Footer/Footer';
 import Loader from './Loader/Loader';
@@ -24,9 +23,7 @@ const App = () => {
 			{isLoaded && (
 				<>
 					{/* <Header /> */}
-					<Water>
-						<Content index={0} />
-					</Water>
+					<Water />
 					{/* <Footer /> */}
 				</>
 			)}
