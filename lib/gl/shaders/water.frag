@@ -15,9 +15,9 @@ precision mediump float;
 #define REFLECTION_FRESNEL .99
 #define BACKGROUND_COLOR vec4(0.0)
 #define WATER_COLOR vec4(vec3(0.0), 1.0)
-#define FOG_THRESHOLD_Z -0.5
+#define FOG_THRESHOLD_Z 1.0
 #define FOG_THRESHOLD_X 3.0
-#define FOG_AMOUNT 0.05
+#define FOG_AMOUNT 0.035
 
 const float X_BOUND = WIDTH * 0.5;
 const float Z_BOUND = DEPTH * 0.5;
@@ -176,7 +176,7 @@ vec4 getReflection(vec3 rd) {
  	vec2 st = gl_FragCoord.xy / uSamplerResolution0;
 	st.y = 1.0 - st.y;
 	vec2 sampleCoords = mix(st, rd.xy, vec2(0.1, 1.0));
-	float shift = .002 * rd.z;
+	float shift = .005 * rd.z;
 	
 	vec4 unshifted = texture2D(uDiffuse0, sampleCoords);
 	unshifted = mix(unshifted, vec4(1.0), 1.0 - unshifted.a);
@@ -187,18 +187,16 @@ vec4 getReflection(vec3 rd) {
 	vec4 bImage = texture2D(uDiffuse0, sampleCoords + vec2(shift, 0.));
 	bImage = mix(bImage, vec4(1.0), 1.0 - bImage.a);
 	
-	return vec4(rImage.r, unshifted.g, bImage.b, unshifted.a);
+	vec4 shifted = vec4(rImage.r, unshifted.g, bImage.b, unshifted.a);
+	
+	if (rd.y > 0.3) return shifted;
+    if (rd.y < 0.0) return vec4(vec3(0.0), 1.0);
 
-	  
-	// float ra = texture2D(uDiffuse0, sampleCoords - vec2(shift, 0.)).a;
-	// float ba = texture2D(uDiffuse0, sampleCoords + vec2(shift, 0.)).a;
-	// float a = max(max(ra, ba), unshifted.a);
-	// vec3 left = vec3(ra - unshifted.a, 0, unshifted.b);
-    // vec3 right = vec3(unshifted.r, 0, ba - unshifted.a);
-	// vec4 shifted = vec4(left + right, a);
-	// return mix(shifted * 3., vec4(1.0), 1.0 - shifted.a);
+    if (rd.z > 0.9 && rd.x > 0.1) {
+    	return shifted;
+    } 
+	return vec4(vec3(0.0), 1.0);
 }
-
 
 vec4 shade(vec3 normal, vec3 pos, vec3 rayDirection)
 {
@@ -216,14 +214,14 @@ vec4 shade(vec3 normal, vec3 pos, vec3 rayDirection)
 	
 	float zDist = 0.0;
 	if (pos.z > FOG_THRESHOLD_Z) {
-		zDist = pow(abs(pos.z - FOG_THRESHOLD_Z), 2.25);
+		zDist = pow(abs(pos.z - FOG_THRESHOLD_Z), 3.);
 	}
 
 	float xDist = 0.0;
 	if (pos.x > FOG_THRESHOLD_X) {
-		xDist = pow(abs(pos.x - FOG_THRESHOLD_X), 3.0);
+		xDist = pow(abs(pos.x - FOG_THRESHOLD_X), 3.5);
 	} else if (pos.x < -FOG_THRESHOLD_X) {
-		xDist = pow(abs(pos.x + FOG_THRESHOLD_X), 3.0);
+		xDist = pow(abs(pos.x + FOG_THRESHOLD_X), 3.5);
 	}
 	float fogZ = clamp((zDist / Z_BOUND) * FOG_AMOUNT, 0.0, 1.0);
 	float fogX = clamp((xDist / (X_BOUND * .5)) * FOG_AMOUNT, 0.0, 1.0);
