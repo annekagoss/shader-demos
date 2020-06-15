@@ -2,6 +2,7 @@
 body {
 	min-height: 100vh;
 	margin: 0;
+	padding: 1rem 2rem;
 	font-family: 'Roboto', sans-serif;
 }
 
@@ -45,6 +46,11 @@ body {
 
 canvas {
 	border: solid 1px rgba(0, 0, 0, 0.8);
+	width: 400px;
+	height: 400px;
+	max-height: 400px;
+	min-width: 400px;
+	min-height: 400px;
 	box-sizing: border-box;
 	cursor: crosshair;
 	touch-action: none;
