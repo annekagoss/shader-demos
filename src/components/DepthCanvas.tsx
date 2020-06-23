@@ -64,6 +64,7 @@ const DepthCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, fa
 		textureAddressBuffer: null,
 		barycentricBuffer: null,
 	});
+
 	const rotationRef: React.MutableRefObject<Vector3> = React.useRef<Vector3>({
 		x: -15,
 		y: 44.5,
@@ -83,11 +84,8 @@ const DepthCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, fa
 		size,
 		faceArray,
 		meshType: MESH_TYPE.FACE_ARRAY,
+		setAttributes: (buffers) => setAttributes(formatAttributes(buffers)),
 	});
-
-	React.useEffect(() => {
-		setAttributes(formatAttributes(buffersRef));
-	}, []);
 
 	useUpdateShaders({ gl, programRef, loadedShadersRef, uniformLocations, uniforms, fragmentShader, vertexShader, setFragmentError, setVertexError });
 

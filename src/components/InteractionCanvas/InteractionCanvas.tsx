@@ -205,8 +205,8 @@ const InteractionCanvas = ({ fragmentShader, vertexShader, uniforms, setAttribut
 				baseVertexBufferRef,
 				FBOA,
 				FBOB,
+				setAttributes: (buffers) => setAttributes(formatAttributes(buffers)),
 			});
-			setAttributes(formatAttributes(buffersRef));
 		},
 		OBJData,
 		useWebWorker: ENABLE_WEBWORKER,

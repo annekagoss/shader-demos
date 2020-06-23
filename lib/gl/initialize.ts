@@ -30,6 +30,7 @@ export interface InitializeProps {
 	imageTextures?: Record<string, string>;
 	texturesRef?: React.MutableRefObject<WebGLTexture[]>;
 	loadedShadersRef?: React.MutableRefObject<LoadedShaders>;
+	setAttributes?: (buffers: Buffers) => void;
 }
 
 export const initializeRenderer = ({ uniformLocations, canvasRef, fragmentSource, vertexSource, uniforms, size, FBOA, FBOB, outlineUniformLocations, loadedShadersRef }: InitializeProps) => {
@@ -115,7 +116,12 @@ export const mapUniformSettingsToLocations = (settings: UniformSettings, gl: Web
 	}, locations);
 };
 
-export const initializeMesh = ({ faceArray, buffersRef, meshType, mesh, baseVertexBufferRef }: InitializeProps, gl: WebGLRenderingContext, program: WebGLProgram, outlineProgram: WebGLProgram) => {
+export const initializeMesh = (
+	{ faceArray, buffersRef, meshType, mesh, baseVertexBufferRef, setAttributes }: InitializeProps,
+	gl: WebGLRenderingContext,
+	program: WebGLProgram,
+	outlineProgram: WebGLProgram
+) => {
 	switch (meshType) {
 		case MESH_TYPE.BASE_TRIANGLES:
 			initBaseMeshBuffers(gl, program);
@@ -123,6 +129,7 @@ export const initializeMesh = ({ faceArray, buffersRef, meshType, mesh, baseVert
 		case MESH_TYPE.FACE_ARRAY:
 			if (!faceArray) return;
 			buffersRef.current = initMeshBuffersFromFaceArray(gl, program, faceArray, true);
+			setAttributes && setAttributes(buffersRef.current);
 			break;
 		case MESH_TYPE.OBJ:
 			if (outlineProgram) {
@@ -131,6 +138,7 @@ export const initializeMesh = ({ faceArray, buffersRef, meshType, mesh, baseVert
 			}
 			gl.useProgram(program);
 			buffersRef.current = initBuffers(gl, program, mesh, true);
+			setAttributes && setAttributes(buffersRef.current);
 			break;
 		default:
 			initBaseMeshBuffers(gl, program);

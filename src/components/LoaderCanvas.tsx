@@ -175,8 +175,8 @@ const LoaderCanvas = ({ fragmentShader, vertexShader, uniforms, setAttributes, O
 				baseVertexBufferRef,
 				FBOA,
 				FBOB,
+				setAttributes: (buffers) => setAttributes(formatAttributes(buffers)),
 			});
-			setAttributes(formatAttributes(buffersRef));
 			updateRendererSize(canvasRef, gl, uniforms.current, size);
 		},
 		OBJData,

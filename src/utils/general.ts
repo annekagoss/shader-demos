@@ -47,10 +47,10 @@ export const parseUniform = (value: any, type: UNIFORM_TYPE) => {
 	}
 };
 
-export const formatAttributes = (buffersRef: React.MutableRefObject<Buffers>): Record<string, string>[] => {
-	if (!buffersRef.current) return [];
-	return Object.keys(buffersRef.current).reduce((result, bufferName) => {
-		const buffer = buffersRef.current[bufferName];
+export const formatAttributes = (buffers: Buffers): Record<string, string>[] => {
+	if (!buffers) return [];
+	return Object.keys(buffers).reduce((result, bufferName) => {
+		const buffer = buffers[bufferName];
 		if (!buffer || !buffer.data) return result;
 		result.push({
 			name: bufferName,
