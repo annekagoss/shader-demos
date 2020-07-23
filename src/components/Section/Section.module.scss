@@ -35,7 +35,6 @@
 	flex-wrap: wrap;
 	flex-direction: column;
 	margin-top: 10px;
-	max-height: 400px;
 
 	@media (min-width: 900px) {
 		width: calc(100% - 420px);
@@ -43,6 +42,7 @@
 		flex-wrap: nowrap;
 		margin-top: 0;
 		margin-left: 10px;
+		max-height: 400px;
 
 		.root.fullScreen & {
 			width: 100%;
