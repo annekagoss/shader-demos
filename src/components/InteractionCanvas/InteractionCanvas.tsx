@@ -59,16 +59,17 @@ const render = (props: RenderProps) => {
 		return;
 	}
 
-	gl.activeTexture(gl.TEXTURE7);
+	gl.useProgram(program);
+	gl.activeTexture(gl.TEXTURE0 + 7);
 	gl.bindFramebuffer(gl.FRAMEBUFFER, FBOA.buffer);
 	gl.viewport(0, 0, FBOA.textureWidth, FBOA.textureHeight);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-	gl.useProgram(program);
 	gl.uniform1i(uniformLocations.uOutlinePass, 1);
 	draw(props);
 
-	gl.activeTexture(gl.TEXTURE8);
+	gl.activeTexture(gl.TEXTURE0 + 8);
 	gl.bindFramebuffer(gl.FRAMEBUFFER, FBOB.buffer);
+	gl.viewport(0, 0, FBOB.textureWidth, FBOB.textureHeight);
 	gl.uniform1i(uniformLocations.uOutlinePass, 0);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	draw(props);
@@ -77,11 +78,11 @@ const render = (props: RenderProps) => {
 	gl.viewport(0, 0, size.x, size.y);
 	gl.useProgram(outlineProgram);
 
-	gl.activeTexture(gl.TEXTURE7);
+	gl.activeTexture(gl.TEXTURE0 + 7);
 	gl.bindTexture(gl.TEXTURE_2D, FBOA.targetTexture);
 	gl.uniform1i(outlineUniformLocations.uOutline, 7);
 
-	gl.activeTexture(gl.TEXTURE8);
+	gl.activeTexture(gl.TEXTURE0 + 8);
 	gl.bindTexture(gl.TEXTURE_2D, FBOB.targetTexture);
 	gl.uniform1i(outlineUniformLocations.uSource, 8);
 
@@ -138,6 +139,16 @@ const draw = ({ gl, uniformLocations, uniforms, buffers, time, mousePos, size, p
 	normalMatrix = transposeMatrix(normalMatrix);
 	gl.uniformMatrix4fv(uniformLocations.uNormalMatrix, false, normalMatrix);
 	assignUniforms(uniforms, uniformLocations, gl, time, mousePos);
+
+	gl.bindBuffer(gl.ARRAY_BUFFER, buffers.vertexBuffer.buffer);
+	const vertexLocation = gl.getAttribLocation(program, 'aVertexPosition');
+	gl.vertexAttribPointer(vertexLocation, 3, gl.FLOAT, false, 0, 0);
+	gl.enableVertexAttribArray(vertexLocation);
+
+	gl.bindBuffer(gl.ARRAY_BUFFER, buffers.normalBuffer.buffer);
+	const normalLocation = gl.getAttribLocation(program, 'aVertexNormal');
+	gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, 0, 0);
+	gl.enableVertexAttribArray(normalLocation);
 
 	gl.bindBuffer(gl.ARRAY_BUFFER, buffers.barycentricBuffer.buffer);
 	const barycentricLocation = gl.getAttribLocation(program, 'aBarycentric');

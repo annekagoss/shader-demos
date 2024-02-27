@@ -112,6 +112,16 @@ const draw = ({ gl, uniformLocations, uniforms, buffers, time, size, rotation, p
 	gl.uniformMatrix4fv(uniformLocations.uNormalMatrix, false, normalMatrix);
 	assignUniforms(uniforms, uniformLocations, gl, time);
 
+	gl.bindBuffer(gl.ARRAY_BUFFER, buffers.vertexBuffer.buffer);
+	const vertexLocation = gl.getAttribLocation(program, 'aVertexPosition');
+	gl.vertexAttribPointer(vertexLocation, 3, gl.FLOAT, false, 0, 0);
+	gl.enableVertexAttribArray(vertexLocation);
+
+	gl.bindBuffer(gl.ARRAY_BUFFER, buffers.normalBuffer.buffer);
+	const normalLocation = gl.getAttribLocation(program, 'aVertexNormal');
+	gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, 0, 0);
+	gl.enableVertexAttribArray(normalLocation);
+
 	gl.bindBuffer(gl.ARRAY_BUFFER, buffers.barycentricBuffer.buffer);
 	const barycentricLocation = gl.getAttribLocation(program, 'aBarycentric');
 	gl.vertexAttribPointer(barycentricLocation, 3, gl.FLOAT, false, 0, 0);
